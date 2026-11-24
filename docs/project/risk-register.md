@@ -1,0 +1,21 @@
+# Risk register — 2026-11-24
+
+| ID    | Risk / likelihood / impact                                                  | Mitigation and owner                                                                                | Exit evidence / status                        |
+| ----- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| RK-01 | No registered app/site credentials; certain / high                          | Owner login/register then explicitly authorise development deployment                               | LH-013; open                                  |
+| RK-02 | Cross-ISP data access; medium / critical                                    | Tech lead enforces trusted context, tenant predicates/reference checks and negative tests           | Sprint 1/7 two-tenant/two-install tests; open |
+| RK-03 | Jira create ambiguity produces duplicate incident; medium / high            | Persist initial marker, reconcile exact candidates and hold unknown outcome for review              | Sprint 4 failure injection/live search; open  |
+| RK-04 | SQL partial writes/concurrency/migration assumptions; medium / high         | No session transaction assumption, single-statement claims, inbox/sweep repair and schema readiness | Live SQL migration/claim tests; open          |
+| RK-05 | Source secret compromise/replay; medium / high                              | Per-source bearer, rotation/revocation, bounded timestamps, durable dedupe, minimal scope           | Sprint 2 negative/rotation tests; open        |
+| RK-06 | Forge/JSM billing above allowance; medium / high                            | No deployment now; owner reviews budgets/alerts and bounded work before authorising exposure        | Billing review and usage evidence; open       |
+| RK-07 | Native SLA differs from app deadline; high / medium                         | Separate authorities and display reconciliation drift; approve 24/7 assumption                      | ADR-0009 owner + live metric test; open       |
+| RK-08 | Notification misconfiguration exposes info or fails delivery; medium / high | Aggregate-only content, safe internal/public workflow and recipient matrix                          | Synthetic notification logs; open             |
+| RK-09 | Directory consent/unattended flow unavailable; medium / medium              | Provider-specific verification; manual fallback; no external auth replacement                       | Sprint 6 consent/revocation tests; open       |
+| RK-10 | Deadline pressure across ten slices; high / high                            | Re-estimate each exit, protect MVP and defer stretch, freeze release 19 Dec                         | Owner capacity/scope review; open             |
+| RK-11 | Dependency advisory/peer mismatch; observed / high                          | Compatible patches, React 18, exact lockfile, audit/bundle review                                   | Final audit evidence in audit.md; review      |
+| RK-12 | Scheduled warnings late / retries expire; high / medium                     | UTC-derived display, bounded sweep, durable backlog and manual review; no precise scheduler promise | Stalled-state/retry exhaustion tests; open    |
+| RK-13 | Judge cannot reproduce setup; medium / high                                 | Fresh-site install with synthetic seed/fixture instructions and actual JSM                          | Sprint 8/9 independent exercise; open         |
+| RK-14 | Confidential data/IP enters fixtures; low / critical                        | Synthetic-only policy, staged/history/recording review                                              | Each PR and pre-submission review; ongoing    |
+| RK-15 | Platform docs/dependencies change; medium / medium                          | Dated official evidence, recheck before introducing capability or releasing                         | Capability matrix and live gates; ongoing     |
+
+Risk owners are the project owner for consent/budget/eligibility and the technical lead for implementation/verification. These labels identify responsibilities, not configured assignees in Jira.

@@ -1,0 +1,19 @@
+# Unregistered scaffold: forge register supplies app.id. No fabricated ARI.
+modules:
+  jira:globalPage:
+    - key: light-house-global-page
+      resource: light-house-ui
+      resolver:
+        function: status-resolver
+      title: Light House
+  function:
+    - key: status-resolver
+      handler: index.handler
+resources:
+  - key: light-house-ui
+    path: dist/ui
+permissions:
+  scopes: []
+app:
+  runtime:
+    name: nodejs22.x
