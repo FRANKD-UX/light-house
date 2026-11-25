@@ -18,3 +18,18 @@
 | R-14 | Clean judge install + complete synthetic scenario             | release end-to-end             | 8/9 planned        | actual installation link and replayable instructions     |
 
 A planned row is not test coverage. Audit records executable counts only.
+
+## Planned operational workflow additions (Sprint 0.5 design)
+
+| Case | Required assertion                                                                                   | Sprint / status                    |
+| ---- | ---------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| W-01 | Forged actor/state/gate and viewer/revoked/cross-tenant mutation denied                              | 3/4 planned                        |
+| W-02 | Concurrent accept/reject/return permits one outcome; origin/receiver owns until accepted transfer    | 4 planned                          |
+| W-03 | Rejection reason/evidence/actions required; return rejection preserves receiver accountability       | 4 planned                          |
+| W-04 | Direct NOC remediation reaches validation/closure with no handoff                                    | 3/4/7 planned                      |
+| W-05 | Team changes and rejected/returned transfers retain original SLA and snapshots                       | 3/4 planned                        |
+| W-06 | Recovery evidence alone, stale validation, missing diagnostics and active handoff cannot close       | 7 planned                          |
+| W-07 | Native Jira UI/REST/automation/bulk closure cannot bypass gate; drift/timeout reconciled             | 4/7 real site required             |
+| W-08 | Authenticated unmapped event remains visible, unknown count never zero; original start preserved     | 2/3 planned                        |
+| W-09 | Fault after incident write before handoff/audit materialisation blocks next command and repairs once | 1 primitive; 3/4 behaviour planned |
+| W-10 | Evidence HTML/URL/cross-tenant attachment cannot execute/fetch/leak data                             | 4/5/7 planned                      |

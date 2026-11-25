@@ -31,3 +31,7 @@ Sprint 1 must verify migrationRunner, composite uniqueness, affectedRows/conditi
 ## Official references
 
 [Official documentation](https://developer.atlassian.com/platform/forge/storage-reference/sql/), reviewed 2026-11-24. Capability verification and limitations are consolidated in [assessment](../project/forge-capability-assessment.md); decisions above are Light House architecture choices, not claims of platform guarantees.
+
+## Sprint 0.5 refinement — 2026-11-25
+
+Proposed minimal operational representation is in data-model.md: dedicated handoff/validation/impact records later, existing incident SLA snapshot/audit history reused, fixed workflow/checklists in code. Sprint 1 stays inventory/tenancy only. No generic engine or complete future schema is authorised by this design.

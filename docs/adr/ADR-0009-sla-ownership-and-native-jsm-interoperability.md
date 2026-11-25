@@ -31,3 +31,7 @@ Test UTC/effective-time boundaries, policy immutability, unknown impact and reso
 ## Official references
 
 [Official documentation](https://support.atlassian.com/jira-service-management-cloud/docs/set-up-sla-goals/), reviewed 2026-11-24. Capability verification and limitations are consolidated in [assessment](../project/forge-capability-assessment.md); decisions above are Light House architecture choices, not claims of platform guarantees.
+
+## Sprint 0.5 owner requirement — 2026-11-25
+
+Overall incident SLA must continue across team changes, pending/rejected/accepted handoffs and NOC return/validation; preserve policy snapshots. Additional acknowledgement/department/acceptance/validation timers are optional designs outside the mandatory hackathon MVP. This accepted constraint does not approve the proposed 24/7/start/reopen defaults above. See ADR-0015 and sla-engine.md.

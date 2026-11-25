@@ -25,3 +25,9 @@ Implement shell, metadata, errors, logging, correlation IDs, tenant/adapter cont
 ## Minimum viable submission
 
 Installable Forge app with synthetic inventory, authenticated Zabbix-compatible fixture ingestion, enrichment, unique customer impact, versioned P1/P2/P3 policies, real JSM issue creation, dashboard visibility, duplicate safety and recovery. Manual identity fallback is essential; Entra/Google adapters remain planned Sprint 6 deliverables and are schedule risks. Optional production enhancements include advanced topology correlation, large directory sync, high-volume tuning and Zoho Desk. No optional feature blocks submission.
+
+## Sprint 0.5 approved operational extension — 2026-11-25
+
+The owner requires a server-authoritative ISP workflow from automated intake Border Control through enrichment, impact, P1/P2/P3 assignment, JSM creation, NOC acknowledgement/triage, operational Border Control, optional departmental handoff request/acceptance/rejection/remediation/return, final restoration validation and guarded closure. Direct NOC remediation must work without handoff. Recovery is evidence only. Unknown inventory/impact must enter visible manual triage rather than being discarded. Ownership, immutable SLA history and comprehensive audit are mandatory; team changes cannot reset the deadline.
+
+Custom UI command centre, workflow board, drawer/full workspace and embedded Jira context provide oversight; JSM remains primary ticketing. Versioned fixed workflow/checklists are proposed implementation defaults; advanced customisation/BPMN and additional timers are deferred. All original Zabbix/shared adapter, Entra, Google, manual fallback and native JSM notification requirements remain. Zoho stays optional. Sprint 0.5 changes documentation/security assessment and acceptance readiness only; no incident engine, full schema or frontend implementation. See architecture-gap-analysis.md and ADR-0015.

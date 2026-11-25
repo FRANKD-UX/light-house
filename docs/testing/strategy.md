@@ -7,3 +7,7 @@ Sprint 0 uses Vitest for pure contracts/use cases and a mocked Forge resolver re
 Future layers: adapter contract tests with bounded synthetic payloads; SQL integration tests for migrations/concurrency and cross-tenant access; worker failure-injection tests around each durable/external boundary; installed JSM tests for actual request/transition/notification behaviour. Pure SLA tests inject UTC clocks. End-to-end demonstration requires an installed app, genuine JSM issue and labelled monitoring transport.
 
 Mocks prove local logic and wiring only. No runtime integration, API permission, installability, database migration, notification delivery or Forge iframe claim can be inferred from these unit tests. Record exact counts/results and blockers in audit. Use meaningful negative tests; do not create placeholder passing suites for unimplemented features.
+
+## Sprint 0.5 verification boundary
+
+Documentation-only architecture changes introduce no pretend behaviour tests. Re-run existing meaningful scaffold tests and builds after clean install. Dependency review includes full/prod audits and local emitted-module/backend graph evidence; actual Forge artifact/runtime remain separate. Development-only scaffold smoke procedure is in operations/deployment.md. Future workflow regression below is planned, not passing evidence.

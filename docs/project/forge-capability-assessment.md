@@ -43,3 +43,7 @@ The initially attempted pricing URL `/platform-pricing/` and two guessed notific
 CLI execution evidence and dependency versions are recorded in audit. A manifest without a registered ARI is an honest unregistered scaffold, not a deployable registered application. Local manifest wiring validation is intentionally narrower than Forge schema/lint acceptance.
 
 CI action references were verified against [actions/checkout](https://github.com/actions/checkout) and [actions/setup-node](https://github.com/actions/setup-node) on 2026-11-24. Current v7 tags are pinned to their resolved Git SHAs in the workflow; remote CI has not run.
+
+## Sprint 0.5 focused re-verification — 2026-11-25
+
+Official globalPage, issueContext, issuePanel, adminPage and Bridge createHistory documentation was reopened; supported proposed surfaces and module limitations are recorded in architecture.md. Only globalPage exists in manifest.yml. Official lint/log command docs were reopened and CLI 16 deploy/install help checked. Actual `forge lint --non-interactive` exits 1 at missing app registration, not a successful authenticated validation. No deployed UI/SQL/JSM/native workflow validation is claimed. Earlier capability claims retain their original dates unless explicitly rechecked here; provider-specific unknowns remain unverified.

@@ -31,3 +31,7 @@ Build resources, unit-test loading/failure/unmount states and verify installed J
 ## Official references
 
 [Official documentation](https://developer.atlassian.com/platform/forge/build-a-custom-ui-app-in-jira/), reviewed 2026-11-24. Capability verification and limitations are consolidated in [assessment](../project/forge-capability-assessment.md); decisions above are Light House architecture choices, not claims of platform guarantees.
+
+## Sprint 0.5 refinement — 2026-11-25
+
+Retain the scaffold. Proposed global-page command centre/board/drawer/workspace, issueContext embedded view and adminPage are documented with verified official module links in project/architecture.md. No new surface is implemented or required in Sprint 0.5; Jira remains the ticketing workspace. Module visibility is not mutation authorisation. Advanced frontend customisation remains deferred.

@@ -16,3 +16,5 @@ All records created 2026-11-24. Accepted constraints come from the Sprint 0 owne
 - [ADR-0012: Cost governance](ADR-0012-cost-governance.md) — Accepted — minimise infrastructure/billing owner-approved; controls proposed.
 - [ADR-0013: Forge UI architecture](ADR-0013-forge-ui-architecture.md) — Proposed — selected scaffold default pending installed-runtime verification.
 - [ADR-0014: Synthetic demonstration data](ADR-0014-synthetic-demonstration-data.md) — Accepted — owner-approved constraint.
+
+- [ADR-0015: Operational workflow mental model](ADR-0015-operational-workflow-mental-model.md) — Accepted conceptual requirements; proposed persistence/state mapping and site enforcement pending verification.

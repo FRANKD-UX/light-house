@@ -1,6 +1,6 @@
 # Engineering backlog
 
-Updated 2026-11-24. P0 critical path/security; P1 planned supporting delivery; P3 stretch. “Documented” is design completion, not implemented functionality. Sprint 0 local evidence and external gates are recorded separately in audit and acceptance criteria. No Sprint 1 implementation has begun.
+Updated 2026-11-25 (Sprint 0.5). P0 critical path/security; P1 planned supporting delivery; P3 stretch. “Documented” is design completion, not implemented functionality. Sprint 0 local evidence and external gates are recorded separately in audit and acceptance criteria. No Sprint 1 implementation has begun.
 
 ## LH-001 — Repository baseline
 
@@ -152,14 +152,14 @@ Updated 2026-11-24. P0 critical path/security; P1 planned supporting delivery; P
 - Priority: P0 before deployment/release
 - Dependencies: LH-009
 - Acceptance criteria: Review current official upstream fixes and compatibility; deterministic install, audit and behaviour/build checks after any change; document residual exposure and owner disposition.
-- Status: Open — upstream affected tree remains
-- Verification evidence: Final npm audit reports 8 affected packages, 5 high and 3 moderate, no critical. Current shell has no editor/paste UI. Full security review is not claimed.
+- Status: Assessed — upstream affected tree remains; deployment/release gate open
+- Verification evidence: Sprint 0.5 full and production audits exit 1: 8 affected packages, 5 high/3 moderate. Per-package paths/ranges/patches and local bundle reachability are recorded in dependency-security-assessment.md; vulnerable leaves absent from current emitted app graphs. Official Forge artifact remains unverified.
 - Known blockers: Current SDK tree pins affected components; suggested Bridge major downgrade and transitive overrides are not verified remedies. No force fix applied.
 
 ## LH-101 — Tenancy and Forge-native persistence
 
 - Sprint: 1
-- Description: Implement migration readiness, tenant membership and repositories with same-tenant references/optimistic writes.
+- Description: Implement migration readiness, tenant membership and inventory repositories with same-tenant references/optimistic writes; validate bounded mutation-envelope repair primitive without building the full future schema.
 - Priority: P0
 - Dependencies: LH-013,LH-004,LH-007
 - Acceptance criteria: Real SQL migrate/retry tests; two-tenant and two-installation denial tests; parameterised operations.
@@ -170,7 +170,7 @@ Updated 2026-11-24. P0 critical path/security; P1 planned supporting delivery; P
 ## LH-102 — Synthetic ISP inventory
 
 - Sprint: 1
-- Description: Implement sites/carriers/uplinks/customers/teams and explicit dependencies with synthetic seed.
+- Description: Implement sites/carriers/uplinks/customers/customer services/basic teams/manual engineer references and uplink service dependencies with synthetic seed; defer directory adapters and full admin UI to Sprint 6.
 - Priority: P0
 - Dependencies: LH-101
 - Acceptance criteria: Multi-site inventory, primary/backup relationships, validated references and distinct service identities.
@@ -181,7 +181,7 @@ Updated 2026-11-24. P0 critical path/security; P1 planned supporting delivery; P
 ## LH-103 — Authenticated Zabbix ingestion
 
 - Sprint: 2
-- Description: Implement source credentials/rotation, adapter validation, stable event inbox and async dispatch.
+- Description: Implement Zabbix/shared monitoring port, credentials/rotation, automated intake Border Control, stable inbox and async dispatch; retain valid unmapped events in visible manual triage.
 - Priority: P0
 - Dependencies: LH-101,LH-102
 - Acceptance criteria: Pinned source version; wrong/replayed/oversized/tenant-spoof payload denied; duplicates one receipt; queue gap repair.
@@ -192,10 +192,10 @@ Updated 2026-11-24. P0 critical path/security; P1 planned supporting delivery; P
 ## LH-104 — Incident enrichment and SLA engine
 
 - Sprint: 3
-- Description: Calculate known/unknown distinct impact and effective ISP P1/P2/P3 snapshots.
+- Description: Implement network enrichment, versioned known/unknown impact, configurable ISP P1/P2/P3 deadline/warning engine and fixed server-authoritative operational state machine.
 - Priority: P0
 - Dependencies: LH-102,LH-103,LH-006
-- Acceptance criteria: Deterministic UTC boundary tests; policy changes affect new incidents; unknown/failover scenarios explicit.
+- Acceptance criteria: UTC/effective boundary tests, immutable snapshots, no SLA reset on team changes, unknown/failover handling; role/gate/version denial and direct NOC route tests.
 - Status: Not started
 - Verification evidence: SLA and lifecycle designs.
 - Known blockers: Owner ADR-0009 assumptions.
@@ -203,18 +203,18 @@ Updated 2026-11-24. P0 critical path/security; P1 planned supporting delivery; P
 ## LH-105 — Actual JSM lifecycle and notifications
 
 - Sprint: 4
-- Description: Create real requests, reconcile ambiguous outcomes, process recovery/manual resolution/reopen and native notification fields/rules.
+- Description: Create real JSM requests, reconcile ambiguity, sync guarded transitions and implement basic departmental handoff request/accept/reject/remediation/return with native notifications; recovery evidence never bypasses final closure.
 - Priority: P0
 - Dependencies: LH-104,LH-005
-- Acceptance criteria: Actual issue key, one issue under duplicate/concurrency, timeout reconciliation, recovery and recipient evidence.
+- Acceptance criteria: Actual issue key, duplicate/timeout reconciliation; full handoff/rejection/return audit with continuous SLA, direct NOC route, ownership matrix sync and target native-transition restriction evidence. Final recovery/closure hardening in Sprint 7.
 - Status: Not started
 - Verification evidence: JSM integration/event lifecycle designs only.
 - Known blockers: Site project/request-type/field/workflow/recipient configuration.
 
-## LH-106 — NOC dashboard and administration
+## LH-106 — Operational dashboard, incident drawer and Jira context
 
 - Sprint: 5
-- Description: Expose incident context/deadlines/retries and admin source/inventory/SLA configuration with backend authorisation.
+- Description: Implement command centre/workflow board, incident drawer/minimal full workspace and embedded Jira issue context, exposing ownership/gates/deadlines/manual triage/retries with backend authorisation.
 - Priority: P0
 - Dependencies: LH-105
 - Acceptance criteria: Honest live states, tenant-isolated views, keyboard/theme checks, forged admin invokes denied.
@@ -225,7 +225,7 @@ Updated 2026-11-24. P0 critical path/security; P1 planned supporting delivery; P
 ## LH-107 — Directory adapters and manual mapping
 
 - Sprint: 6
-- Description: Implement Entra ID, Google Workspace and always-available reviewed manual identity mapping.
+- Description: Implement Entra ID, Google Workspace and always-available reviewed manual identity mapping, team administration and tenant/site administrative permission configuration; Atlassian authentication remains authority.
 - Priority: P1
 - Dependencies: LH-101,LH-106
 - Acceptance criteria: Provider consent/revocation, ambiguity/disabled subject tests; no replacement login or automatic role grants.
@@ -233,21 +233,21 @@ Updated 2026-11-24. P0 critical path/security; P1 planned supporting delivery; P
 - Verification evidence: Identity/integration designs; provider details unverified.
 - Known blockers: Owner provider consent and current REST capability verification.
 
-## LH-108 — Security and reliability regression
+## LH-108 — Recovery, reconciliation, guarded closure and security hardening
 
 - Sprint: 7
-- Description: Execute threat-driven failure, tenant, auth, rate and dependency/browser regression matrix.
+- Description: Implement final restoration validation and guarded closure; harden out-of-order recovery, drift reconciliation, native Jira bypass prevention, tenant/auth/rate controls and dependency exposure.
 - Priority: P0
 - Dependencies: LH-103,LH-105,LH-106
-- Acceptance criteria: Cross-tenant/auth/ambiguous-create tests pass, audit findings resolved or explicitly accepted before release.
+- Acceptance criteria: Recovery alone cannot close; stale/missing validation, native UI/REST/automation bypass and open handoffs denied; cross-tenant/auth/ambiguous-write tests pass, audit findings remediated or explicitly dispositioned before deployment/release.
 - Status: Not started
 - Verification evidence: Regression matrix and threat model.
 - Known blockers: Implemented flows and live environment.
 
-## LH-109 — Release and judge installation readiness
+## LH-109 — Regression, deployment and release candidate
 
 - Sprint: 8
-- Description: Prepare release candidate, owner-authorised deployment/sharing, install instructions and fresh-site verification.
+- Description: Run full regression matrix, prepare release candidate, owner-authorised deployment/sharing, install instructions and fresh-site verification.
 - Priority: P0
 - Dependencies: LH-108
 - Acceptance criteria: Working installation link, setup succeeds on independent JSM site, cost/scopes reviewed.
@@ -279,6 +279,30 @@ Updated 2026-11-24. P0 critical path/security; P1 planned supporting delivery; P
 
 ## Critical path and handover
 
-LH-013 → LH-101 → LH-102 → LH-103 → LH-104 → LH-105 → LH-106 → LH-108 → LH-109 → LH-110. Identity adapter work has independent provider consent risk; manual fallback is essential. LH-190 never blocks this path. See roadmap.md for minimum submission versus optional production enhancements and risk-register.md for schedule pressure.
+LH-013 registration/runtime and LH-014 security disposition → LH-101 → LH-102 → LH-103 → LH-104 → LH-105 → LH-106 → LH-108 → LH-109 → LH-110. Identity adapter work has independent provider consent risk; manual fallback is essential. LH-190 never blocks this path. See roadmap.md for minimum submission versus optional production enhancements and risk-register.md for schedule pressure.
 
 Next action is owner review of proposed ADRs and registration/runtime gate, not an automatic start of Sprint 1. All local quality results must be read from audit; no mocked test is credited as runtime validation.
+
+## LH-015 — Sprint 0.5 stabilisation and architectural alignment
+
+- Sprint: 0.5, existing sprint-0/engineering-foundation branch
+- Priority: P0
+- Dependencies: LH-001–LH-014
+- Description: Independently verify baseline, align conceptual operational workflow, assess security findings and prepare platform/CI acceptance.
+- Acceptance criteria: Gap analysis/ADR-0015, ERD/entity decisions/ownership/threat model, per-package audit, local gates, actual Forge lint attempt, smoke/remote commands and honest blocked gates recorded; clean committed tree.
+- Status: Local stabilisation documented and checked; external acceptance blocked, not sprint-wide completion.
+- Evidence: architecture-gap-analysis.md, dependency-security-assessment.md, audit.md and sprint-0.5-execution-report.md.
+- Blockers: Missing genuine app.id/site/deployment authorisation; LH-014 owner disposition/upstream patch; remote setup/push authorisation and actual CI run; proposed policy/site enforcement decisions.
+
+## LH-191 — Advanced workflow customisation and optional timers
+
+- Sprint: Beyond mandatory MVP
+- Priority: P3
+- Dependencies: LH-104,LH-105,LH-108
+- Description: Evaluate configurable workflow/checklists and acknowledgement/handoff/department/validation timers only after explicit scope approval; no generic BPMN/designer framework.
+- Acceptance criteria: Separate proposal, cost/capacity and security review; preserve overall incident SLA.
+- Status: Deferred, non-blocking
+- Evidence: ADR-0015, data-model.md and sla-engine.md.
+- Blockers: Owner prioritisation; no automatic critical-path expansion.
+
+Sprint 0.5 exit does not authorise Sprint 1. Original deadline remains 22 December 2026 22:00 SAST (20:00 UTC); original integration requirements remain mandatory. Teams/manual membership needed for handoffs cannot wait for directory integration; Sprint 1 provides minimal configuration, Sprint 6 provides full administration. Additional timers and LH-190/LH-191 do not block the MVP.

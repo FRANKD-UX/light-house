@@ -2,7 +2,7 @@
 
 Light House gives ISP NOC teams business context for infrastructure incidents through Atlassian Forge and Jira Service Management (JSM). The technical repository name is `light-house`.
 
-**Stage: Sprint 0 — engineering foundation.** The React Custom UI shell and read-only status resolver are implemented. Inventory, ingestion, persistence, SLA enforcement, directory adapters and JSM incident creation are designed only. No integrations are connected, and the Forge application is not registered or deployed.
+**Stage: Sprint 0.5 — local stabilisation; external acceptance blocked.** The React Custom UI shell and read-only status resolver are implemented. Inventory, ingestion, persistence, SLA enforcement, directory adapters and JSM incident creation are designed only. No integrations are connected or deployed. The manifest has no app.id; owner-console registration remains unverified.
 
 ## Local development
 
@@ -24,3 +24,5 @@ Custom UI → Forge resolver → application use cases → domain contracts. Fut
 Start with [requirements](docs/project/requirements.md), [architecture](docs/project/architecture.md), [capability assessment](docs/project/forge-capability-assessment.md), [backlog](docs/project/tracking.md), [ADRs](docs/adr/README.md) and [Sprint 0 evidence](docs/project/audit.md). Follow [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Internal release target: **19 December 2026**. Submission deadline: **22 December 2026, 22:00 SAST (20:00 UTC)**. Category: Apps for Specialized Industries. Zoho Desk is a stretch goal.
+
+Sprint 0.5 documents server-authoritative operational workflow, Border Control, accountable handoffs and guarded closure. These are future designs; the running scaffold still reports Sprint 0 metadata. See [gap analysis](docs/project/architecture-gap-analysis.md), [security assessment](docs/project/dependency-security-assessment.md) and [current handover](docs/project/sprint-0.5-execution-report.md). Eight affected dependency packages remain an explicit deployment/release gate. No Sprint 1 implementation has started.

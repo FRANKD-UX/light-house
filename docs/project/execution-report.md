@@ -200,3 +200,7 @@ forge install --environment development --site your-development-site.atlassian.n
 ```
 
 Review billing/scopes/advisories first; do not enter credentials in chat. Verify Jira Apps → Light House and record installed Bridge/CSP/theme/log evidence. Registration changes only the real app identity; deployment instructions do not grant production or paid-resource authorisation. No remote push is required or performed by this Sprint 0 handover.
+
+## Historical report notice — 2026-11-25
+
+This document preserves Sprint 0 results at `315200a`; it is not a current runtime acceptance claim. See [Sprint 0.5 execution report](sprint-0.5-execution-report.md) and appended audit evidence for independent verification, architectural changes and remaining blocked gates. Do not run historical registration/deployment instructions without the current console duplicate-registration check, security disposition and explicit deployment authorisation in operations/deployment.md.

@@ -11,3 +11,7 @@ A durable inbox row carries enqueue state. Insert first, enqueue its ID, then ma
 Migrations use immutable named migrationRunner operations in one invocation per installation, preferably an async consumer. Track schema readiness before accepting tenant data. Expand/backfill/contract changes are resumable, paginated and version compatible. Never run destructive migrations during ordinary reads. DDL retries, concurrent install/upgrade, development quotas and fixture cleanup need live tests; migration implementation belongs to Sprint 1.
 
 Retention uses bounded tenant-indexed pages and application reference checks; no cascades exist. Soft-disable parent records first, prevent new children, sweep dependencies and only then delete eligible tombstones. Recovery and SLA histories must survive policy edits. Reconcile SQL → queue → JSM independently; no distributed atomicity is claimed.
+
+## Workflow preparation (Sprint 0.5 design)
+
+The entity decision table in data-model.md is the migration scope authority. Sprint 1 implements inventory/tenancy only, with CustomerService and uplink ServiceDependency replacing the ambiguous service ID. Incident conditional updates will carry one active handoff pointer and bounded pending command/audit envelope; audit/validation/handoff materialisation is idempotent and gates further mutation until repaired. No multi-table transaction or partial unique index is assumed. Later forward migrations add operational records only in their assigned sprints. No schema or persistence SDK is added in Sprint 0.5.

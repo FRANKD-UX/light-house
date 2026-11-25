@@ -19,3 +19,15 @@
 | RK-15 | Platform docs/dependencies change; medium / medium                          | Dated official evidence, recheck before introducing capability or releasing                         | Capability matrix and live gates; ongoing     |
 
 Risk owners are the project owner for consent/budget/eligibility and the technical lead for implementation/verification. These labels identify responsibilities, not configured assignees in Jira.
+
+## Sprint 0.5 risk update — 2026-11-25
+
+| ID           | Risk                                                                 | Mitigation / owner                                                                                                                | Exit evidence / status                                                        |
+| ------------ | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| RK-11 update | Eight affected packages remain; no supported compatible upstream fix | Per-package and bundle assessment; no override/downgrade; owner explicitly dispositions residual risk before deployment/release   | dependency-security-assessment.md; open deployment/release gate               |
+| RK-16        | Native Jira close/automation bypasses app validation                 | Site workflow restriction plus live native UI/REST/automation tests; technical lead + Jira admin/owner choose supported mechanism | Sprint 4/7 acceptance blocked until proven; reconciliation alone insufficient |
+| RK-17        | Handoff race or missing audit creates owner gap                      | Conditional incident version/pointer, origin/receiver accountability and bounded pending-envelope repair                          | Sprint 3/4 fault/race tests; designed only                                    |
+| RK-18        | Operational expansion exceeds remaining calendar                     | Fixed workflow, basic transfers, reuse Jira, defer extra timers/designer/Zoho; owner re-estimates capacity                        | Revised roadmap/tracking; high/high, open                                     |
+| RK-19        | Unknown inventory hides a legitimate outage                          | Visible durable manual triage with unknown impact and original start                                                              | Sprint 2/3 intake tests; designed only                                        |
+
+No risk disposition or proposed ADR is silently accepted. Missing app registration remains RK-01; authenticated GitHub CLI does not remove remote/push authorisation gate. Conceptual alignment uses only owner-supplied operational requirements, never employer material.
