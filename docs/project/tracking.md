@@ -1,6 +1,6 @@
 # Engineering backlog
 
-Updated 2026-11-25 (Sprint 0.5). P0 critical path/security; P1 planned supporting delivery; P3 stretch. “Documented” is design completion, not implemented functionality. Sprint 0 local evidence and external gates are recorded separately in audit and acceptance criteria. No Sprint 1 implementation has begun.
+Updated 2026-11-26 (Sprint 0.6). P0 critical path/security; P1 planned supporting delivery; P3 stretch. “Documented” is design completion, not implemented functionality. Sprint 0 local evidence and external gates are recorded separately in audit and acceptance criteria. No Sprint 1 implementation has begun.
 
 ## LH-001 — Repository baseline
 
@@ -88,7 +88,7 @@ Updated 2026-11-25 (Sprint 0.5). P0 critical path/security; P1 planned supportin
 - Acceptance criteria: TypeScript implementation and meaningful automated tests; honest development UI.
 - Status: Implemented locally; Forge gate pending
 - Verification evidence: src/, static/app/, tests/unit/, manifest.yml.
-- Known blockers: Real app.id and installed runtime absent.
+- Known blockers: Genuine app.id now present; official lint credential-store access and installed runtime remain pending.
 
 ## LH-009 — Quality gates and CI
 
@@ -141,9 +141,9 @@ Updated 2026-11-25 (Sprint 0.5). P0 critical path/security; P1 planned supportin
 - Priority: P0
 - Dependencies: LH-008,LH-009
 - Acceptance criteria: Real ARI, Forge lint, actual module/Bridge/CSP/theme test and safe logs recorded.
-- Status: Blocked — owner credentials/authorisation
-- Verification evidence: No registration/deploy/runtime test claimed; operations/deployment.md has exact commands.
-- Known blockers: Interactive Atlassian owner authentication, development site and deployment authorisation.
+- Status: Registration owner-completed; CLI credential-store blocker and deployment authorisation/runtime gates pending
+- Verification evidence: Owner registration and genuine manifest ID preserved; Sprint 0.6 official lint exits 1 on credential-store access, no deploy/runtime test claimed. See operations/deployment.md.
+- Known blockers: Codex environment credential-store access, owner confirmation of development site, LH-014 disposition and deployment/install authorisation.
 
 ## LH-014 — Forge SDK dependency advisory review
 
@@ -165,7 +165,7 @@ Updated 2026-11-25 (Sprint 0.5). P0 critical path/security; P1 planned supportin
 - Acceptance criteria: Real SQL migrate/retry tests; two-tenant and two-installation denial tests; parameterised operations.
 - Status: Not started
 - Verification evidence: Design in tenancy/persistence/data-model.
-- Known blockers: Registered app/site; review proposed persistence defaults.
+- Known blockers: Registered app present; site/runtime acceptance and proposed persistence defaults still pending.
 
 ## LH-102 — Synthetic ISP inventory
 
@@ -279,9 +279,9 @@ Updated 2026-11-25 (Sprint 0.5). P0 critical path/security; P1 planned supportin
 
 ## Critical path and handover
 
-LH-013 registration/runtime and LH-014 security disposition → LH-101 → LH-102 → LH-103 → LH-104 → LH-105 → LH-106 → LH-108 → LH-109 → LH-110. Identity adapter work has independent provider consent risk; manual fallback is essential. LH-190 never blocks this path. See roadmap.md for minimum submission versus optional production enhancements and risk-register.md for schedule pressure.
+LH-013 official lint/runtime and LH-014 security disposition → LH-101 → LH-102 → LH-103 → LH-104 → LH-105 → LH-106 → LH-108 → LH-109 → LH-110. Identity adapter work has independent provider consent risk; manual fallback is essential. LH-190 never blocks this path. See roadmap.md for minimum submission versus optional production enhancements and risk-register.md for schedule pressure.
 
-Next action is owner review of proposed ADRs and registration/runtime gate, not an automatic start of Sprint 1. All local quality results must be read from audit; no mocked test is credited as runtime validation.
+Next action is owner review of proposed ADRs and official lint/runtime gate, not an automatic start of Sprint 1. All local quality results must be read from audit; no mocked test is credited as runtime validation.
 
 ## LH-015 — Sprint 0.5 stabilisation and architectural alignment
 
@@ -292,7 +292,7 @@ Next action is owner review of proposed ADRs and registration/runtime gate, not 
 - Acceptance criteria: Gap analysis/ADR-0015, ERD/entity decisions/ownership/threat model, per-package audit, local gates, actual Forge lint attempt, smoke/remote commands and honest blocked gates recorded; clean committed tree.
 - Status: Local stabilisation documented and checked; external acceptance blocked, not sprint-wide completion.
 - Evidence: architecture-gap-analysis.md, dependency-security-assessment.md, audit.md and sprint-0.5-execution-report.md.
-- Blockers: Missing genuine app.id/site/deployment authorisation; LH-014 owner disposition/upstream patch; remote setup/push authorisation and actual CI run; proposed policy/site enforcement decisions.
+- Blockers at Sprint 0.5: Missing genuine app.id/site/deployment authorisation (registration and site existence now owner-confirmed in Sprint 0.6; exact target/runtime still pending); LH-014 owner disposition/upstream patch; remote setup/push authorisation and actual CI run; proposed policy/site enforcement decisions.
 
 ## LH-191 — Advanced workflow customisation and optional timers
 
@@ -306,3 +306,13 @@ Next action is owner review of proposed ADRs and registration/runtime gate, not 
 - Blockers: Owner prioritisation; no automatic critical-path expansion.
 
 Sprint 0.5 exit does not authorise Sprint 1. Original deadline remains 22 December 2026 22:00 SAST (20:00 UTC); original integration requirements remain mandatory. Teams/manual membership needed for handoffs cannot wait for directory integration; Sprint 1 provides minimal configuration, Sprint 6 provides full administration. Additional timers and LH-190/LH-191 do not block the MVP.
+
+## LH-016 — Sprint 0.6 tooling and platform acceptance
+
+- Sprint: 0.6 (no Sprint 1 implementation)
+- Priority: P0
+- Dependencies: LH-008, LH-009, LH-013, LH-014
+- Acceptance criteria: Preserve registered identity, isolate third-party tooling, run independent local gates, assess official skills/MCP, record platform blockers, security/cost/environment/remote procedures and commit locally.
+- Status: Local tooling/validation/review/documentation complete; external gates pending.
+- Evidence: sprint-0.6-execution-report.md; 10 tests/3 files, 100% configured coverage; official lint exit 1 (credential-store access); full/prod audit exit 1 (8 packages). No dependency changes.
+- Known blockers: Authenticated official lint, owner LH-014 disposition, billing/site/deploy/install approval, actual runtime and remote CI acceptance. No Sprint 1 start authorised.

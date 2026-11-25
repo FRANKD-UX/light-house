@@ -1,86 +1,84 @@
 # Deployment and installation gates
 
-No deployment, registration, installation link or live integration exists at Sprint 0 handover. Local validation is independent of Atlassian credentials. Do not deploy production, incur paid resources or push remotes without explicit owner authorisation. CI never deploys.
+Updated 2026-11-26, Sprint 0.6. Owner registration is complete in the owner-controlled Developer Space; manifest retains ari:cloud:ecosystem::app/1ef4af03-f1ed-4498-a83e-1a8978cf5430. The owner reports development, staging and production environments created. Independent authenticated listing is blocked by this execution environment's credential-store access, not evidence of failed owner registration. Never register/create another app. No deployment, installation or live integration was performed here.
 
-## Owner authentication and registration
+## Gate separation
 
-```sh
-nvm install
-nvm use
-npm ci
-npm install -g @forge/cli@16.0.0
-forge login
-# Inspect console for an existing registration before the conditional registration step below.
-npm run build
-forge lint
-```
+| Gate                            | Sprint 0.6 evidence                                                                                                                                                                                             |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Local manifest wiring/resources | npm run check:manifest exit 0; built dist/ui/index.html, global page/resource/function references, nodejs22.x and empty scopes checked. This script is not full Forge schema validation.                        |
+| Official Forge CLI lint         | forge lint --non-interactive exit 1 before validation: CLI cannot securely access/store its local credentials file. Run in owner's authenticated terminal; no lint pass claimed.                                |
+| Authenticated platform checks   | whoami, environments list and install list exit 1 for the same credential-store blocker. App ID existence verified locally; owner-console correspondence accepted as owner evidence, not independently queried. |
+| Official artifact inspection    | Pending. CLI 16 help and official docs expose forge build --inspect (packages and uploads) and forge deploy --inspect (deploys); no supported purely local packaging command found. Neither executed.           |
+| Deployment                      | Not authorised/executed.                                                                                                                                                                                        |
+| Installed runtime               | Not executed; mocked SDK tests are not substitutes.                                                                                                                                                             |
 
-Only if no existing registration is found, `forge register` must create the real owner-controlled app and developer space and add `app.id`; otherwise restore the genuine existing ID. No fabricated ARI is acceptable. Verify displayed permissions and environment. If CLI asks for analytics consent, make that owner preference explicitly; local runs here used isolated configuration with analytics disabled.
+Manifest review: one jira:globalPage -> light-house-ui -> dist/ui; resolver status-resolver -> index.handler -> src/index.ts -> status resolver. Frontend invoke('getStatus') matches resolver.define('getStatus'). No product API, SQL, storage, trigger, remote, egress or custom CSP permission required by current code; scopes remain empty. Node 22 is documented supported; no runtime migration is needed for this checkpoint.
 
-## Development deployment — only after owner authorises it
+Default Forge packaging compiles/bundles handler dependencies. CLI 16 runtime-bundler.js inspection confirms handler entrypoints, bundled outputs, manifest/dependency metadata and explicit extraFiles, not a wholesale repository archive. No extraFiles/manual packaging is configured and no app code imports tooling. Local UI and backend graphs contain no .agents/.codex or affected leaves. This is boundary evidence, not official archive verification. During the first authorised deployment inspect .forge/inspect privately for unexpected files and vulnerable paths before crediting the artifact gate; stop distribution if unexpected content appears.
 
-Replace `your-development-site.atlassian.net` with a real JSM development site owned by the reviewer:
+## First development acceptance procedure
 
-```sh
-forge deploy --environment development
-forge install --environment development --site your-development-site.atlassian.net --product jira
-```
+Prerequisites: preserve real ID; pass local checks and official lint; resolve LH-014 with a supported fix or explicit owner development-only risk disposition; review scanner limitations; owner confirms exact site, site administration rights, synthetic-only use, billing review and explicit deploy/install authorisation. No blanket risk acceptance is implied by this document.
 
-Open Jira Apps → Light House, confirm accurate Sprint 0 stage, no connected integrations, and successful real backend resolver invocation. Inspect CSP/network errors, light/dark theme, keyboard/zoom behaviour and redacted Forge logs. Capture app version, site, environment and date in audit without tokens. No runtime acceptance can be marked passed until this happens.
-
-Before future ingestion deployment verify scopes, KVS/SQL consent, migration readiness, secret rotation and billing settings. Adding SQL/scopes may require installation upgrade/consent. Future queues/schedules need crash/retry and cost testing. Record schema versions and use forward-fix migrations; do not promise automated rollback of durable or external side effects.
-
-## Distribution/release
-
-After a separately authorised production release, use the Forge developer console distribution page to enable sharing and obtain the actual installation link. Verify installation in a fresh judge-controlled environment and include setup instructions. Some distribution/licensing states constrain sharing; recheck official documentation. No production command is executed or automated here. Owner must authorise production and any paid exposure first.
-
-Official registration/distribution references and 2026-11-24 verification are in capability assessment. A shareable URL alone is not an exercised judge installation.
-
-## Sprint 0.5 development-only smoke acceptance procedure
-
-Readiness checked 2026-11-25. No deployment authorised or performed. Manifest still lacks app.id; owner registration/site and LH-014 security disposition are prerequisites. A genuine ID is not proven by a syntactically plausible ARI: verify owner-controlled console/app correspondence, then authenticated CLI. Do not replace an ID already present or create a duplicate app. No credentials in chat or tracked files.
-
-Owner setup (local commands; choose registration branch only after console inspection):
+Run read-only/local preparation in the owner's authenticated terminal:
 
 ```sh
-nvm install
 nvm use
 npm ci
 npm run validate
-npm install -g @forge/cli@16.0.0
-forge --version
-forge login
+npm audit
+npm audit --omit=dev
 forge whoami
+forge environments list
+forge lint --non-interactive
+forge install list
 ```
 
-Inspect the owner [developer console](https://developer.atlassian.com/console/myapps/) for an existing Light House registration. If registered, restore its genuine app.id into manifest.yml from that console rather than registering again. If and only if none exists:
+Audits currently exit 1; record output and owner disposition, do not chain them in a way that hides later gate results. If whoami fails in the owner's own terminal, run forge login there interactively; never share tokens. Do not repeat registration.
 
-```sh
-forge register
-```
-
-Then run `forge lint --non-interactive` and record exit/output. The local manifest wiring script is not this official CLI gate; failed registration validation is not authenticated success. Reassess LH-014 and record owner disposition before deployment. After explicit development deployment/installation authorisation, substitute the authorised real site for the example placeholder:
+Only after prerequisites and explicit authorisation, substitute the confirmed site for the reserved example:
 
 ```sh
 npm run build
-forge deploy --environment development
-forge install --environment development --site your-development-site.atlassian.net --product jira
+forge deploy --environment development --inspect
+forge install --environment development --site example.atlassian.net --product jira
 forge logs --environment development --since 15m --limit 50 --grouped
 ```
 
-If already installed, inspect installation status and use `forge install --upgrade --environment development --site your-development-site.atlassian.net --product jira` only where an upgrade is required. Do not treat install failure as permission to create resources. No production commands are part of this procedure.
+If an installation already exists, inspect its version/permissions; use forge install --upgrade with the same explicit environment/site/product only when required and authorised. No --no-verify or automatic approval flags. Capture exits and version, inspect artifact listing, then execute every check below:
 
-| Acceptance check             | Expected result / evidence to record                                                                                                                                                                            | Current result |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| Development deploy           | CLI exit 0; genuine app/environment/version recorded                                                                                                                                                            | Not executed   |
-| Authorised Jira site install | CLI exit 0, correct site/product/permissions; no unexpected egress/scopes                                                                                                                                       | Not executed   |
-| Global page access           | Jira Apps → Light House opens real iframe                                                                                                                                                                       | Not executed   |
-| Shell renders                | Product Light House, scaffold stage, version 0.1.0; no operational metrics/integrations claimed                                                                                                                 | Not executed   |
-| Real Bridge invocation       | Existing App calls `invoke('getStatus')`; view reaches backend-success state                                                                                                                                    | Not executed   |
-| Expected status contract     | `{application:{name:'Light House',repository:'light-house',version:'0.1.0',stage:'Sprint 0 — engineering foundation'},backend:'available',integrations:'not-configured',correlationId:<server-generated UUID>}` | Not executed   |
-| Runtime errors               | Browser console/network: no unexpected CSP/asset/Bridge failures; no backend exceptions                                                                                                                         | Not executed   |
-| Logs inspectable             | `backend.status`, outcome success and matching correlation ID in redacted allowlisted log                                                                                                                       | Not executed   |
+| Acceptance check   | Required actual evidence                                                                                                                                                          | Current result |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| Deployment         | CLI exit 0, app/environment/version/date match approved target                                                                                                                    | Pending        |
+| Installation       | CLI exit 0, authorised Jira/JSM site and expected permissions                                                                                                                     | Pending        |
+| Page accessibility | Jira Apps -> Light House (DEVELOPMENT) opens iframe; keyboard navigation works                                                                                                    | Pending        |
+| Shell rendering    | Light House, scaffold version/stage and explicitly unconfigured integrations; no fake metrics                                                                                     | Pending        |
+| Real Bridge        | App invokes getStatus and reaches backend-available state                                                                                                                         | Pending        |
+| Resolver response  | Inspect response: application metadata version 0.1.0/stage Sprint 0 — engineering foundation, backend available, integrations not-configured, server-generated UUID correlationId | Pending        |
+| Logs               | backend.status / success and matching correlation ID, no payload/secret output                                                                                                    | Pending        |
+| Runtime errors     | No unexpected console, network, CSP, asset or function errors; check light/dark theme and zoom                                                                                    | Pending        |
 
-Inspect the Bridge response in browser devtools if available; do not introduce a fake transport or test-only status endpoint. Save only redacted evidence; no HAR containing session tokens. Match the response correlation ID to `forge logs`; record deployment version/date/site alias and command exits. Check keyboard/zoom and light/dark theme as secondary scaffold acceptance. If any check fails, record failure and retain blocked state, never credit mocked unit tests as runtime evidence.
+The UI treats a fulfilled invocation as availability, so inspect the actual resolver response separately. Save redacted evidence only, never a token-bearing HAR. Record failures and stop promotion if any check fails. No real monitoring or JSM orchestration is implemented yet.
 
-Official command/module sources verified 2026-11-25: [lint](https://developer.atlassian.com/platform/forge/cli-reference/lint/), [logs](https://developer.atlassian.com/platform/forge/cli-reference/logs/), [global page](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-global-page/). Deploy/install command flags also checked against installed Forge CLI 16 help. The status contract is sourced from this repository, not fabricated operational data.
+## Development site readiness
+
+Owner confirms an appropriate owner-controlled JSM development site exists and will identify it before deployment. Exact URL, administration rights and installation suitability remain to be independently confirmed; no provisioning is needed or authorised. Registration and environment creation alone do not establish a site.
+
+If absent, after separate owner site-creation authorisation, follow the [official demo-site procedure](https://developer.atlassian.com/platform/forge/provision-a-demo-development-site/): forge site provision requests a site (or returns the existing active demo site). It includes JSM; record ready status and expiry, normally 90 days, and use synthetic records. Do not run that command merely to discover whether a site exists because it can provision one. Explicit --site installation avoids implicit provisioning through --demo-site. If unavailable, use the traditional site setup wizard linked by [getting started](https://developer.atlassian.com/platform/forge/getting-started/). The [Marketplace developer benefit](https://developer.atlassian.com/platform/marketplace/getting-started/) describes a free development instance including one JSM agent; verify current eligibility and terms before selection. Do not assume unlimited agents, permanent entitlement, free production use or that Forge consumption billing is covered. No site or paid plan created here.
+
+## Environment governance
+
+Promotion policy is a Light House proposal, not completed acceptance. Use the same registered app ID and reviewed Git commit through development -> staging -> production, with explicit --environment on commands. Deployments create versions per target environment, not a configuration/data copy. Record build/commit/version mapping; a future immutable Forge build tag can be reused only after authorised upload/inspection, with current CLI compatibility reviewed.
+
+| Environment | Intended use and gate                                                                                                                     |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| development | Active engineering, synthetic inventory, integration verification, developer smoke tests                                                  |
+| staging     | Same reviewed release candidate; regression, demonstration rehearsal and security acceptance before promotion                             |
+| production  | Hackathon distribution/submission only after competition requirements are verified again, security release gate passes and owner approves |
+
+Runtime variables have separate environment values and require redeployment to take effect. KVS namespaces isolate site/product/environment; SQL provisions a database per installation. Forge isolation does not enforce ISP tenant boundaries inside an installation. Future migrations must record schema readiness/version per installation and environment, run bounded idempotent forward migrations first in development then staging, and verify before enabling new code. Application rollback does not undo SQL or external side effects. No migrations are implemented or run in Sprint 0.6.
+
+Future credentials remain KVS setSecret/getSecret with installation/source/tenant binding, rotation and revocation per environment; SQL stores references only. Provision each environment independently; do not copy secrets/customer data automatically. Use encrypted Forge variables only for approved environment-level configuration and private interactive entry; frontend variables are public. Staging has no tunnel; production debugging follows current console/log-access guidance rather than assuming development CLI access. No values were listed or changed.
+
+Official sources verified 2026-11-26: [environments](https://developer.atlassian.com/platform/forge/environments-and-versions/), [versions](https://developer.atlassian.com/platform/forge/versions/), [KVS partitioning](https://developer.atlassian.com/platform/forge/storage-reference/kvs/), [SQL](https://developer.atlassian.com/platform/forge/storage-reference/sql/), [packaging](https://developer.atlassian.com/platform/forge/manifest-reference/packaging/), [build](https://developer.atlassian.com/platform/forge/cli-reference/build/), [deploy](https://developer.atlassian.com/platform/forge/cli-reference/deploy/), [install](https://developer.atlassian.com/platform/forge/cli-reference/install/). Forge MCP manifest guide and packaging/storage searches also consulted. Live isolation, deployment and artifact acceptance remain unverified.

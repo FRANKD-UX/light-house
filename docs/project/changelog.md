@@ -20,3 +20,11 @@ No Sprint 1 persistence, live Zabbix ingestion, SLA engine, Jira incident orches
 - Individually assessed eight affected SDK-tree packages and three advisories. Current emitted UI/local backend graphs exclude vulnerable leaves; supported parent versions still pin affected dependencies. No dependency changes, overrides, force fixes or downgrade. LH-014 remains open.
 - Repeated clean install/local validation and official Forge lint attempt; registration failure remains blocked. Added exact development smoke/remote CI owner procedures; no deployment, push or remote creation.
 - Current results, command exit codes, blockers and acceptance checklist are in audit.md and sprint-0.5-execution-report.md; external gates are not marked passed.
+
+## Unreleased — 2026-11-26 — Sprint 0.6 platform acceptance and tooling
+
+- Preserved genuine owner-registered app identity on the existing Sprint 0 branch; removed stale unregistered-manifest comment.
+- Added ESLint global ignores for external agent tooling and generated security artifacts; explicit Prettier/artifact Git policy, application rules and lockfile unchanged.
+- Verified Node/npm/Forge CLI, seven installed official skills, Forge/ADS MCP and GitHub authentication; documented Codex-specific Forge credential-store blocker without disputing owner login.
+- Independently passed local lint/format/types/tests/coverage/build/manifest gates; ten tests and configured 100% coverage retained. Official security scanners completed, no confirmed application finding; eight dependency findings remain open.
+- Updated risk disposition proposal, cost/environment governance, authorised-development smoke procedure, private GitHub/PR/CI checklist and Sprint 0.6 evidence. No deployment, site creation/install, paid resource, remote mutation or Sprint 1 work.

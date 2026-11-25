@@ -1,8 +1,16 @@
 import js from '@eslint/js';
+import { globalIgnores } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 export default tseslint.config(
-  { ignores: ['dist/**', 'coverage/**', 'node_modules/**'] },
+  globalIgnores([
+    'dist/**',
+    'coverage/**',
+    'node_modules/**',
+    '.agents/**',
+    '.codex/**',
+    'security-audit-artifacts/**',
+  ]),
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

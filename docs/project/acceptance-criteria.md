@@ -52,3 +52,21 @@ Local final validate and clean committed-tree evidence are recorded in the Sprin
 - [x] Local Markdown links and diff whitespace checks pass; dependency/manifest/CI/application source unchanged.
 
 Clean committed-tree verification is performed after the local commit and reported with its actual hash in handover; it is not a passing external runtime gate.
+
+## Sprint 0.6 acceptance — 2026-11-26 (supersedes historical registration blockers)
+
+- [x] Owner-registered genuine app ID preserved; owner reports three environments and accepted Developer Space terms.
+- [x] Seven installed official skills identified, relevant instructions read, content hashes recorded; Forge and ADS MCP respond.
+- [x] Third-party agent tooling globally ignored by application ESLint and explicitly by Prettier; no app rules weakened or fixtures modified.
+- [x] TS/tests/coverage/build/manifest/dependency scan boundaries inspected; local source/config stays validated.
+- [x] Seven independent local commands pass; aggregate validate and final evidence recorded in execution report.
+- [x] Ten existing tests/three files and 100% configured implemented-code coverage preserved; no fabricated runtime tests.
+- [x] Official lint executed; exact credential-store blocker recorded instead of passing the gate.
+- [x] Official source/security/cost review and dependency risk recommendation complete; both audits remain visibly failing.
+- [x] Cost/environment governance, first deployment and private GitHub/PR/CI procedures prepared.
+- [ ] Authenticated platform listing and official Forge lint pass in owner terminal.
+- [ ] Owner LH-014 disposition/security prerequisites and billing/site confirmation completed.
+- [ ] Official artifact, authorised deployment/install and actual Bridge/runtime/log acceptance.
+- [ ] Authorised remote setup/push and successful remote CI run.
+
+Local commit and clean-tree verification are reported after commit. Sprint 1 remains unstarted and is not authorised by this checkpoint.
