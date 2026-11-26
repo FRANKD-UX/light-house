@@ -132,11 +132,12 @@ The foundation is accepted at cc82f504 with merged PR #1 and successful post-mer
 - [x] Network inventory, independent services/dependencies, manual teams/assignees, editable SLA drafts/immutable published versions, bounded two-ISP seed and minimal UI implemented.
 - [x] Durable tenant/aggregate intent and idempotent receipt repair tested with injected failures and concurrent original/replay.
 - [x] Foundation diagnostics retained; coverage includes new modules and existing thresholds are unchanged.
-- [ ] Official Forge lint major-upgrade approval resolved under owner authorisation (final check: zero errors/warnings, one MAJOR_VERSION_RULE approval; exit 1).
-- [ ] Owner accepts reassessed dependency/scope exposure and explicitly authorises Sprint 1 development deployment/SQL upgrade.
+- [x] Official Forge lint passes under owner authorisation with only MAJOR_VERSION_RULE approved; exit 0, no issues.
+- [x] Owner accepts exact reviewed dependency/scope exposure for existing development installation/synthetic data and authorises development deployment/SQL upgrade; actual deploy 3.0.0 and installed major 3 confirmed.
 - [ ] Actual SQL migrations/retries, persistence/seed/idempotency, tenant isolation, stale writes, repair, diagnostics and costs accepted on Forge.
 - [ ] Genuine second-installation evidence available under separate authorisation; local simulation does not pass this gate.
-- [ ] Authorised publication, required new CI, PR review, protected merge and main synchronisation.
+- [x] Authorised branch publication and draft PR #2; required Validate run 45804050905 passes on 3926d38.
+- [ ] Final-head CI, PR review, separately authorised protected merge and main synchronisation.
 
 Sprint 1 is not complete and Sprint 2 has not started. See the execution report for final local command results and limitations.
 

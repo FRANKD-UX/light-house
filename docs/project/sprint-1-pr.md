@@ -11,3 +11,5 @@ Native SQL provisioning/migrations, readiness, fixture counts/persistence/idempo
 Keep draft: genuine second-installation isolation remains required and separately unauthorised; final merge needs explicit owner approval. No staging/production, paid provisioning, real data/integrations, distribution, licence selection or Sprint 2.
 
 Evidence: [execution report](docs/project/sprint-1-execution-report.md), [audit](docs/project/audit.md), [security review](docs/project/sprint-1-security-review.md), [readiness review](docs/project/sprint-1-readiness-review.md), [live acceptance and second-installation procedure](docs/operations/sprint-1-live-acceptance.md). Remote CI results are recorded after publication.
+
+Remote validation: [Validate run 45804050905](https://github.com/FRANKD-UX/light-house/actions/runs/45804050905) passed on 3926d38; required context is validate with strict branch protection. Later documentation heads require their own successful required check.

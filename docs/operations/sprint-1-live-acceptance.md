@@ -50,8 +50,8 @@ Record pre-session and post-session SQL requests/compute/storage, Functions dura
 
 Use this checklist as separate evidence rows, with UTC time, expected/observed outcome and private evidence reference. Every box starts open:
 
-- [ ] 1. Development deploy succeeds; record actual version and inspect official package/resources privately for vulnerable leaves, secrets and excluded tooling.
-- [ ] 2. Existing Jira installation upgrades to the new major with administrator scope/SQL consent; confirm installed version.
+- [x] 1. Development deploy succeeds (3.0.0; official package inspected); record actual version and inspect official package/resources privately for vulnerable leaves, secrets and excluded tooling.
+- [x] 2. Existing Jira installation upgrades to the new major with administrator scope/SQL consent; confirm installed version.
 - [ ] 3. Console confirms native SQL database provisioning for that installation; no second database/site is manually provisioned.
 - [ ] 4. Queue migration as verified Jira admin; all fifteen named checkpoints and matching physical schema are present; readiness reaches ready/v1.
 - [ ] 5. In a quiet window queue again; record checkpoint names, schema and existing fixture state unchanged, with no destructive DDL. Respect the 25-DDL/minute limit.

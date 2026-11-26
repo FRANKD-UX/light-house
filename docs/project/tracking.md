@@ -153,7 +153,7 @@ Updated 2026-11-26 (explicitly authorised Sprint 1 implementation). P0 critical 
 - Dependencies: LH-009
 - Acceptance criteria: Review current official upstream fixes and compatibility; deterministic install, audit and behaviour/build checks after any change; document residual exposure and owner disposition.
 - Status: Open — owner accepted residual risk for isolated development only; production blocked
-- Verification evidence: Sprint 0.5 full and production audits exit 1: 8 affected packages, 5 high/3 moderate. Per-package paths/ranges/patches and local bundle reachability are recorded in dependency-security-assessment.md; vulnerable leaves absent from current emitted app graphs. Official Forge artifact remains unverified.
+- Verification evidence: Current Sprint 1 full/production audits exit 1: eleven affected package findings, five high/six moderate; zero new advisory identifiers. Exact versions/paths, exposure and renewed owner development-only disposition in dependency-security-assessment.md/readiness review. Official inspected backend map excludes affected leaf sources; dependencies remain unresolved.
 - Known blockers: Current SDK tree pins affected components; suggested Bridge major downgrade and transitive overrides are not verified remedies. No force fix applied.
 
 ## LH-101 — Tenancy and Forge-native persistence
@@ -165,7 +165,7 @@ Updated 2026-11-26 (explicitly authorised Sprint 1 implementation). P0 critical 
 - Acceptance criteria: Real SQL migrate/retry; two-tenant/two-installation denial; parameterised operations; durable repair.
 - Status: Implemented locally; acceptance incomplete.
 - Verification evidence: Executable repositories, application/resolver/UI paths, local relational simulation and mock-SDK tests; Sprint 1 execution/security reports.
-- Known blockers: Official lint MAJOR_VERSION_RULE approval; explicit deployment/SQL upgrade consent and reassessed dependency-risk disposition; live SQL and actual second-installation evidence; publication/CI/review/merge authorisation. Foundation is accepted, not reopened.
+- Known blockers: Native SQL/migration/security/recovery/usage acceptance and actual second-installation evidence; final-head CI/review and separate owner merge approval. Official approved-rule lint, development deploy 3.0.0, existing installation major 3 upgrade, renewed exact-tree dependency disposition, branch publication/PR #2 and initial required CI passed. Foundation is accepted, not reopened.
 
 ## LH-102 — Synthetic ISP inventory
 
@@ -356,3 +356,5 @@ The owner explicitly assigned Sprint 1. Baseline PR #1 is merged; post-merge run
 Owner authorisation now covers the reviewed development dependency exception, deployment/major upgrade/SQL migrations and synthetic acceptance, Sprint 1 branch publication/PR/CI. LH-014 stays open for five high/six moderate findings in the exact reviewed tree; staging/production blocked. LH-101/LH-102 runtime acceptance remains incomplete until actual evidence is recorded. Second installation and merge remain separately gated. Earlier pending-authorisation wording is historical and superseded by this entry; Sprint 2 has not started.
 
 Development platform update: official lint passes, deploy 3.0.0 succeeds and existing Jira development installation is independently confirmed major 3/up-to-date. Native SQL/installed behaviour remain pending owner UI execution and backend verification; second installation and merge remain blocked.
+
+Publication/CI update: draft PR #2 exists, Validate run 45804050905 passed on 3926d38; protected main requires strict validate. Native acceptance and genuine second-installation evidence still block completion/merge; no next sprint started.
