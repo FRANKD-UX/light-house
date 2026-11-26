@@ -56,3 +56,7 @@ Remote CI passed for acceptance commit 85f542c: [Validate run 45775501033](https
 - Add manual accessible runtime diagnostics, sanitised failures/retry and overlap prevention; preserve read-only resolver and existing host theme.
 - Extend mocked regression and simulated token compatibility tests: 35 tests/four files; configured 97.95% statement, 98.36% branch, 100% function/line coverage. No dependency changes.
 - Installed-runtime acceptance, development version, CI and owner theme disposition are tracked in the current acceptance report and audit; no Sprint 1 work.
+
+- Owner confirms actual installed diagnostic contract/backend/UUIDv4; independent development log matches correlation at 2026-11-26T08:00:25.634Z. Theme comparison explicitly deferred to Sprint 5 as unverified. Browser Console and protected merge/post-merge acceptance remain separately gated.
+
+- Closed actual installed-runtime acceptance with matched backend success and owner-confirmed scoped iframe Console retry. Installed light/dark comparison is explicitly deferred to Sprint 5, unverified. Foundation proceeds to protected merge/main/post-merge verification; LH-014 stays open and development-only.

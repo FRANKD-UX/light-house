@@ -141,9 +141,9 @@ Updated 2026-11-26 (final foundation Gates B/C; no new sprint). P0 critical path
 - Priority: P0
 - Dependencies: LH-008,LH-009
 - Acceptance criteria: Real ARI, Forge lint, actual module/Bridge/CSP/theme test and safe logs recorded.
-- Status: Development deploy/install passed; pending owner runtime verification
-- Verification evidence: Genuine identity preserved; elevated official lint exit 0/no issues, deploy 2.0.0 and Jira development installation succeeded. See foundation-acceptance-report.md.
-- Known blockers: Navigation/shell/Bridge and backend logs verified. Typed response and frontend errors remain unverified; owner cannot locate response. Host-theme comparison unavailable in owner UI.
+- Status: Runtime accepted for development with explicit Sprint 5 visual deferral; protected merge/post-merge checks next
+- Verification evidence: Genuine identity preserved; elevated official lint exit 0/no issues, deploy 2.1.0 and Jira development installation succeeded; owner diagnostic contract/UUID confirmed, matching backend.status/success at 2026-11-26T08:00:25.634Z. See foundation-acceptance-report.md.
+- Known blockers: No remaining mandatory runtime blocker. Scoped owner Console retry passed without Light House iframe errors; host/browser noise documented. Installed theme selector unavailable; owner-approved Sprint 5 deferral remains unverified visual acceptance. Final protected merge/main/post-merge evidence is recorded in PR #1 after execution.
 
 ## LH-014 — Forge SDK dependency advisory review
 
@@ -338,3 +338,7 @@ Owner approves moving the unavailable installed host-theme comparison to Sprint 
 Focused development deployment **2.1.0** succeeded; initial timeout/history verification recorded in audit. Owner has installed diagnostic/Console instructions; runtime confirmation pending. No staging/production deployment or next sprint.
 
 Implementation 5843382 pushed, PR #1 updated; required Validate run 45778629516 passed. History confirms 2.1.0 development success 07:51:19Z and post-deploy major-2/up-to-date installation. No upgrade. Owner diagnostics/Console and matched post-deployment logs remain pending; no merge or Sprint 1 readiness claim. Main stays ff2939c.
+
+Owner installed diagnostic acceptance received: Passed/Resolved/available/Valid, correct metadata/not-configured integrations and valid UUIDv4. Exact supplied correlation independently matched to development backend.status/success at 2026-11-26T08:00:25.634Z. Installed light/dark visual comparison explicitly deferred to Sprint 5 as unverified. Console review result still pending; final-head CI/protected merge/main sync/post-merge CI remain required. LH-014 open/development-only; no new sprint.
+
+Final Console disposition: owner-controlled stable-connection/refresh/scoped Light House iframe retry passes with no app iframe errors. LH-013 runtime acceptance satisfied with owner-approved Sprint 5 visual deferral. Prior host/network warnings recorded without raw private identifiers. Foundation may proceed through final-head CI/protected PR #1 merge/main sync/post-merge CI under existing owner authorisation. Sprint 1 is prepared, not started; next sprint requires owner initiation and its own prerequisite decisions.

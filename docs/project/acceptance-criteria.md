@@ -75,22 +75,22 @@ Local commit and clean-tree verification are reported after commit. Sprint 1 rem
 
 These results supersede historical pending registration, permission and credential-store entries. No Sprint 0.7 or Sprint 1 was introduced.
 
-| Gate                           | Status                                  | Evidence                                                                                                           |
-| ------------------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Registered identity            | Passed                                  | Genuine app ARI unchanged; authenticated environment listing                                                       |
-| Clean dependency installation  | Passed                                  | npm ci exit 0; lockfile unchanged                                                                                  |
-| Local quality                  | Passed                                  | validate exit 0; 10 tests/3 files; configured 100% coverage; builds and manifest wiring                            |
-| Official Forge lint            | Passed                                  | Elevated CLI exit 0, no issues; deploy checks also passed                                                          |
-| LH-014 development disposition | Accepted with documented residual risk  | Explicit project-owner approval, synthetic/isolated development only; issue remains open                           |
-| Development deployment         | Passed                                  | Version 2.0.0; actual deployment history success                                                                   |
-| Development installation       | Passed                                  | Authorised Jira site; development installation complete                                                            |
-| Official bundle review         | Passed with documented scope limitation | Saved backend artifact reviewed; no vulnerable leaf source/agent fixtures detected; lockfile records affected tree |
-| Actual installed runtime       | Pending owner verification              | Navigation/shell/Bridge/logs verified; response/frontend errors and host-theme comparison unverified               |
-| Public-release privacy review  | Passed                                  | Owner-authorised cleanup; repeated local and fresh public-clone review                                             |
-| Public repo/remote branches/PR | Passed                                  | PUBLIC FRANKD-UX/light-house, cleaned main/foundation, PR #1                                                       |
-| Remote and post-merge CI       | Passed for PR; post-merge pending       | Actual Validate runs 45775501033 and 45775879468 passed; no merge                                                  |
-| Conditional merge/main sync    | Pending owner verification              | Installed response/frontend/theme acceptance incomplete; no bypass                                                 |
-| Production security            | Blocked                                 | Development exception does not transfer                                                                            |
+| Gate                           | Status                                  | Evidence                                                                                                                |
+| ------------------------------ | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Registered identity            | Passed                                  | Genuine app ARI unchanged; authenticated environment listing                                                            |
+| Clean dependency installation  | Passed                                  | npm ci exit 0; lockfile unchanged                                                                                       |
+| Local quality                  | Passed                                  | validate exit 0; 35 tests/4 files; statements 97.95%, branches 98.36%, functions/lines 100%; builds/manifest            |
+| Official Forge lint            | Passed                                  | Elevated CLI exit 0, no issues; deploy checks also passed                                                               |
+| LH-014 development disposition | Accepted with documented residual risk  | Explicit project-owner approval, synthetic/isolated development only; issue remains open                                |
+| Development deployment         | Passed                                  | Version 2.1.0; actual development deployment history success                                                            |
+| Development installation       | Passed                                  | Authorised Jira site; development installation complete                                                                 |
+| Official bundle review         | Passed with documented scope limitation | Saved backend artifact reviewed; no vulnerable leaf source/agent fixtures detected; lockfile records affected tree      |
+| Actual installed runtime       | Passed with approved visual deferral    | Owner diagnostics and scoped iframe Console pass; exact backend log matched; host theme deferred to Sprint 5/unverified |
+| Public-release privacy review  | Passed                                  | Owner-authorised cleanup; repeated local and fresh public-clone review                                                  |
+| Public repo/remote branches/PR | Passed                                  | PUBLIC FRANKD-UX/light-house, cleaned main/foundation, PR #1                                                            |
+| Remote and post-merge CI       | Passed for PR; post-merge pending       | Actual Validate runs 45775501033 and 45775879468 passed; no merge                                                       |
+| Conditional merge/main sync    | Final execution pending                 | Runtime gates satisfied; protected merge/main/post-merge CI evidence recorded in PR #1 after execution                  |
+| Production security            | Blocked                                 | Development exception does not transfer                                                                                 |
 
 The foundation is not fully accepted. Sprint 1 backlog is prepared but not started; remaining runtime acceptance and conditional merge remain prerequisites. See foundation-acceptance-report.md.
 
@@ -110,7 +110,8 @@ Owner-requested acceptance refinement replaces raw Bridge Network inspection wit
 - [x] Manual accessible check, retry, no polling/overlap; separate Bridge and validated backend availability.
 - [x] Regression tests and local quality gates, including simulated light/dark token compatibility.
 - [x] Confirm new development deployment 2.1.0 and existing major-2/up-to-date installation after focused correction.
-- [ ] Owner confirms actual installed diagnostics and browser Console; real development logs inspected.
+- [x] Owner confirms actual installed diagnostic fields/contract/UUIDv4; exact correlation matched to backend.status/success at 2026-11-26T08:00:25.634Z.
+- [x] Owner confirms stable-connection refresh/check with the Light House iframe Console isolated: check passed, no iframe errors. Host/browser noise recorded separately.
 - [x] Owner-approved conditional Sprint 5 deferral of unavailable installed theme comparison; actual visual behaviour remains unverified.
 - [ ] Focused foundation branch committed/pushed, PR #1 final-head validate passes, conditional protected merge, local main sync and post-merge CI verified.
 
@@ -119,3 +120,5 @@ No next sprint is authorised automatically. Current evidence and limitations: fo
 Owner explicitly approves the conditional Sprint 5 visual deferral if the selector remains unavailable (previously reported unavailable). Installed light/dark comparison is deferred/unverified, not passed; simulated token compatibility passed. Diagnostic/Console/log and CI gates remain mandatory.
 
 Implementation commit 5843382 pushed; required PR Validate run 45778629516 passed. Evidence-only follow-up receives its own CI; installed diagnostics/Console/post-deploy logs and protected merge/post-merge gates remain outstanding.
+
+Final runtime disposition: actual installed diagnostics, exact backend correlation and scoped browser retry pass. Owner explicitly defers unavailable installed light/dark comparison to Sprint 5 as unverified. Final protected merge/main synchronisation/post-merge CI evidence is recorded in PR #1 and handover after execution. No security exception transfer or automatic Sprint 1 start.
