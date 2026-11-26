@@ -77,3 +77,5 @@ Local Sprint 1 implementation commit: f04d41a36204f5fe8f094d787ad2ef27486d743a. 
 ## 2026-11-26 — Authorised Sprint 1 development acceptance started
 
 Recorded explicit owner approval for the exact reviewed development dependency tree (LH-014 remains open), SQL/scope/consumer major deployment and existing-installation consent, synthetic native acceptance and 5,000-request planning budget, public branch/PR and remote CI. Preserved implementation, manifest identity, lockfile and accepted main. Second installation and merge remain separately gated. Reproduced 83 tests/coverage and approved-rule official lint; current usage readings require owner console access.
+
+Authorised development deployment 3.0.0 and existing-installation major 3 upgrade succeeded. Official package inspection recorded; fresh owner pre-SQL baseline captured. Native SQL/runtime gates remain pending; deployment success is not runtime acceptance.

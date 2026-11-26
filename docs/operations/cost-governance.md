@@ -73,3 +73,7 @@ Suggested owner-approved acceptance planning limit: 5,000 SQL requests across bo
 ## Acceptance-session baseline — 2026-11-26T10:37:17Z
 
 Owner approved an internal 5,000 SQL-request planning budget for this initial session; it is not platform enforced. Current browser inventory reports the access host unavailable; no connected Forge usage API is available. Fresh charges/forecast, SQL requests/compute/storage and function compute cannot be independently read. Owner has been asked for timestamped readings before live SQL exercises. Historical zero readings above are not the new baseline. No application-controlled SQL statement or migration has been initiated in this session at this checkpoint (platform provisioning/internal work is not measured). No billing settings, limits or paid features changed. Official pricing/SQL limits rechecked 2026-11-26; allowances above remain published allowances, not measured remaining capacity.
+
+## Fresh owner-provided pre-SQL baseline
+
+At 2026-11-26T10:40:37Z the owner read Usage and charges for 1–26 November: current/forecast charges USD 0.00; SQL requests 0/100,000; SQL compute 0/1 hour; SQL storage 0/730 GB-hours; function compute 2.548/200,000 GB-seconds. This is owner-provided console evidence. Deployment had started before this timestamp, so it is a pre-SQL baseline, not an independently observed pre-deployment reading. No live application SQL exercise had been initiated by this agent. No paid feature/limit/billing change.

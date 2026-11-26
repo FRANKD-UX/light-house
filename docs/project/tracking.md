@@ -354,3 +354,5 @@ The owner explicitly assigned Sprint 1. Baseline PR #1 is merged; post-merge run
 ## Authorised Sprint 1 execution — 2026-11-26
 
 Owner authorisation now covers the reviewed development dependency exception, deployment/major upgrade/SQL migrations and synthetic acceptance, Sprint 1 branch publication/PR/CI. LH-014 stays open for five high/six moderate findings in the exact reviewed tree; staging/production blocked. LH-101/LH-102 runtime acceptance remains incomplete until actual evidence is recorded. Second installation and merge remain separately gated. Earlier pending-authorisation wording is historical and superseded by this entry; Sprint 2 has not started.
+
+Development platform update: official lint passes, deploy 3.0.0 succeeds and existing Jira development installation is independently confirmed major 3/up-to-date. Native SQL/installed behaviour remain pending owner UI execution and backend verification; second installation and merge remain blocked.
