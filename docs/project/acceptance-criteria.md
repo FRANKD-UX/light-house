@@ -122,3 +122,29 @@ Owner explicitly approves the conditional Sprint 5 visual deferral if the select
 Implementation commit 5843382 pushed; required PR Validate run 45778629516 passed. Evidence-only follow-up receives its own CI; installed diagnostics/Console/post-deploy logs and protected merge/post-merge gates remain outstanding.
 
 Final runtime disposition: actual installed diagnostics, exact backend correlation and scoped browser retry pass. Owner explicitly defers unavailable installed light/dark comparison to Sprint 5 as unverified. Final protected merge/main synchronisation/post-merge CI evidence is recorded in PR #1 and handover after execution. No security exception transfer or automatic Sprint 1 start.
+
+## Sprint 1 current acceptance — 2026-11-26
+
+The foundation is accepted at cc82f504 with merged PR #1 and successful post-merge run 45780524271. Earlier open foundation entries are historical and are not current implementation blockers. The owner's explicit current request authorises Sprint 1 local work.
+
+- [x] Executable fifteen-table scope, immutable migration definitions/readiness and bounded explicit development migration admission.
+- [x] Trusted identity/bootstrap/roles, tenant predicates, same-tenant/lifecycle validation, optimistic writes and bounded pages tested locally.
+- [x] Network inventory, independent services/dependencies, manual teams/assignees, editable SLA drafts/immutable published versions, bounded two-ISP seed and minimal UI implemented.
+- [x] Durable tenant/aggregate intent and idempotent receipt repair tested with injected failures and concurrent original/replay.
+- [x] Foundation diagnostics retained; coverage includes new modules and existing thresholds are unchanged.
+- [x] Official Forge lint passes under owner authorisation with only MAJOR_VERSION_RULE approved; exit 0, no issues.
+- [x] Owner accepts exact reviewed dependency/scope exposure for existing development installation/synthetic data and authorises development deployment/SQL upgrade; actual deploy 3.0.0 and installed major 3 confirmed.
+- [ ] Actual SQL migrations/retries, persistence/seed/idempotency, tenant isolation, stale writes, repair, diagnostics and costs accepted on Forge.
+- [ ] Genuine second-installation evidence available under separate authorisation; local simulation does not pass this gate.
+- [x] Authorised branch publication and draft PR #2; required Validate run 45804050905 passes on 3926d38.
+- [ ] Final-head CI, PR review, separately authorised protected merge and main synchronisation.
+
+Sprint 1 is not complete and Sprint 2 has not started. See the execution report for final local command results and limitations.
+
+## Sprint 1 readiness review evidence — 2026-11-26
+
+Independent local validation reproduces 83 tests and stated coverage; this completes the requested pre-deployment review, not LH-101/LH-102 runtime acceptance. [Decision package](sprint-1-readiness-review.md) records the advisory/permission/database/cost/publication assessment. All sixteen [live checks](../operations/sprint-1-live-acceptance.md) start open. Genuine two-installation isolation is a separate open requirement; no second installation is currently authorised. No development risk acceptance, major consent, deploy/install success or native SQL result is inferred from local review.
+
+## Authorised development execution boundary — 2026-11-26
+
+Owner approved the reviewed Sprint 1 dependency exception, development deployment/major installation upgrade, native migrations and synthetic acceptance, branch publication/PR and CI. These approvals satisfy authorisation gates only. All live acceptance boxes remain open until observed. Second genuine installation and final merge require separate approval; current acceptance criteria still require genuine installation isolation before Sprint 1 completion/merge.

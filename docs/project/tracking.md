@@ -1,6 +1,6 @@
 # Engineering backlog
 
-Updated 2026-11-26 (final foundation Gates B/C; no new sprint). P0 critical path/security; P1 planned supporting delivery; P3 stretch. “Documented” is design completion, not implemented functionality. Sprint 0 local evidence and external gates are recorded separately in audit and acceptance criteria. No Sprint 1 implementation has begun.
+Updated 2026-11-26 (explicitly authorised Sprint 1 implementation). P0 critical path/security; P1 planned supporting delivery; P3 stretch. “Documented” is design completion, not implemented functionality. Sprint 0 local evidence and external gates are recorded separately in audit and acceptance criteria. Current Sprint 1 evidence supersedes historical foundation blockers; see sprint-1-execution-report.md.
 
 ## LH-001 — Repository baseline
 
@@ -153,30 +153,30 @@ Updated 2026-11-26 (final foundation Gates B/C; no new sprint). P0 critical path
 - Dependencies: LH-009
 - Acceptance criteria: Review current official upstream fixes and compatibility; deterministic install, audit and behaviour/build checks after any change; document residual exposure and owner disposition.
 - Status: Open — owner accepted residual risk for isolated development only; production blocked
-- Verification evidence: Sprint 0.5 full and production audits exit 1: 8 affected packages, 5 high/3 moderate. Per-package paths/ranges/patches and local bundle reachability are recorded in dependency-security-assessment.md; vulnerable leaves absent from current emitted app graphs. Official Forge artifact remains unverified.
+- Verification evidence: Current Sprint 1 full/production audits exit 1: eleven affected package findings, five high/six moderate; zero new advisory identifiers. Exact versions/paths, exposure and renewed owner development-only disposition in dependency-security-assessment.md/readiness review. Official inspected backend map excludes affected leaf sources; dependencies remain unresolved.
 - Known blockers: Current SDK tree pins affected components; suggested Bridge major downgrade and transitive overrides are not verified remedies. No force fix applied.
 
 ## LH-101 — Tenancy and Forge-native persistence
 
 - Sprint: 1
-- Description: Implement migration readiness, tenant membership and inventory repositories with same-tenant references/optimistic writes; validate bounded mutation-envelope repair primitive without building the full future schema.
+- Description: Forge SQL schema/readiness, server-authoritative membership, tenant-scoped repositories, optimistic writes and bounded durable tenant/aggregate repair.
 - Priority: P0
-- Dependencies: LH-013,LH-004,LH-007
-- Acceptance criteria: Real SQL migrate/retry tests; two-tenant and two-installation denial tests; parameterised operations.
-- Status: Not started
-- Verification evidence: Design in tenancy/persistence/data-model.
-- Known blockers: Registered app present; site/runtime acceptance and proposed persistence defaults still pending.
+- Dependencies: Accepted foundation cc82f504; LH-004,LH-007.
+- Acceptance criteria: Real SQL migrate/retry; two-tenant/two-installation denial; parameterised operations; durable repair.
+- Status: Implemented locally; acceptance incomplete.
+- Verification evidence: Executable repositories, application/resolver/UI paths, local relational simulation and mock-SDK tests; Sprint 1 execution/security reports.
+- Known blockers: Native SQL/migration/security/recovery/usage acceptance and actual second-installation evidence; final-head CI/review and separate owner merge approval. Official approved-rule lint, development deploy 3.0.0, existing installation major 3 upgrade, renewed exact-tree dependency disposition, branch publication/PR #2 and initial required CI passed. Foundation is accepted, not reopened.
 
 ## LH-102 — Synthetic ISP inventory
 
 - Sprint: 1
-- Description: Implement sites/carriers/uplinks/customers/customer services/basic teams/manual engineer references and uplink service dependencies with synthetic seed; defer directory adapters and full admin UI to Sprint 6.
+- Description: Sites, carriers, uplinks, synthetic customers, independent services/dependencies, basic teams/manual engineers, demonstration policy configuration and bounded idempotent seed.
 - Priority: P0
-- Dependencies: LH-101
-- Acceptance criteria: Multi-site inventory, primary/backup relationships, validated references and distinct service identities.
-- Status: Not started
-- Verification evidence: Data-model/demo designs only.
-- Known blockers: Persistence and approved impact simplification.
+- Dependencies: LH-101.
+- Acceptance criteria: Multi-site primary/backup inventory, same-tenant/lifecycle validation and distinct service identities.
+- Status: Implemented locally; live persistence acceptance incomplete.
+- Verification evidence: Eleven inventory entity kinds, two-ISP fixtures, UI operations, negative/security and retry/concurrency tests.
+- Known blockers: Installed SQL acceptance and remote review gates. Impact algorithm and operational policy selection remain later work, not Sprint 1 prerequisites to local inventory implementation.
 
 ## LH-103 — Authenticated Zabbix ingestion
 
@@ -279,7 +279,7 @@ Updated 2026-11-26 (final foundation Gates B/C; no new sprint). P0 critical path
 
 ## Critical path and handover
 
-LH-013 remaining installed-runtime acceptance and LH-014 development risk conditions → LH-101 → LH-102 → LH-103 → LH-104 → LH-105 → LH-106 → LH-108 → LH-109 → LH-110. Identity adapter work has independent provider consent risk; manual fallback is essential. LH-190 never blocks this path. See roadmap.md for minimum submission versus optional production enhancements and risk-register.md for schedule pressure.
+Accepted foundation → Sprint 1-specific LH-014 reassessment and live SQL acceptance → LH-101 → LH-102 → LH-103 → LH-104 → LH-105 → LH-106 → LH-108 → LH-109 → LH-110. Identity adapter work has independent provider consent risk; manual fallback is essential. LH-190 never blocks this path. See roadmap.md for minimum submission versus optional production enhancements and risk-register.md for schedule pressure.
 
 Next action is owner review of proposed ADRs and remaining installed-runtime gate, not an automatic start of Sprint 1. All local quality results must be read from audit; no mocked test is credited as runtime validation.
 
@@ -342,3 +342,19 @@ Implementation 5843382 pushed, PR #1 updated; required Validate run 45778629516 
 Owner installed diagnostic acceptance received: Passed/Resolved/available/Valid, correct metadata/not-configured integrations and valid UUIDv4. Exact supplied correlation independently matched to development backend.status/success at 2026-11-26T08:00:25.634Z. Installed light/dark visual comparison explicitly deferred to Sprint 5 as unverified. Console review result still pending; final-head CI/protected merge/main sync/post-merge CI remain required. LH-014 open/development-only; no new sprint.
 
 Final Console disposition: owner-controlled stable-connection/refresh/scoped Light House iframe retry passes with no app iframe errors. LH-013 runtime acceptance satisfied with owner-approved Sprint 5 visual deferral. Prior host/network warnings recorded without raw private identifiers. Foundation may proceed through final-head CI/protected PR #1 merge/main sync/post-merge CI under existing owner authorisation. Sprint 1 is prepared, not started; next sprint requires owner initiation and its own prerequisite decisions.
+
+## Sprint 1 current boundary
+
+The owner explicitly assigned Sprint 1. Baseline PR #1 is merged; post-merge run 45780524271 passed at cc82f504. Earlier foundation pending entries describe historical checkpoints, not current blockers. Sprint 1 requires its own live SQL, isolation, CI, review and authorised merge gates. Sprint 2 has not started.
+
+## Sprint 1 independent readiness review — 2026-11-26
+
+[Decision package](sprint-1-readiness-review.md) independently reproduces baseline/83 tests/coverage, lint approval gate and exact advisory delta. No confirmed exploitable application defect established; no implementation/dependency/permission edit justified. LH-014 remains open with a specific renewed development-only recommendation awaiting owner decision. LH-101/LH-102 remain locally implemented with live acceptance incomplete. Sixteen first-installation checks and a separately authorised genuine second-installation procedure are prepared; two logical tenants do not satisfy installation isolation. No Sprint 2, deployment/install/migration/push/PR/merge occurred. Main remains preserved at cc82f504. Review changes are uncommitted pending handover; no commit was requested.
+
+## Authorised Sprint 1 execution — 2026-11-26
+
+Owner authorisation now covers the reviewed development dependency exception, deployment/major upgrade/SQL migrations and synthetic acceptance, Sprint 1 branch publication/PR/CI. LH-014 stays open for five high/six moderate findings in the exact reviewed tree; staging/production blocked. LH-101/LH-102 runtime acceptance remains incomplete until actual evidence is recorded. Second installation and merge remain separately gated. Earlier pending-authorisation wording is historical and superseded by this entry; Sprint 2 has not started.
+
+Development platform update: official lint passes, deploy 3.0.0 succeeds and existing Jira development installation is independently confirmed major 3/up-to-date. Native SQL/installed behaviour remain pending owner UI execution and backend verification; second installation and merge remain blocked.
+
+Publication/CI update: draft PR #2 exists, Validate run 45804050905 passed on 3926d38; protected main requires strict validate. Native acceptance and genuine second-installation evidence still block completion/merge; no next sprint started.

@@ -18,3 +18,5 @@ All records created 2026-11-24. Accepted constraints come from the Sprint 0 owne
 - [ADR-0014: Synthetic demonstration data](ADR-0014-synthetic-demonstration-data.md) — Accepted — owner-approved constraint.
 
 - [ADR-0015: Operational workflow mental model](ADR-0015-operational-workflow-mental-model.md) — Accepted conceptual requirements; proposed persistence/state mapping and site enforcement pending verification.
+
+Sprint 1: [ADR-0016 — physical persistence and bounded repair](ADR-0016-sprint-1-persistence-and-repair.md).

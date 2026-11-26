@@ -32,28 +32,44 @@ describe('simulated host token compatibility (jsdom; not installed Jira visual a
       expect(getComputedStyle(document.body).backgroundColor).toBe(
         expected(surface),
       );
-      expect(getComputedStyle(screen.getByRole('region')).backgroundColor).toBe(
-        expected(raised),
-      );
-      expect(getComputedStyle(screen.getByRole('button')).color).toBe(
-        expected(text),
-      );
-      expect(getComputedStyle(screen.getByRole('button')).backgroundColor).toBe(
-        expected(neutral),
-      );
+      expect(
+        getComputedStyle(
+          screen.getByRole('region', { name: 'Engineering foundation' }),
+        ).backgroundColor,
+      ).toBe(expected(raised));
+      expect(
+        getComputedStyle(
+          screen.getByRole('button', { name: 'Run health check' }),
+        ).color,
+      ).toBe(expected(text));
+      expect(
+        getComputedStyle(
+          screen.getByRole('button', { name: 'Run health check' }),
+        ).backgroundColor,
+      ).toBe(expected(neutral));
       expect(getComputedStyle(document.querySelector('.eyebrow')!).color).toBe(
         expected(subtle),
       );
-      expect(getComputedStyle(screen.getByRole('region')).borderTopColor).toBe(
-        expected(subtle),
-      );
-      (screen.getByRole('button') as HTMLButtonElement).disabled = true;
-      expect(getComputedStyle(screen.getByRole('button')).color).toBe(
-        expected(subtle),
-      );
-      expect(getComputedStyle(screen.getByRole('button')).backgroundColor).toBe(
-        expected(surface),
-      );
+      expect(
+        getComputedStyle(
+          screen.getByRole('region', { name: 'Engineering foundation' }),
+        ).borderTopColor,
+      ).toBe(expected(subtle));
+      (
+        screen.getByRole('button', {
+          name: 'Run health check',
+        }) as HTMLButtonElement
+      ).disabled = true;
+      expect(
+        getComputedStyle(
+          screen.getByRole('button', { name: 'Run health check' }),
+        ).color,
+      ).toBe(expected(subtle));
+      expect(
+        getComputedStyle(
+          screen.getByRole('button', { name: 'Run health check' }),
+        ).backgroundColor,
+      ).toBe(expected(surface));
     },
   );
   it('keeps every colour declaration token-based, including keyboard focus, and enables the host API', () => {
