@@ -1,0 +1,11 @@
+# Installation and ISP isolation
+
+An Atlassian installation owns a platform database and secret namespace. An ISP tenant is a logical customer/operator inside that installation; several ISPs can coexist. A monitoring source belongs to exactly one tenant and its external IDs are unique only within that source. Atlassian accountId identifies the app user, external directory subject identifies a mapped person, network resource IDs identify equipment/interfaces, and customer IDs identify synthetic service subscribers. None is interchangeable.
+
+For webhook ingress, installation comes from Forge runtime and credential lookup binds source + ISP. Reject payload-selected tenant IDs as authority. For UI calls, derive accountId and installation from trusted Forge context, authorise membership for the selected ISP and validate configuration permissions server-side. A client may request a tenant but cannot grant membership. Background work loads tenant/source from durable server records and revalidates active ownership.
+
+Future repository APIs require TenantContext; every SELECT/UPDATE/DELETE and JOIN includes tenant predicates for all involved tables. Inserts stamp the trusted tenant; reference IDs must already exist in the same tenant and have allowed state. Composite PK/unique keys prevent accidental collisions; they do not independently enforce read isolation. Installation ID is recorded for diagnostics/context checks, never used to choose an arbitrary SQL database.
+
+Tests in Sprint 1 must create two tenants in one installation and two installations, then attempt direct-ID, join, mutation, queue and secret-key crossover. Disable/retire tenants before cascading application-managed cleanup. Keep tombstones until retention expiry to prevent resurrecting mappings. No global mutable request/tenant state in functions.
+
+Sprint 0.5 operational references (handoff origin/receiver teams and engineers, incident, validation evidence, impact snapshots and Jira issue mappings) must all resolve inside the trusted tenant. Receiving a handoff does not grant tenant access. Native Jira issue visibility is independently enforced before embedded context is returned; a supplied issue ID or UI display condition cannot establish membership. Background repair uses persisted tenant bindings and the same reference checks.
