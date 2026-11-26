@@ -109,11 +109,13 @@ Owner-requested acceptance refinement replaces raw Bridge Network inspection wit
 - [x] Validate unknown status response metadata/backend/integrations/UUIDv4 and project only public fields; fail malformed responses explicitly.
 - [x] Manual accessible check, retry, no polling/overlap; separate Bridge and validated backend availability.
 - [x] Regression tests and local quality gates, including simulated light/dark token compatibility.
-- [ ] Confirm new development deployment and existing installation after focused correction.
+- [x] Confirm new development deployment 2.1.0 and existing major-2/up-to-date installation after focused correction.
 - [ ] Owner confirms actual installed diagnostics and browser Console; real development logs inspected.
-- [ ] Installed host light/dark comparison OR explicit owner-approved Sprint 5 deferral; unverified visual behaviour must stay labelled.
+- [x] Owner-approved conditional Sprint 5 deferral of unavailable installed theme comparison; actual visual behaviour remains unverified.
 - [ ] Focused foundation branch committed/pushed, PR #1 final-head validate passes, conditional protected merge, local main sync and post-merge CI verified.
 
 No next sprint is authorised automatically. Current evidence and limitations: foundation-acceptance-report.md and audit.md.
 
 Owner explicitly approves the conditional Sprint 5 visual deferral if the selector remains unavailable (previously reported unavailable). Installed light/dark comparison is deferred/unverified, not passed; simulated token compatibility passed. Diagnostic/Console/log and CI gates remain mandatory.
+
+Implementation commit 5843382 pushed; required PR Validate run 45778629516 passed. Evidence-only follow-up receives its own CI; installed diagnostics/Console/post-deploy logs and protected merge/post-merge gates remain outstanding.
