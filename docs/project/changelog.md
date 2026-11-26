@@ -47,3 +47,5 @@ The temporary publication hold is superseded by explicit owner approval to corre
 Public GitHub execution: https://github.com/FRANKD-UX/light-house is PUBLIC; cleaned main and foundation pushed; PR #1 created. Free secret scanning/push protection/Dependabot alerts/private reporting and main checks configured. Remote CI result must be recorded after actual completion; merge remains conditional on runtime acceptance. No next sprint.
 
 Remote CI passed for acceptance commit 85f542c: [Validate run 45775501033](https://github.com/FRANKD-UX/light-house/actions/runs/45775501033). PR #1 remains open; remaining runtime response/frontend-error/theme verification prevents merge. Main is the cleaned baseline ff2939c; post-merge CI has not run. The evidence-only documentation update is verified again on its own head before handover.
+
+- Corrected current tracking/acceptance rows after actual publication/CI. Owner cannot locate runtime response or host theme option; response/frontend-error/theme checks remain unverified and PR stays open. No diagnostic functionality or next sprint added.

@@ -85,14 +85,14 @@ These results supersede historical pending registration, permission and credenti
 | Development deployment         | Passed                                  | Version 2.0.0; actual deployment history success                                                                   |
 | Development installation       | Passed                                  | Authorised Jira site; development installation complete                                                            |
 | Official bundle review         | Passed with documented scope limitation | Saved backend artifact reviewed; no vulnerable leaf source/agent fixtures detected; lockfile records affected tree |
-| Actual installed runtime       | Pending owner verification              | Browser host unavailable; manual checklist sent; CLI logs checked separately                                       |
-| Public-release privacy review  | Blocked                                 | Historical personal author metadata/path; owner stopped publication and prohibited history rewriting               |
-| Public repo/remote branches/PR | Blocked                                 | Publication hold; none created/pushed                                                                              |
-| Remote and post-merge CI       | Blocked                                 | No published repository; no run URLs                                                                               |
-| Conditional merge/main sync    | Blocked                                 | Runtime and publication/CI prerequisites incomplete                                                                |
+| Actual installed runtime       | Pending owner verification              | Navigation/shell/Bridge/logs verified; response/frontend errors and host-theme comparison unverified               |
+| Public-release privacy review  | Passed                                  | Owner-authorised cleanup; repeated local and fresh public-clone review                                             |
+| Public repo/remote branches/PR | Passed                                  | PUBLIC FRANKD-UX/light-house, cleaned main/foundation, PR #1                                                       |
+| Remote and post-merge CI       | Passed for PR; post-merge pending       | Actual Validate runs 45775501033 and 45775879468 passed; no merge                                                  |
+| Conditional merge/main sync    | Pending owner verification              | Installed response/frontend/theme acceptance incomplete; no bypass                                                 |
 | Production security            | Blocked                                 | Development exception does not transfer                                                                            |
 
-The foundation is not fully accepted. Sprint 1 backlog is prepared but not started; runtime acceptance, publication/privacy resolution and CI/merge remain prerequisites. See foundation-acceptance-report.md.
+The foundation is not fully accepted. Sprint 1 backlog is prepared but not started; remaining runtime acceptance and conditional merge remain prerequisites. See foundation-acceptance-report.md.
 
 ## Owner-authorised privacy cleanup and publication continuation — 2026-11-26
 

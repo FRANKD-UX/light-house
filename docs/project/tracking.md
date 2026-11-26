@@ -97,9 +97,9 @@ Updated 2026-11-26 (final foundation Gates B/C; no new sprint). P0 critical path
 - Priority: P0
 - Dependencies: LH-008
 - Acceptance criteria: Applicable local validation passes; CI on PR/main; failures visible.
-- Status: Verified locally — aggregate validate exit 0
-- Verification evidence: package scripts, lockfile, CI workflow; npm ci and validate pass, 10 tests/0 failures; audit.
-- Known blockers: Remote CI blocked by owner publication hold over historical personal metadata; authorisation is not the blocker.
+- Status: Verified locally and remotely — validate passes on PR #1
+- Verification evidence: package scripts/lockfile, npm ci/validate, ten tests; successful PR Validate runs 45775501033 and 45775879468; audit.
+- Known blockers: No PR quality-check blocker; merge waits for LH-013 installed response/frontend/theme verification.
 
 ## LH-010 — Prioritised backlog
 
@@ -143,7 +143,7 @@ Updated 2026-11-26 (final foundation Gates B/C; no new sprint). P0 critical path
 - Acceptance criteria: Real ARI, Forge lint, actual module/Bridge/CSP/theme test and safe logs recorded.
 - Status: Development deploy/install passed; pending owner runtime verification
 - Verification evidence: Genuine identity preserved; elevated official lint exit 0/no issues, deploy 2.0.0 and Jira development installation succeeded. See foundation-acceptance-report.md.
-- Known blockers: Actual installed shell/Bridge/typed response/frontend/backend error verification; owner browser evidence requested.
+- Known blockers: Navigation/shell/Bridge and backend logs verified. Typed response and frontend errors remain unverified; owner cannot locate response. Host-theme comparison unavailable in owner UI.
 
 ## LH-014 — Forge SDK dependency advisory review
 
@@ -279,9 +279,9 @@ Updated 2026-11-26 (final foundation Gates B/C; no new sprint). P0 critical path
 
 ## Critical path and handover
 
-LH-013 official lint/runtime and LH-014 security disposition → LH-101 → LH-102 → LH-103 → LH-104 → LH-105 → LH-106 → LH-108 → LH-109 → LH-110. Identity adapter work has independent provider consent risk; manual fallback is essential. LH-190 never blocks this path. See roadmap.md for minimum submission versus optional production enhancements and risk-register.md for schedule pressure.
+LH-013 remaining installed-runtime acceptance and LH-014 development risk conditions → LH-101 → LH-102 → LH-103 → LH-104 → LH-105 → LH-106 → LH-108 → LH-109 → LH-110. Identity adapter work has independent provider consent risk; manual fallback is essential. LH-190 never blocks this path. See roadmap.md for minimum submission versus optional production enhancements and risk-register.md for schedule pressure.
 
-Next action is owner review of proposed ADRs and official lint/runtime gate, not an automatic start of Sprint 1. All local quality results must be read from audit; no mocked test is credited as runtime validation.
+Next action is owner review of proposed ADRs and remaining installed-runtime gate, not an automatic start of Sprint 1. All local quality results must be read from audit; no mocked test is credited as runtime validation.
 
 ## LH-015 — Sprint 0.5 stabilisation and architectural alignment
 
