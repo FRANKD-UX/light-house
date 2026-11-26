@@ -64,3 +64,5 @@ Remote CI passed for acceptance commit 85f542c: [Validate run 45775501033](https
 ## 2026-11-26 — Sprint 1 local implementation
 
 Implemented LH-101/LH-102 persistence, authorised ISP tenancy, network/service inventory, minimal manual teams/access configuration, demonstration SLA policy versions, bounded durable mutation repair, explicit idempotent seed batches and Custom UI. Added SQL/API/Events dependencies and SQL/permission/consumer manifest wiring; preserved real app identity, foundation diagnostics and coverage gates. Added local relational, mock-SDK, UI/security/contract tests and the live acceptance runbook. Reconciled accepted foundation evidence. Sprint 1 deployment/publication/merge remain unauthorised and live acceptance incomplete; no Sprint 2 work.
+
+Local Sprint 1 implementation commit: f04d41a36204f5fe8f094d787ad2ef27486d743a. Exact files and acceptance evidence are in sprint-1-execution-report.md; publication/live gates remain open.

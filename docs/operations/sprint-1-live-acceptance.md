@@ -16,10 +16,11 @@ npm audit --omit=dev
 ATL_FORGE_ATTRIBUTION_SKILL_NAME=forge-app-builder forge lint --non-interactive --environment development
 ```
 
-Audits currently fail with documented upstream advisories; passing other checks does not waive them. Investigate any changed results. Once explicit owner authorisation and risk disposition are recorded:
+Audits currently fail with documented upstream advisories; passing other checks does not waive them. Investigate any changed results. Once explicit owner authorisation for the reported MAJOR_VERSION_RULE, development deployment/upgrade and risk disposition is recorded (the flags below acknowledge only that approved major-upgrade rule; do not use --no-verify):
 
 ```sh
-ATL_FORGE_ATTRIBUTION_SKILL_NAME=forge-app-builder forge deploy --environment development --inspect --non-interactive
+ATL_FORGE_ATTRIBUTION_SKILL_NAME=forge-app-builder forge lint --non-interactive --environment development --approve MAJOR_VERSION_RULE
+ATL_FORGE_ATTRIBUTION_SKILL_NAME=forge-app-builder forge deploy --environment development --inspect --non-interactive --approve MAJOR_VERSION_RULE
 ATL_FORGE_ATTRIBUTION_SKILL_NAME=forge-app-builder forge install --upgrade --environment development --site "$LIGHT_HOUSE_DEV_SITE" --product jira --non-interactive
 ```
 

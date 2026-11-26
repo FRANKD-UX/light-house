@@ -1,6 +1,6 @@
 # Sprint 1 execution report
 
-Date: 2026-11-26. Branch: sprint-1/tenancy-network-inventory. Isolated worktree: light-house-sprint1 in temporary workspace storage. Baseline: verified origin/main cc82f5044288f9a35894b06c9d8b08efa228b13f. Local implementation commit is recorded in the commit evidence section after committing. This report does not mark Sprint 1 complete.
+Date: 2026-11-26. Branch: sprint-1/tenancy-network-inventory. Isolated worktree: light-house-sprint1 in temporary workspace storage. Baseline: verified origin/main cc82f5044288f9a35894b06c9d8b08efa228b13f. Local implementation commit: f04d41a36204f5fe8f094d787ad2ef27486d743a. This report does not mark Sprint 1 complete.
 
 ## Baseline and authorisation
 
@@ -74,4 +74,67 @@ Final npm ci and npm run validate exited 0 on Node 22.23.4/npm 10.9.9. 83 tests/
 
 ## Commit evidence and files
 
-The local implementation commit and changed-file inventory are recorded after local commit creation; final handover identifies the documentation evidence commit separately. No remote branch/PR exists for Sprint 1 in this execution.
+Implementation commit: f04d41a36204f5fe8f094d787ad2ef27486d743a, using the existing repository noreply email. Original main remains at cc82f504 and the isolated implementation tree was clean after this commit. A following documentation-only commit records this immutable commit/file inventory; final handover reports that evidence commit separately. No Sprint 1 remote push/PR/merge or deployment occurred.
+
+| Change   | File                                                       |
+| -------- | ---------------------------------------------------------- |
+| Modified | AGENTS.md                                                  |
+| Modified | README.md                                                  |
+| Modified | docs/adr/ADR-0003-forge-native-persistence.md              |
+| Modified | docs/adr/ADR-0004-installation-and-isp-tenant-isolation.md |
+| Created  | docs/adr/ADR-0016-sprint-1-persistence-and-repair.md       |
+| Modified | docs/adr/README.md                                         |
+| Modified | docs/architecture/data-model.md                            |
+| Modified | docs/architecture/persistence.md                           |
+| Modified | docs/architecture/security.md                              |
+| Modified | docs/architecture/sla-engine.md                            |
+| Modified | docs/architecture/tenancy.md                               |
+| Modified | docs/hackathon/demonstration-scenario.md                   |
+| Modified | docs/operations/cost-governance.md                         |
+| Modified | docs/operations/deployment.md                              |
+| Created  | docs/operations/sprint-1-live-acceptance.md                |
+| Modified | docs/project/acceptance-criteria.md                        |
+| Modified | docs/project/audit.md                                      |
+| Modified | docs/project/changelog.md                                  |
+| Modified | docs/project/dependency-security-assessment.md             |
+| Modified | docs/project/requirements.md                               |
+| Modified | docs/project/risk-register.md                              |
+| Created  | docs/project/sprint-1-execution-report.md                  |
+| Created  | docs/project/sprint-1-pr.md                                |
+| Created  | docs/project/sprint-1-security-review.md                   |
+| Modified | docs/project/tracking.md                                   |
+| Modified | docs/testing/regression-matrix.md                          |
+| Modified | manifest.yml                                               |
+| Modified | package-lock.json                                          |
+| Modified | package.json                                               |
+| Modified | scripts/check-manifest.mjs                                 |
+| Created  | src/application/inventory/fixtures.ts                      |
+| Created  | src/application/inventory/ports.ts                         |
+| Created  | src/application/inventory/seed.ts                          |
+| Created  | src/application/inventory/service.ts                       |
+| Created  | src/domain/inventory/model.ts                              |
+| Modified | src/domain/value-objects/application-metadata.ts           |
+| Created  | src/forge/inventory/boundary.ts                            |
+| Created  | src/forge/inventory/migration.ts                           |
+| Modified | src/forge/resolvers/status.ts                              |
+| Modified | src/index.ts                                               |
+| Created  | src/infrastructure/sql/access-repository.ts                |
+| Created  | src/infrastructure/sql/driver.ts                           |
+| Created  | src/infrastructure/sql/inventory-repository.ts             |
+| Created  | src/infrastructure/sql/migrations.ts                       |
+| Created  | src/infrastructure/sql/migrations.v001.json                |
+| Modified | static/app/src/App.tsx                                     |
+| Created  | static/app/src/Inventory.tsx                               |
+| Created  | static/app/src/inventory-contract.ts                       |
+| Modified | static/app/src/styles.css                                  |
+| Created  | tests/contract/inventory-sql.test.ts                       |
+| Created  | tests/integration/inventory-service.test.ts                |
+| Created  | tests/support/sqlite.ts                                    |
+| Modified | tests/unit/app.test.tsx                                    |
+| Created  | tests/unit/inventory-boundary.test.ts                      |
+| Created  | tests/unit/inventory-domain.test.ts                        |
+| Created  | tests/unit/inventory-driver.test.ts                        |
+| Created  | tests/unit/inventory-ui.test.tsx                           |
+| Modified | tests/unit/resolver.test.ts                                |
+| Modified | tests/unit/theme.test.tsx                                  |
+| Modified | vitest.config.ts                                           |
