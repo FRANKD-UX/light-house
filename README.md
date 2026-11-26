@@ -1,5 +1,7 @@
 # Light House
 
+[![Validate](https://github.com/FRANKD-UX/light-house/actions/workflows/ci.yml/badge.svg)](https://github.com/FRANKD-UX/light-house/actions/workflows/ci.yml)
+
 **Light House — Network Incident Orchestration for Internet Service Providers, built on Atlassian Forge.**
 
 Light House is a Codegeist 2026 project in **Apps for Specialized Industries**. ISP network operations teams need to turn monitoring alerts into accountable incidents: identify customer impact, keep SLA ownership visible, coordinate departmental handoffs and validate restoration before closure.

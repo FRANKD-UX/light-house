@@ -48,7 +48,7 @@ Verified ESLint API reports tooling ignored and src/index.ts, App.tsx, tests, sc
 
 ## Public GitHub and CI readiness
 
-The owner originally authorised a PUBLIC `FRANKD-UX/light-house` repository, superseding the earlier private proposal. The owner subsequently authorised and completed controlled unpublished-history cleanup for email metadata and documentation privacy details. Repeated review passed. Public creation/push/PR/CI may proceed under the existing authorisation; merge still requires actual runtime and CI acceptance. No backup refs/private recovery material may be published. The intended SSH remote is `git@github.com:FRANKD-UX/light-house.git`; this is a target, not an existing published repository.
+The owner originally authorised a PUBLIC `FRANKD-UX/light-house` repository, superseding the earlier private proposal. The owner subsequently authorised and completed controlled unpublished-history cleanup for email metadata and documentation privacy details. Repeated review passed. Public creation/push/PR/CI may proceed under the existing authorisation; merge still requires actual runtime and CI acceptance. No backup refs/private recovery material may be published. The public repository is https://github.com/FRANKD-UX/light-house with SSH origin `git@github.com:FRANKD-UX/light-house.git`, default branch main. Cleaned branches and PR #1 are published.
 
 The existing `Validate` workflow runs on pull requests and pushes to main, pins action SHAs, uses Node from `.nvmrc`, runs `npm ci` and `npm run validate`, grants only contents:read, disables persisted checkout credentials and has no deployments or Atlassian credentials. Remote CI evidence must be recorded after actual execution; no successful run is inferred from local checks.
 

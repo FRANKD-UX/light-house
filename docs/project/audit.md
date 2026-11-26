@@ -243,7 +243,7 @@ Rebuilt four original commits with corrected author/committer email and approved
 
 Repeated history scan: four commits/140 unique blobs, zero bounded secret/path/forbidden-artifact matches; all intended author/committer metadata uses noreply, no Gmail. Genuine app ID preserved. Existing deployment 2.0.0 and installation remain valid because source/config functionality was unchanged. No additional Forge deployment is needed solely for Git metadata. Current documentation corrected to reflect approval; public repository/push/PR/CI continue, conditional merge still awaits runtime and actual CI.
 
-Final post-cleanup validation: npm run validate exit 0; repeated format:check exit 0; history scan zero bounded findings. Staged review covers 21 intended files after commit-reference corrections; no secrets, private site/path/email, original refs, backups, tooling or generated artifacts are proposed. Only refs/heads/main and refs/heads/sprint-0/engineering-foundation exist. Earlier pre-cleanup changed-file inventory is superseded by:
+Final post-cleanup validation: npm run validate exit 0; repeated format:check exit 0; history scan zero bounded findings. The final acceptance commit covers 18 intended files after restaging corrected references; an intermediate index review counted 21 before redundant historical-reference changes were restaged; no secrets, private site/path/email, original refs, backups, tooling or generated artifacts are proposed. Only refs/heads/main and refs/heads/sprint-0/engineering-foundation exist. Earlier pre-cleanup changed-file inventory is superseded by:
 
 - `.prettierignore`
 - `AGENTS.md`
@@ -263,3 +263,13 @@ Final post-cleanup validation: npm run validate exit 0; repeated format:check ex
 - `docs/project/tracking.md`
 - `eslint.config.js`
 - `tsconfig.json`
+
+## Public repository, branches and PR — actual execution
+
+After repeated cleaned-history/current-source review passed, created https://github.com/FRANKD-UX/light-house with explicit PUBLIC visibility and the approved description, no initial licence/README/history. Remote uses the approved SSH URL. Pushed only cleaned main and sprint-0/engineering-foundation, no force/mirror/backup/original refs. Foundation acceptance commit 85f542c uses verified noreply metadata; source/manifest/dependency/CI checks unchanged. PR #1 created at https://github.com/FRANKD-UX/light-house/pull/1 with actual evidence and explicit pending runtime gates. No merge performed at this checkpoint.
+
+Repository metadata independently reports PUBLIC, owner administrative permission and default branch main. All ten requested topics configured. Public secret scanning and push protection report enabled. Enabled Dependabot alerts (verified GET HTTP 204) and private vulnerability reporting (enabled true), using free repository features only. Configured main protection requiring the validate status, up-to-date branches, admin enforcement, conversation resolution, no force pushes/deletions; merge-commit method enabled and squash/rebase disabled to retain cleaned foundation history. Actual remote CI outcome and final repo settings are recorded after run completion; no success inferred from configuration.
+
+Actual remote CI run 45775501033 exited successfully: https://github.com/FRANKD-UX/light-house/actions/runs/45775501033, head 85f542cf6322653495b4e10b717167bbc3d7ccb1, completed 07:28:20Z. validate job checkout/setup-node/npm ci/npm run validate and cleanup all success. PR #1 remains OPEN with CLEAN merge state; manual typed-response/frontend errors/themes are still pending, so no merge. Public security settings and main protection were read back and verified. Sandboxed SSH verification failed on system config permissions; supported elevated verification succeeded, showing only cleaned main/foundation plus GitHub-generated clean PR refs, no backup/original refs. Final evidence-only documentation commit is validated by a new actual PR run; final head/run identifiers are reported in the PR and handover.
+
+Independent fresh PUBLIC HTTPS clone verification: intended branches contain only cleaned noreply metadata; repeated reachable-history scan reports zero bounded privacy/secret/forbidden-path findings. None of the four original commit objects is present in the fresh clone. Private recovery data and original refs were not published. This verifies the published history independently of local reflogs/dangling recovery objects.
