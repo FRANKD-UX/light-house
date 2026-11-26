@@ -2,7 +2,7 @@
 
 ## Repository baseline
 
-Working directory: `[local light-house checkout]`. Initial repository had no tracked files, commits, remotes or existing package configuration; main was unborn and status was clean. Reserved read-only `.agents`, `.codex` and `.aws` surfaces were preserved and excluded from source control. No existing repository AGENTS.md applied.
+Working directory: the local `light-house` checkout. Initial repository had no tracked files, commits, remotes or existing package configuration; main was unborn and status was clean. Reserved read-only `.agents`, `.codex` and `.aws` surfaces were preserved and excluded from source control. No existing repository AGENTS.md applied.
 
 Created minimal README baseline commit `ff2939c` on main, then `sprint-0/engineering-foundation`. The sandbox mounts `.git` read-only; authorised local Git mutation succeeded through the reviewed escalation. No reset, remote push or deployment occurred.
 
@@ -172,3 +172,94 @@ Final formatting, aggregate validation and staged/commit review follow below. Th
 npm run format exit 0; independent final npm run format:check exit 0; npm run validate exit 0 after documentation edits, repeating the same ten passing tests/100% implemented-scope coverage and build/local manifest results. git diff --check exit 0. Final evidence/report adds no dependency or source behaviour change. A final documentation-only acceptance ledger/tracking clarification was formatted and checked before staging. Local/staged destination and secret-pattern checks inspect every proposed file; no ignored tooling, fixtures, cache/binaries, .env or credential files are permitted in the index. This bounded pattern review does not claim enterprise secret-scanner coverage.
 
 Staged review: exactly 16 intended files; zero .agents/.codex/fixtures/generated scan artifacts/dependencies/build outputs or credential files. Full staged-content scan found zero private-key/GitHub/AWS/Slack/Atlassian token, credential-assignment or URL-userinfo pattern matches. git diff --cached --check exit 0; local Markdown destinations pass; final npm run format:check exit 0. App source/tests/package-lock/package.json/CI remain unchanged. Report/source citations reviewed; only documentation clarifications followed the passing aggregate run. Local commit uses the requested existing branch and descriptive message; no push. Post-commit hash and clean-tree verification are returned in final handover; external gates remain pending.
+
+## Final foundation acceptance update — 2026-11-26
+
+The project owner explicitly authorises development deployment/install on the confirmed owner-controlled Jira site, public GitHub source publication after review, push/PR/CI and conditional history-preserving merge. No staging/production deployment, app distribution, paid provisioning, licence selection or Sprint 1 start is authorised. LH-014 is accepted with documented residual risk for isolated synthetic development only; it remains open, not remediated. See dependency-security-assessment.md and foundation-acceptance-report.md for current evidence and remaining gates. Earlier permission and registration blockers are historical.
+
+## Final foundation Gates B/C execution evidence — 2026-11-26
+
+This is final acceptance on the existing branch, not another sprint. Entry tree clean at 1841ec5; history ff2939c/315200a/fee2896/1841ec5 preserved. No remotes. Owner authorises development deploy/install and initially public GitHub/CI/conditional merge; subsequent explicit privacy hold blocks publication and history rewriting. No remote mutation was performed. The genuine app ARI is unchanged.
+
+Commands/results: pwd/Git status/history/remotes and node/npm/Forge/gh versions inspected; Node 22.23.4/npm 10.9.9/Forge 16.0.0/gh 2.92.0. gh auth status exits 0, intended owner/SSH confirmed without extracting tokens. forge skills status/help exits 0; seven existing skill hashes match prior report. MCP config contains only official HTTPS Forge/ADS URLs; Forge MCP deployment/install/TypeScript searches responded. Builder, review, security and debugger instructions read. ADS changes were not needed. Relevant ADRs and current project evidence read before changes.
+
+npm ci exit 0: 332 packages; install-time audit summary 14 (11 high/3 moderate). Separate npm audit --json --cache /tmp/light-house-acceptance-npm-cache and npm audit --omit=dev --json --cache /tmp/light-house-acceptance-npm-cache each exit 1: eight affected packages, five high/three moderate, matching recorded advisories. Package/lockfile/dependency versions unchanged. This differing install-time summary is recorded, not represented as remediation or silently substituted. LH-014 owner acceptance is isolated synthetic development only, with no production credentials/customer/real ISP data, monitoring and material-change/pre-promotion reassessment. Risk remains open; production security blocked. No force fix/downgrade/override.
+
+npm run validate passed at entry and after the actual packaging fix: ESLint/Prettier/strict TS, ten tests/three files, 100% configured implemented-code coverage (24/24 statements, 8/8 branches, 13/13 functions, 22/22 lines), UI/backend build and local manifest wiring. Seven covered/five empty source files; no installed-runtime claims from mocks. UI main 205.25 kB, iframe-resizer 29.18, CSS 0.43, HTML 0.39; backend smoke 3.0 kB. Existing ignores/positive compile/test/build/resource boundaries inspected; no application rules weakened or third-party fixtures changed. No behavioural test invented for emit configuration; actual official deployment verified it.
+
+Sandbox forge whoami exits 1 (credential store). Supported elevated retry exits 0. Elevated environments/list history/install-list/lint each exit 0: three environments, no previous deployments, no development installations, official lint no issues. Environment timestamp fields were not treated as successful deployments. No credentials were extracted or OS restriction bypass used.
+
+First forge deploy --environment development --inspect --non-interactive: lint passes but bundling fails because root noEmit blocks ts-loader. CLI subsequently reports a telemetry network error yet exits 0; recorded as FAILED, not a successful deployment. Installed CLI ts-loader configuration confirms inherited root compiler options. Replaced root noEmit with outDir dist/typescript; local script remains tsc --noEmit, strictness retained. After validation passes, retry same development command exits 0 and explicitly deploys Light House 2.0.0. Actual deploy history: 2026-11-26T07:11:02.488Z, major 2, Success; history labels environment default, while explicit command/installation verify development. No staging/production command executed.
+
+Official .forge/inspect backend artifact contains eight reviewed files. index.cjs 7,164 bytes, SHA-256 d41f96589f59a80e574b848c248d57ccc3e2496c73ae0d6b091c94e681b6fa0c; 13 source-map sources, no vulnerable leaf module/agent fixture references; bounded secret patterns no matches. Copied lockfile retains affected tree. Wrapper/platform/build-time/all-server-artifact coverage is limited; this is not vulnerability remediation. Existing frontend resources reviewed separately. No extra deploy/build upload solely for inspection.
+
+Installation on the exact privately recorded authorised Jira site, development, exits 0; independent installation listing exits 0, major 2/up-to-date. CLI warning classifies the site as production; the Forge app remains development. No site provisioning or paid resource/billing change. Browser inventory fails: host unavailable. Owner confirms Apps navigation and supplies actual rendered shell with product/stage/unconnected integrations/backend-available text. Actual forge logs --environment development --limit 30 exits 0 and returns two backend.status/success entries at 07:14:47.606Z and 07:15:23.402Z with UUID correlations, no payloads and no errors in that queried window. Exact typed response/frontend Console/Network/theme acceptance remains pending owner verification; no fake metrics appear in supplied text. Post-test usage console inaccessible; dated owner zero baseline recorded in cost-governance, not claimed as post-test observation.
+
+Mandatory deterministic launcher first exits 1 with read-only tool/cache paths; unchanged /tmp tooling copy and writable cache/settings/log retry exits 0. FSRT v0.1.1 zero findings (imprecise scanned array), OpenGrep 1.16.2 44 rules/19 files zero findings/errors, six standard-ignore files. Global/auditing/misc scope and prior minimal read-only source-to-sink review retained; absent future auth/tenant/query/secret/egress/webtrigger/Rovo surfaces not given fabricated tests. Raw scans stay ignored. Gitleaks/Snyk unavailable. Installed licence inventory: 332 records; direct Forge SDK licences reference Atlassian terms, React MIT notices retained in installed packages; no vendor/build publication proposed. Third-party redistribution notices remain a future artifact gate; project licence not selected. Codegeist and Atlassian terms reopened 2026-11-26.
+
+Public review inspected all four reachable initial commits and 140 unique historical blobs, tracked/current changes, path inventories and ignored tooling/artifacts/config boundaries. Provider-token/private-key/credential URL/cookie/password-assignment patterns found no credentials. Personal commit author email and workspace path in three historical audit versions found. Owner explicitly declined publication and history rewrite. Current path/account details redacted; old history preserved privately. No claim of exhaustive/provenance scanner coverage. .env.example is comments only. Ignored tooling, .forge, dependencies/builds/coverage/raw scans/temporary diagnostics/credentials are absent from tracked publication paths. Git local config has only ordinary core settings; no remotes or credential extraction. Required app ID is an identifier, not a credential, and remains untouched.
+
+GitHub owner authenticated; target repo lookup could not resolve an existing repo. No remote creation/push/PR/CI/security-setting change/merge/main sync. Workflow static review: PR/main, exact Node, npm ci/validate, least privilege, action SHA pins/no persisted credentials/no Forge credentials or automatic deploy. Both official v7 refs verified by git ls-remote, exit 0. Free public secret scanning/dependency graph/Dependabot availability reviewed in official docs; actual repository settings/push protection/topics/default branch remain blocked. No paid feature enabled or false badge/CI success added. A PR body is prepared privately as a draft, not submitted.
+
+Public-ready README/security/contribution/operations docs and current acceptance/tracking/risk/changelog updated. foundation-acceptance-report.md records current gates and limitations. Private operational URL/site evidence and local PR draft remain outside the repository. Sprint 1 backlog remains design-ready but blocked by incomplete foundation acceptance and owner decisions; not started. Final formatting/validation/diff/staged secret review and local commit evidence follow; containing commit can be identified with git log -1 rather than a self-referential hash.
+
+Final validation discovered that newly generated `.forge/inspect` wrappers were included by the broad lint/format entrypoints despite being Git-ignored. Validation failed (exit 1; 2,931 generated-code lint errors), so this was not credited as passed. Added a global ESLint `.forge/**` ignore and explicit Prettier `.forge/` exclusion, matching the generated-artifact boundary; application rules/source/tests remain included. The formatter already skipped the saved inspection copies through Git ignore; the explicit exclusion makes the intended boundary durable. The recorded inspection hash remains unchanged. No deployment/runtime code was changed. Final validation was rerun after the exclusions. No third-party fixture was edited, and `.forge` remains untracked. This is a configuration fix within final acceptance, not a new sprint.
+
+Final standalone Forge lint retry exited 1 after a 300,000 ms platform-request timeout. This is recorded as a failed/inconclusive retry; earlier independent official lint and both actual deployment prechecks passed and manifest/source remained unchanged. No verification was bypassed. The explicit Prettier invocation briefly included .prettierignore as an input and returned a no-parser error; reran only supported document/config inputs, then the normal aggregate format gate. No application validation result is inferred from that formatter invocation.
+
+## Final local handover verification
+
+After the .forge exclusion, npm run validate exited 0 with the same ten tests/100% configured coverage/build/manifest results. Final format:check and git diff --check pass. ESLint API confirms .forge/.agents/.codex ignored while source/UI/unit tests/scripts remain included. Relative Markdown destination review found no broken destinations. Manifest, dependencies, lockfile and CI have no diff. Runtime implementation is unchanged; TypeScript emit and generated-artifact check boundaries are the only code/config changes.
+
+A new local acceptance commit uses the authenticated owner's GitHub noreply identity for both author and committer; prior four commits are unchanged. No remote push, history rewriting or account-wide setting change is performed. Final staged-secret/path review is required before that commit.
+
+Changed files in this acceptance commit:
+
+- `.prettierignore`
+- `AGENTS.md`
+- `CONTRIBUTING.md`
+- `README.md`
+- `SECURITY.md`
+- `docs/hackathon/submission-checklist.md`
+- `docs/operations/cost-governance.md`
+- `docs/operations/deployment.md`
+- `docs/operations/development-setup.md`
+- `docs/project/acceptance-criteria.md`
+- `docs/project/audit.md`
+- `docs/project/changelog.md`
+- `docs/project/dependency-security-assessment.md`
+- `docs/project/foundation-acceptance-report.md`
+- `docs/project/risk-register.md`
+- `docs/project/sprint-0.6-execution-report.md`
+- `docs/project/tracking.md`
+- `eslint.config.js`
+- `tsconfig.json`
+
+## Authorised unpublished-history cleanup — current continuation
+
+Owner explicitly approved the metadata rewrite, workspace-path redaction and equivalent documentation-only privacy corrections, superseding the earlier hold. Before mutation, verified no configured remote/remote-tracking refs/push reflog and intended authenticated-owner repository 404. No prior publication evidence found; no claim is made about unknown external copies. Created and verified a private Git bundle plus staged/unstaged/files backup outside repository, then retained a durable private copy with restricted permissions. Configured only repository-local verified GitHub noreply email; global Git config unchanged.
+
+Rebuilt four original commits with corrected author/committer email and approved doc placeholders; updated prior ancestor hashes in documentation. Verified exact original messages/names/timestamps/mapped parents; tree differences only in approved documentation, zero application/functional config/manifest changes. Atomically updated main and foundation refs, no backup/original publication refs. Full original/replacement maps and thirty targeted privacy/reference corrections recorded privately. Original commit hashes/refs/backups are not publication inputs.
+
+Repeated history scan: four commits/140 unique blobs, zero bounded secret/path/forbidden-artifact matches; all intended author/committer metadata uses noreply, no Gmail. Genuine app ID preserved. Existing deployment 2.0.0 and installation remain valid because source/config functionality was unchanged. No additional Forge deployment is needed solely for Git metadata. Current documentation corrected to reflect approval; public repository/push/PR/CI continue, conditional merge still awaits runtime and actual CI.
+
+Final post-cleanup validation: npm run validate exit 0; repeated format:check exit 0; history scan zero bounded findings. Staged review covers 21 intended files after commit-reference corrections; no secrets, private site/path/email, original refs, backups, tooling or generated artifacts are proposed. Only refs/heads/main and refs/heads/sprint-0/engineering-foundation exist. Earlier pre-cleanup changed-file inventory is superseded by:
+
+- `.prettierignore`
+- `AGENTS.md`
+- `CONTRIBUTING.md`
+- `README.md`
+- `SECURITY.md`
+- `docs/hackathon/submission-checklist.md`
+- `docs/operations/cost-governance.md`
+- `docs/operations/deployment.md`
+- `docs/operations/development-setup.md`
+- `docs/project/acceptance-criteria.md`
+- `docs/project/audit.md`
+- `docs/project/changelog.md`
+- `docs/project/dependency-security-assessment.md`
+- `docs/project/foundation-acceptance-report.md`
+- `docs/project/risk-register.md`
+- `docs/project/tracking.md`
+- `eslint.config.js`
+- `tsconfig.json`

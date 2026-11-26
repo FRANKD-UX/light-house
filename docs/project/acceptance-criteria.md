@@ -70,3 +70,30 @@ Clean committed-tree verification is performed after the local commit and report
 - [ ] Authorised remote setup/push and successful remote CI run.
 
 Local commit and clean-tree verification are reported after commit. Sprint 1 remains unstarted and is not authorised by this checkpoint.
+
+## Final foundation acceptance — 2026-11-26 (current)
+
+These results supersede historical pending registration, permission and credential-store entries. No Sprint 0.7 or Sprint 1 was introduced.
+
+| Gate                           | Status                                  | Evidence                                                                                                           |
+| ------------------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Registered identity            | Passed                                  | Genuine app ARI unchanged; authenticated environment listing                                                       |
+| Clean dependency installation  | Passed                                  | npm ci exit 0; lockfile unchanged                                                                                  |
+| Local quality                  | Passed                                  | validate exit 0; 10 tests/3 files; configured 100% coverage; builds and manifest wiring                            |
+| Official Forge lint            | Passed                                  | Elevated CLI exit 0, no issues; deploy checks also passed                                                          |
+| LH-014 development disposition | Accepted with documented residual risk  | Explicit project-owner approval, synthetic/isolated development only; issue remains open                           |
+| Development deployment         | Passed                                  | Version 2.0.0; actual deployment history success                                                                   |
+| Development installation       | Passed                                  | Authorised Jira site; development installation complete                                                            |
+| Official bundle review         | Passed with documented scope limitation | Saved backend artifact reviewed; no vulnerable leaf source/agent fixtures detected; lockfile records affected tree |
+| Actual installed runtime       | Pending owner verification              | Browser host unavailable; manual checklist sent; CLI logs checked separately                                       |
+| Public-release privacy review  | Blocked                                 | Historical personal author metadata/path; owner stopped publication and prohibited history rewriting               |
+| Public repo/remote branches/PR | Blocked                                 | Publication hold; none created/pushed                                                                              |
+| Remote and post-merge CI       | Blocked                                 | No published repository; no run URLs                                                                               |
+| Conditional merge/main sync    | Blocked                                 | Runtime and publication/CI prerequisites incomplete                                                                |
+| Production security            | Blocked                                 | Development exception does not transfer                                                                            |
+
+The foundation is not fully accepted. Sprint 1 backlog is prepared but not started; runtime acceptance, publication/privacy resolution and CI/merge remain prerequisites. See foundation-acceptance-report.md.
+
+## Owner-authorised privacy cleanup and publication continuation — 2026-11-26
+
+The temporary publication hold is superseded by explicit owner approval to correct unpublished author/committer emails and equivalent documentation-only privacy details. Private recovery bundle, original refs, complete old/new commit mapping and redaction record are retained outside the repository. All application/configuration trees, commit messages/names/timestamps and branch relationships are verified unchanged except approved documentation privacy/hash-reference corrections. Both branches are consistent; intended metadata has no Gmail address. Repeated history/current-source review passes. Public repo/push/PR/CI are authorised to continue; runtime/CI remain mandatory before conditional merge. No force push, backup publication or next sprint.

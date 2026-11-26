@@ -5,6 +5,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 export default tseslint.config(
   globalIgnores([
     'dist/**',
+    '.forge/**',
     'coverage/**',
     'node_modules/**',
     '.agents/**',

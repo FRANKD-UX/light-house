@@ -12,7 +12,9 @@ forge environments list
 forge lint --non-interactive
 ```
 
-Ordinary local checks need no Atlassian credentials. In this restricted execution environment Forge whoami, environment listing, installation listing and lint exit 1 because the CLI cannot securely access/store its local credentials file. The owner's authenticated terminal is a separate environment; retry there first, without re-registering. If login is needed, run forge login interactively and enter credentials privately. Do not paste tokens into chat or commit them. No token/config extraction was attempted. A read-only npm cache may be redirected with npm --cache /tmp/light-house-npm-cache; Sprint 0.6 audits/registry lookups needed that override.
+Ordinary local checks need no Atlassian credentials. Sandboxed Forge authentication initially failed with a credential-store error; supported elevated execution succeeded during final foundation acceptance. Use the existing owner authentication through the supported permission mechanism. Never extract credentials or configure tokens in chat. If login is required, use `forge login` privately in the owner terminal. No credentials are needed for CI.
+
+The root TypeScript configuration permits emit for Forge's ts-loader and directs any compiler output into ignored `dist/typescript`. Local type checking still explicitly runs `tsc --noEmit`. Forge deploy bundles the source handler; `dist/backend` is a local smoke artifact. This fixes the demonstrated deployment bundling failure without changing runtime behaviour or compiler strictness.
 
 ## Reproducing optional official agent tooling
 
@@ -31,45 +33,25 @@ Install is an optional owner/local setup step, never an npm lifecycle or CI prer
 
 ## Validation and packaging boundaries
 
-| Tool                        | Application scope and boundary                                                                                                                                                                                          |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ESLint 10.15.0              | eslint . with supported globalIgnores from eslint/config; .agents/**, .codex/** and generated scan artifacts excluded along with dependencies/build/coverage. All existing application rules retained; 21 files linted. |
-| Prettier 3.10.1             | Repository docs/config/source remain checked; explicit tooling/artifact ignores, existing lockfile/generated ignores retained.                                                                                          |
-| TypeScript 6.0.3            | Explicit src, static/app/src, tests and Vite/Vitest config include list; no tooling files.                                                                                                                              |
-| Vitest 5.1.1 / V8 coverage  | tests/unit only; implemented src and App.tsx coverage, unchanged thresholds; contract/integration directories remain documented future gates.                                                                           |
-| Vite 8.3.8 / esbuild 0.28.2 | static/app root and src/index.ts entry; no tooling imports. dist/ui resource only; backend dist is a smoke artifact.                                                                                                    |
-| npm audit                   | Application package-lock only, both full and omit=dev. Does not audit optional skills or global CLI tools; those are separate supply-chain surfaces.                                                                    |
-| Forge                       | Default handler dependency bundling plus declared Custom UI resource; no manual package or extraFiles. Official artifact inspection remains pending; Git ignore alone is not a deployment exclusion.                    |
-| Security review             | Independent source and proposed-commit secret review remains mandatory regardless of formatter/linter ignores. Scan artifacts stay local; durable conclusions go in audit/assessment.                                   |
+| Tool                        | Application scope and boundary                                                                                                                                                                                                     |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ESLint 10.15.0              | eslint . with supported globalIgnores from eslint/config; .agents/**, .codex/**, .forge/** and generated scan artifacts excluded along with dependencies/build/coverage. All existing application rules retained; 21 files linted. |
+| Prettier 3.10.1             | Repository docs/config/source remain checked; explicit tooling/artifact ignores including .forge/, existing lockfile/generated ignores retained.                                                                                   |
+| TypeScript 6.0.3            | Explicit src, static/app/src, tests and Vite/Vitest config include list; no tooling files.                                                                                                                                         |
+| Vitest 5.1.1 / V8 coverage  | tests/unit only; implemented src and App.tsx coverage, unchanged thresholds; contract/integration directories remain documented future gates.                                                                                      |
+| Vite 8.3.8 / esbuild 0.28.2 | static/app root and src/index.ts entry; no tooling imports. dist/ui resource only; backend dist is a smoke artifact.                                                                                                               |
+| npm audit                   | Application package-lock only, both full and omit=dev. Does not audit optional skills or global CLI tools; those are separate supply-chain surfaces.                                                                               |
+| Forge                       | Default handler dependency bundling plus declared Custom UI resource; no manual package or extraFiles. Official artifact inspection remains pending; Git ignore alone is not a deployment exclusion.                               |
+| Security review             | Independent source and proposed-commit secret review remains mandatory regardless of formatter/linter ignores. Scan artifacts stay local; durable conclusions go in audit/assessment.                                              |
 
 Verified ESLint API reports tooling ignored and src/index.ts, App.tsx, tests, scripts and Vite/Vitest/ESLint config included. No source, tests, dependency versions or lockfile changes were needed. No pretend behaviour tests were added for this configuration-only correction.
 
-## Private GitHub repository and CI readiness
+## Public GitHub and CI readiness
 
-GitHub authentication is available; no remote is configured. No remote repository was created or queried for availability. CI uses Node from .nvmrc, npm ci and npm run validate, contents:read, no persisted checkout credentials, ten-minute timeout, no Forge auth/skills/deploy. Official v7 action SHAs were reverified with git ls-remote on 2026-11-26. Remote execution remains untested. Audits deliberately remain visible separate security gates; validate passing does not accept LH-014.
+The owner originally authorised a PUBLIC `FRANKD-UX/light-house` repository, superseding the earlier private proposal. The owner subsequently authorised and completed controlled unpublished-history cleanup for email metadata and documentation privacy details. Repeated review passed. Public creation/push/PR/CI may proceed under the existing authorisation; merge still requires actual runtime and CI acceptance. No backup refs/private recovery material may be published. The intended SSH remote is `git@github.com:FRANKD-UX/light-house.git`; this is a target, not an existing published repository.
 
-Only after owner authorises repository creation, check availability (distinguish absent repository from network/auth failure):
+The existing `Validate` workflow runs on pull requests and pushes to main, pins action SHAs, uses Node from `.nvmrc`, runs `npm ci` and `npm run validate`, grants only contents:read, disables persisted checkout credentials and has no deployments or Atlassian credentials. Remote CI evidence must be recorded after actual execution; no successful run is inferred from local checks.
 
-```sh
-gh repo view FRANKD-UX/light-house
-# Only if genuinely absent and creation authorised:
-gh repo create FRANKD-UX/light-house --private --source=. --remote=origin
-```
+Dependency auditing is a separate, visibly failing security gate. Run `npm audit` and `npm audit --omit=dev` separately; record exit codes and LH-014. Do not label a tolerated audit as a successful security check. A development exception cannot satisfy staging/production security acceptance.
 
-Only after push/PR authorisation:
-
-```sh
-git push -u origin main
-git push -u origin sprint-0/engineering-foundation
-cat > /tmp/light-house-pr.md <<'PR'
-Preserves the owner-registered Light House identity and isolates optional Forge agent tooling from application validation. Adds Sprint 0/0.5 architecture and scaffold plus Sprint 0.6 acceptance evidence and deployment procedures.
-
-Local checks pass with 10 tests and 100% configured implemented-code coverage. LH-014 remains open; official CLI lint, deployment, installed runtime and remote CI gates remain pending as recorded in the Sprint 0.6 report.
-PR
-gh pr create --base main --head sprint-0/engineering-foundation --title 'Light House engineering foundation and tooling stabilisation' --body-file /tmp/light-house-pr.md
-gh run list --workflow ci.yml
-# Substitute an actual run ID:
-gh run view RUN_ID --exit-status
-```
-
-PR/merge checklist: inspect the complete Sprint 0 branch diff; preserve real app ID; no credentials, skill fixtures or generated artifacts; local validation and both audits recorded; actual PR CI run succeeds; official lint blocker resolved before deployment; owner LH-014 disposition remains explicit; required reviews/branch protection chosen by owner; merge approval does not authorise deploy or start Sprint 1. No push, PR or merge has occurred.
+The cleaned candidate history has been reviewed; repeat the check after any further history/content change. Preserve the main baseline and foundation branch ancestry unless the owner explicitly authorises otherwise. After successful publication: verify PUBLIC visibility and ownership, configure free security protections, create the PR, wait for actual CI, and merge with a merge commit only after installed runtime acceptance and all mandatory gates pass. Exact current commands and blockers are in the [acceptance report](../project/foundation-acceptance-report.md).

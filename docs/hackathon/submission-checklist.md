@@ -14,3 +14,7 @@ Official rules reviewed 2026-11-24: [Codegeist 2026 rules](https://codegeist2026
 - [ ] Complete Devpost fields, test links/access and submit before the deadline; retain submission confirmation.
 
 These are release/submission gates, not completed Sprint 0 features. AI/Rovo/MCP bonus categories are not pursued under the approved no-runtime-AI scope. Marketplace publication is optional and must not delay a working installation link. The owner must approve any actual submission/publishing action separately.
+
+## Final foundation review — 2026-11-26
+
+The [official rules](https://codegeist2026.devpost.com/rules) were reopened on this date: Forge integration, the Specialized Industries category, judge-installability, rights to submitted content and compliance with third-party licences remain relevant. This scaffold is not a complete submission or judge-ready incident workflow. Public GitHub source visibility is distinct from a project licence and Forge distribution; neither public app distribution nor Marketplace publication is authorised here. Project licence awaits owner decision. Rules permit third-party software subject to its licences; eligibility/IP and final submission remain owner gates. No Devpost action was taken.

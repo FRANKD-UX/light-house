@@ -1,6 +1,6 @@
 # Engineering backlog
 
-Updated 2026-11-26 (Sprint 0.6). P0 critical path/security; P1 planned supporting delivery; P3 stretch. “Documented” is design completion, not implemented functionality. Sprint 0 local evidence and external gates are recorded separately in audit and acceptance criteria. No Sprint 1 implementation has begun.
+Updated 2026-11-26 (final foundation Gates B/C; no new sprint). P0 critical path/security; P1 planned supporting delivery; P3 stretch. “Documented” is design completion, not implemented functionality. Sprint 0 local evidence and external gates are recorded separately in audit and acceptance criteria. No Sprint 1 implementation has begun.
 
 ## LH-001 — Repository baseline
 
@@ -86,9 +86,9 @@ Updated 2026-11-26 (Sprint 0.6). P0 critical path/security; P1 planned supportin
 - Priority: P0
 - Dependencies: LH-002,LH-007
 - Acceptance criteria: TypeScript implementation and meaningful automated tests; honest development UI.
-- Status: Implemented locally; Forge gate pending
+- Status: Implemented and deployed to development; installed runtime pending
 - Verification evidence: src/, static/app/, tests/unit/, manifest.yml.
-- Known blockers: Genuine app.id now present; official lint credential-store access and installed runtime remain pending.
+- Known blockers: Genuine app.id preserved; official lint/deploy/install pass; owner runtime evidence pending.
 
 ## LH-009 — Quality gates and CI
 
@@ -99,7 +99,7 @@ Updated 2026-11-26 (Sprint 0.6). P0 critical path/security; P1 planned supportin
 - Acceptance criteria: Applicable local validation passes; CI on PR/main; failures visible.
 - Status: Verified locally — aggregate validate exit 0
 - Verification evidence: package scripts, lockfile, CI workflow; npm ci and validate pass, 10 tests/0 failures; audit.
-- Known blockers: Remote CI cannot execute without remote/push authorisation.
+- Known blockers: Remote CI blocked by owner publication hold over historical personal metadata; authorisation is not the blocker.
 
 ## LH-010 — Prioritised backlog
 
@@ -141,9 +141,9 @@ Updated 2026-11-26 (Sprint 0.6). P0 critical path/security; P1 planned supportin
 - Priority: P0
 - Dependencies: LH-008,LH-009
 - Acceptance criteria: Real ARI, Forge lint, actual module/Bridge/CSP/theme test and safe logs recorded.
-- Status: Registration owner-completed; CLI credential-store blocker and deployment authorisation/runtime gates pending
-- Verification evidence: Owner registration and genuine manifest ID preserved; Sprint 0.6 official lint exits 1 on credential-store access, no deploy/runtime test claimed. See operations/deployment.md.
-- Known blockers: Codex environment credential-store access, owner confirmation of development site, LH-014 disposition and deployment/install authorisation.
+- Status: Development deploy/install passed; pending owner runtime verification
+- Verification evidence: Genuine identity preserved; elevated official lint exit 0/no issues, deploy 2.0.0 and Jira development installation succeeded. See foundation-acceptance-report.md.
+- Known blockers: Actual installed shell/Bridge/typed response/frontend/backend error verification; owner browser evidence requested.
 
 ## LH-014 — Forge SDK dependency advisory review
 
@@ -152,7 +152,7 @@ Updated 2026-11-26 (Sprint 0.6). P0 critical path/security; P1 planned supportin
 - Priority: P0 before deployment/release
 - Dependencies: LH-009
 - Acceptance criteria: Review current official upstream fixes and compatibility; deterministic install, audit and behaviour/build checks after any change; document residual exposure and owner disposition.
-- Status: Assessed — upstream affected tree remains; deployment/release gate open
+- Status: Open — owner accepted residual risk for isolated development only; production blocked
 - Verification evidence: Sprint 0.5 full and production audits exit 1: 8 affected packages, 5 high/3 moderate. Per-package paths/ranges/patches and local bundle reachability are recorded in dependency-security-assessment.md; vulnerable leaves absent from current emitted app graphs. Official Forge artifact remains unverified.
 - Known blockers: Current SDK tree pins affected components; suggested Bridge major downgrade and transitive overrides are not verified remedies. No force fix applied.
 
@@ -316,3 +316,11 @@ Sprint 0.5 exit does not authorise Sprint 1. Original deadline remains 22 Decemb
 - Status: Local tooling/validation/review/documentation complete; external gates pending.
 - Evidence: sprint-0.6-execution-report.md; 10 tests/3 files, 100% configured coverage; official lint exit 1 (credential-store access); full/prod audit exit 1 (8 packages). No dependency changes.
 - Known blockers: Authenticated official lint, owner LH-014 disposition, billing/site/deploy/install approval, actual runtime and remote CI acceptance. No Sprint 1 start authorised.
+
+## Final foundation acceptance update — 2026-11-26
+
+The project owner explicitly authorises development deployment/install on the confirmed owner-controlled Jira site, public GitHub source publication after review, push/PR/CI and conditional history-preserving merge. No staging/production deployment, app distribution, paid provisioning, licence selection or Sprint 1 start is authorised. LH-014 is accepted with documented residual risk for isolated synthetic development only; it remains open, not remediated. See dependency-security-assessment.md and foundation-acceptance-report.md for current evidence and remaining gates. Earlier permission and registration blockers are historical.
+
+## Owner-authorised privacy cleanup and publication continuation — 2026-11-26
+
+The temporary publication hold is superseded by explicit owner approval to correct unpublished author/committer emails and equivalent documentation-only privacy details. Private recovery bundle, original refs, complete old/new commit mapping and redaction record are retained outside the repository. All application/configuration trees, commit messages/names/timestamps and branch relationships are verified unchanged except approved documentation privacy/hash-reference corrections. Both branches are consistent; intended metadata has no Gmail address. Repeated history/current-source review passes. Public repo/push/PR/CI are authorised to continue; runtime/CI remain mandatory before conditional merge. No force push, backup publication or next sprint.

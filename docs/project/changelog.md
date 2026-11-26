@@ -28,3 +28,18 @@ No Sprint 1 persistence, live Zabbix ingestion, SLA engine, Jira incident orches
 - Verified Node/npm/Forge CLI, seven installed official skills, Forge/ADS MCP and GitHub authentication; documented Codex-specific Forge credential-store blocker without disputing owner login.
 - Independently passed local lint/format/types/tests/coverage/build/manifest gates; ten tests and configured 100% coverage retained. Official security scanners completed, no confirmed application finding; eight dependency findings remain open.
 - Updated risk disposition proposal, cost/environment governance, authorised-development smoke procedure, private GitHub/PR/CI checklist and Sprint 0.6 evidence. No deployment, site creation/install, paid resource, remote mutation or Sprint 1 work.
+
+## Final foundation Gates B/C — 2026-11-26
+
+- Preserved real Forge registration; supported elevated authentication resolved the sandbox credential-store blocker. Official lint passed, development deployment 2.0.0 and authorised Jira installation succeeded.
+- Fixed the actual Forge TypeScript bundling failure: root config permits emit to ignored dist/typescript; local typecheck remains tsc --noEmit. No runtime feature or dependency change.
+- Recorded project-owner LH-014 residual risk acceptance for isolated synthetic development only; eight affected packages remain, production security blocked.
+- Inspected the saved official backend artifact and reran local gates and deterministic scanners; recorded scope limits separately from actual runtime acceptance.
+- Prepared public README/security/contribution/operations documentation and dated owner FinOps baseline. Publication review found historical personal author metadata and a workspace path; owner stopped publication and declined history rewriting. No remote, push, PR, CI run or merge occurred.
+- Installed runtime and post-test usage require owner browser evidence. No new foundation sprint or Sprint 1 work.
+
+- Excluded generated .forge inspection artifacts from ESLint/Prettier after final validation exposed generated-code errors; retained all application checks.
+
+## Owner-authorised privacy cleanup and publication continuation — 2026-11-26
+
+The temporary publication hold is superseded by explicit owner approval to correct unpublished author/committer emails and equivalent documentation-only privacy details. Private recovery bundle, original refs, complete old/new commit mapping and redaction record are retained outside the repository. All application/configuration trees, commit messages/names/timestamps and branch relationships are verified unchanged except approved documentation privacy/hash-reference corrections. Both branches are consistent; intended metadata has no Gmail address. Repeated history/current-source review passes. Public repo/push/PR/CI are authorised to continue; runtime/CI remain mandatory before conditional merge. No force push, backup publication or next sprint.

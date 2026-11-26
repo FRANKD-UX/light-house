@@ -1,5 +1,30 @@
 # Deployment and installation gates
 
+## Current foundation acceptance — 2026-11-26
+
+This section supersedes historical pending-authorisation and credential-store notes below. Supported elevated execution authenticated successfully; environments were listed, deployment history was initially empty, development installation list was initially empty, and `forge lint --non-interactive` exited 0 with no issues. The genuine manifest app ID is unchanged.
+
+The first deployment failed in bundling because root `noEmit` prevented Forge ts-loader output. The CLI process misleadingly returned 0 after reporting that failure and a telemetry timeout; no successful deployment was credited. Root config now permits emit to ignored `dist/typescript`; local `tsc --noEmit` remains unchanged. After passing validation, the development retry succeeded at **2.0.0**. No staging/production deployment occurred. There is no SQL/KVS module, migration, schedule, remote or external call in this scaffold and no paid resource provisioning was requested.
+
+`forge deploy --environment development --inspect --non-interactive` saved the official backend bundle in ignored `.forge/inspect`. Eight files were inspected, including runtime wrappers, application code, source map, manifest and package metadata. Application source map: 13 sources, no glob/minimatch/prosemirror-view module source and no local agent fixtures. Pattern review found no credentials. The copied lockfile still contains vulnerable dependency records. The backend inspection is not a complete downloadable server-side archive or proof about every platform runtime dependency; declared frontend resources were reviewed separately.
+
+The confirmed development installation target is recorded privately for the owner. Public setup examples must use a placeholder and must not authorise arbitrary installs:
+
+```sh
+forge whoami
+forge environments list --non-interactive
+forge deploy list --non-interactive
+forge install list --environment development --non-interactive
+forge lint --non-interactive
+# Only after all gates pass and the target has explicit owner approval:
+forge deploy --environment development --inspect --non-interactive
+forge install --site example.atlassian.net --product jira --environment development --non-interactive
+```
+
+If an installation already exists, inspect its version before deciding whether a supported upgrade is required; do not reinstall blindly. Do not use `--no-verify`. Installed runtime evidence remains a separate acceptance gate in the [report](../project/foundation-acceptance-report.md).
+
+## Historical Sprint 0.6 procedure and evidence
+
 Updated 2026-11-26, Sprint 0.6. Owner registration is complete in the owner-controlled Developer Space; manifest retains ari:cloud:ecosystem::app/1ef4af03-f1ed-4498-a83e-1a8978cf5430. The owner reports development, staging and production environments created. Independent authenticated listing is blocked by this execution environment's credential-store access, not evidence of failed owner registration. Never register/create another app. No deployment, installation or live integration was performed here.
 
 ## Gate separation
