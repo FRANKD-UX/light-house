@@ -71,3 +71,11 @@ Actual installed diagnostic/contract/UUIDv4 success matched independently to bac
 | Publication                    | Branch is local only; publication, new CI, review and merge remain separate authorised gates. No force push/history rewrite.                                                                              |
 
 Parent-retirement/child-creation write skew identified during review is addressed by the tenant mutation admission primitive and concurrent local regression; live verification is still required.
+
+## Independent Sprint 1 review — 2026-11-26
+
+See [owner decision package](sprint-1-readiness-review.md). LH-014: no new GHSA roots, but API/Events/SQL add three inherited moderate package findings and changed persistence/permission exposure; renewed development-only acceptance remains an owner decision. Native SQL compatibility, official packaging, real consumption and genuine second-installation isolation remain open. Proposed 5,000-request session limit is a manual planning control, not an enforced spending cap. Current probe covers one controlled partial-write boundary; additional live fault stages require reviewed development-only instrumentation. No additional site/install/billing or publication authorisation is inferred.
+
+## Current authorised development risk boundary — 2026-11-26
+
+Owner renewed the exact Sprint 1 LH-014 exception for the existing development installation and synthetic acceptance only. Five high/six moderate findings remain unresolved; no new advisory identifiers. SQL/scope/major upgrade and 5,000-request internal session budget are approved. Missing live metrics, native SQL acceptance and genuine second-installation isolation remain evidence risks. Additional installations/dependency changes do not inherit this exception. Staging/production and final merge remain blocked.

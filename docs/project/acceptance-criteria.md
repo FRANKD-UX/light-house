@@ -139,3 +139,11 @@ The foundation is accepted at cc82f504 with merged PR #1 and successful post-mer
 - [ ] Authorised publication, required new CI, PR review, protected merge and main synchronisation.
 
 Sprint 1 is not complete and Sprint 2 has not started. See the execution report for final local command results and limitations.
+
+## Sprint 1 readiness review evidence — 2026-11-26
+
+Independent local validation reproduces 83 tests and stated coverage; this completes the requested pre-deployment review, not LH-101/LH-102 runtime acceptance. [Decision package](sprint-1-readiness-review.md) records the advisory/permission/database/cost/publication assessment. All sixteen [live checks](../operations/sprint-1-live-acceptance.md) start open. Genuine two-installation isolation is a separate open requirement; no second installation is currently authorised. No development risk acceptance, major consent, deploy/install success or native SQL result is inferred from local review.
+
+## Authorised development execution boundary — 2026-11-26
+
+Owner approved the reviewed Sprint 1 dependency exception, development deployment/major installation upgrade, native migrations and synthetic acceptance, branch publication/PR and CI. These approvals satisfy authorisation gates only. All live acceptance boxes remain open until observed. Second genuine installation and final merge require separate approval; current acceptance criteria still require genuine installation isolation before Sprint 1 completion/merge.

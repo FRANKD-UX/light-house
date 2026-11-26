@@ -138,3 +138,11 @@ Implementation commit: f04d41a36204f5fe8f094d787ad2ef27486d743a, using the exist
 | Modified | tests/unit/resolver.test.ts                                |
 | Modified | tests/unit/theme.test.tsx                                  |
 | Modified | vitest.config.ts                                           |
+
+## Independent pre-deployment review — 2026-11-26
+
+The subsequent [owner decision package](sprint-1-readiness-review.md) reproduces the baseline and records the exact dependency delta, scope/SQL major-consent distinction, database safety, local resource counts and publication review. It supersedes any assumption that three extra affected package names are three new advisories or that LH-014 foundation acceptance automatically extends. The sixteen live checks and genuine two-installation procedure remain unexecuted. No source/dependency/permission change was justified by this review; updated documentation is uncommitted. No new deployment/install/native migration/publication or sprint occurred.
+
+## Current authorised execution checkpoint — 2026-11-26
+
+Owner now authorises reviewed development deployment/installation SQL upgrade, exact-tree LH-014 exception, fifteen migrations and synthetic acceptance with a 5,000-request planning budget, public Sprint 1 branch/PR and remote CI. Earlier no-authorisation statements are historical. Second genuine installation and final merge still need separate owner approval. Reproduced npm ci/validate: 83 passing tests, unchanged coverage (96.79/96.30/100/97.91). Full/production audits each retain five high/six moderate findings; LH-014 remains open. Approved-rule Forge lint passes, CLI 16.0.0. No source/manifest/lockfile change. Browser unavailable; fresh usage readings requested. Live results will be recorded separately from authorisation and local checks.

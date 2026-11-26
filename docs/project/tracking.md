@@ -346,3 +346,11 @@ Final Console disposition: owner-controlled stable-connection/refresh/scoped Lig
 ## Sprint 1 current boundary
 
 The owner explicitly assigned Sprint 1. Baseline PR #1 is merged; post-merge run 45780524271 passed at cc82f504. Earlier foundation pending entries describe historical checkpoints, not current blockers. Sprint 1 requires its own live SQL, isolation, CI, review and authorised merge gates. Sprint 2 has not started.
+
+## Sprint 1 independent readiness review — 2026-11-26
+
+[Decision package](sprint-1-readiness-review.md) independently reproduces baseline/83 tests/coverage, lint approval gate and exact advisory delta. No confirmed exploitable application defect established; no implementation/dependency/permission edit justified. LH-014 remains open with a specific renewed development-only recommendation awaiting owner decision. LH-101/LH-102 remain locally implemented with live acceptance incomplete. Sixteen first-installation checks and a separately authorised genuine second-installation procedure are prepared; two logical tenants do not satisfy installation isolation. No Sprint 2, deployment/install/migration/push/PR/merge occurred. Main remains preserved at cc82f504. Review changes are uncommitted pending handover; no commit was requested.
+
+## Authorised Sprint 1 execution — 2026-11-26
+
+Owner authorisation now covers the reviewed development dependency exception, deployment/major upgrade/SQL migrations and synthetic acceptance, Sprint 1 branch publication/PR/CI. LH-014 stays open for five high/six moderate findings in the exact reviewed tree; staging/production blocked. LH-101/LH-102 runtime acceptance remains incomplete until actual evidence is recorded. Second installation and merge remain separately gated. Earlier pending-authorisation wording is historical and superseded by this entry; Sprint 2 has not started.

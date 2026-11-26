@@ -66,3 +66,14 @@ Remote CI passed for acceptance commit 85f542c: [Validate run 45775501033](https
 Implemented LH-101/LH-102 persistence, authorised ISP tenancy, network/service inventory, minimal manual teams/access configuration, demonstration SLA policy versions, bounded durable mutation repair, explicit idempotent seed batches and Custom UI. Added SQL/API/Events dependencies and SQL/permission/consumer manifest wiring; preserved real app identity, foundation diagnostics and coverage gates. Added local relational, mock-SDK, UI/security/contract tests and the live acceptance runbook. Reconciled accepted foundation evidence. Sprint 1 deployment/publication/merge remain unauthorised and live acceptance incomplete; no Sprint 2 work.
 
 Local Sprint 1 implementation commit: f04d41a36204f5fe8f094d787ad2ef27486d743a. Exact files and acceptance evidence are in sprint-1-execution-report.md; publication/live gates remain open.
+
+## 2026-11-26 — Sprint 1 independent pre-deployment review
+
+- Independently reproduced accepted-main/Sprint 1 baseline, 83 passing tests/coverage, dependency counts and Forge major-approval lint gate.
+- Recorded exact advisory-level delta (no new roots; three inherited moderate parent findings), permission/SQL consent and database safety assessment, renewed development-only disposition recommendation and public-release review.
+- Refined sixteen first-installation acceptance gates, separate genuine two-installation procedure and resource estimates using local statement counts; prepared updated draft PR body.
+- No app/dependency/permission change, deployment, native migration, install, publication, merge or new sprint; owner decisions and live evidence remain open.
+
+## 2026-11-26 — Authorised Sprint 1 development acceptance started
+
+Recorded explicit owner approval for the exact reviewed development dependency tree (LH-014 remains open), SQL/scope/consumer major deployment and existing-installation consent, synthetic native acceptance and 5,000-request planning budget, public branch/PR and remote CI. Preserved implementation, manifest identity, lockfile and accepted main. Second installation and merge remain separately gated. Reproduced 83 tests/coverage and approved-rule official lint; current usage readings require owner console access.
