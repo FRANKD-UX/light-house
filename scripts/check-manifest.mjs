@@ -19,7 +19,10 @@ assert(
       existsSync(`${resource.path}/index.html`),
   ),
 );
-assert.deepEqual(manifest.permissions.scopes, []);
+assert.deepEqual(manifest.permissions.scopes, ['read:jira-work']);
+assert.deepEqual(manifest.modules.sql, [
+  { key: 'light-house-sql', engine: 'mysql' },
+]);
 console.info(
   'Local manifest wiring and built resources passed. This is not Forge CLI validation.',
 );

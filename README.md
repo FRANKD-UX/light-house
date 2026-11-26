@@ -10,9 +10,9 @@ The objective is to bring this workflow into Jira Service Management (JSM), with
 
 ## Current implementation
 
-The implemented foundation is a React Custom UI Jira global page, a Forge Bridge `getStatus` resolver, typed public metadata, an allowlisted structured logger and internally generated correlation IDs. Unit tests cover shell loading/failure, resolver behaviour and foundation contracts. Tests that mock Forge SDKs are local evidence.
+Sprint 1 implements server-authorised ISP tenancy, Forge SQL repositories and immutable migrations, network inventory, manual teams/assignees, demonstration-only SLA policy versions, bounded mutation repair and explicit synthetic seeding. The Custom UI provides tenant selection, schema readiness, paginated lists and basic configuration. Foundation health diagnostics remain available.
 
-The incident engine, Zabbix adapter, persistence layer, SLA engine, inventory, directory adapters and JSM incident creation are **planned, not functional**. The UI states that integrations are not connected and presents no operational metrics. See the [foundation acceptance report](docs/project/foundation-acceptance-report.md) for actual deployment, runtime and publication gates. Sprint 1 has not started.
+**Local implementation is not installed acceptance.** Sprint 1 SQL migrations have not run on Forge, and no Sprint 1 deployment or publication is authorised yet. The incident engine, monitoring adapters, SLA execution, directory integration and JSM incident creation remain planned. See the [Sprint 1 execution report](docs/project/sprint-1-execution-report.md), [live acceptance procedure](docs/operations/sprint-1-live-acceptance.md) and [security review](docs/project/sprint-1-security-review.md).
 
 ## Planned incident workflow
 
@@ -28,16 +28,16 @@ flowchart LR
     Jira --> Bridge[Forge Bridge]
     Bridge --> Functions[Forge resolvers and application use cases]
     Zabbix[Zabbix: planned] -.-> Functions
-    Functions -.-> Storage[Forge SQL and KVS: planned]
+    Functions --> Storage[Forge SQL: implemented; live acceptance pending]
     Functions -.-> JSM[JSM incidents and native notifications: planned]
     Directory[Entra ID / Google Workspace / manual mapping: planned] -.-> Functions
 ```
 
-Only the page → Bridge → read-only status resolver path is implemented. `src/domain` has no Forge imports; `src/application` defines use cases and ports; infrastructure implements ports; `src/forge` owns trusted runtime wiring. Future tenant operations must validate installation membership and ISP tenant boundaries independently.
+The page → Bridge → status and inventory resolvers are implemented. Inventory persistence requires the explicit development SQL migration and installation consent upgrade. `src/domain` has no Forge imports; `src/application` defines use cases and ports; infrastructure implements ports; `src/forge` owns trusted runtime wiring. Future tenant operations must validate installation membership and ISP tenant boundaries independently.
 
 ## Technology and repository structure
 
-TypeScript, React 18, Forge Custom UI, Forge Functions/Resolvers and Forge Bridge; Vite/esbuild; Vitest, ESLint and Prettier. Planned persistence is Forge-native SQL/KVS. There is no separately hosted backend or runtime generative AI.
+TypeScript, React 18, Forge Custom UI, Forge Functions/Resolvers and Forge Bridge; Vite/esbuild; Vitest, ESLint and Prettier. Relational persistence uses Forge SQL; KVS secrets remain reserved for later credentials. There is no separately hosted backend or runtime generative AI.
 
 | Path                 | Purpose                                               |
 | -------------------- | ----------------------------------------------------- |
@@ -66,13 +66,13 @@ The registered Forge application identity is preserved; do not register a duplic
 
 ## Roadmap
 
-Foundation acceptance precedes Sprint 1 tenancy and synthetic inventory. Later sprints cover monitoring intake, enrichment/SLA, JSM lifecycle and handoffs, operational UI, identity mapping, recovery/security hardening, regression and demonstration. See the [backlog](docs/project/tracking.md) and [roadmap](docs/project/roadmap.md). No next sprint starts automatically.
+Foundation acceptance is verified; Sprint 1 tenancy and synthetic inventory are implemented locally with live gates outstanding. Later sprints cover monitoring intake, enrichment/SLA, JSM lifecycle and handoffs, operational UI, identity mapping, recovery/security hardening, regression and demonstration. See the [backlog](docs/project/tracking.md) and [roadmap](docs/project/roadmap.md). No next sprint starts automatically.
 
 ## Security, cost and contributions
 
 Use synthetic data only. Report vulnerabilities through the private process in [SECURITY.md](SECURITY.md); do not put credentials or customer payloads in issues. Follow [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md).
 
-The minimal scaffold uses a bounded status invocation and allowlisted log with no persistence, polling or external calls. Forge included allowances are not hard spending caps or a guarantee of permanent free Atlassian product licensing. See [cost governance](docs/operations/cost-governance.md).
+Inventory uses indexed tenant predicates, explicit four-record seed batches and bounded durable repair intents. There is no automatic polling or migration on page load. Jira global-administration checks run server-side in user context; no external egress is declared. Forge included allowances are not hard spending caps or a guarantee of permanent free Atlassian product licensing. See [cost governance](docs/operations/cost-governance.md).
 
 **Project licence: awaiting owner decision.** Source visibility does not grant an open-source licence. Third-party packages retain their own terms; see [dependency and licence review](docs/project/dependency-security-assessment.md). Public source publication does not authorise public Forge application distribution.
 

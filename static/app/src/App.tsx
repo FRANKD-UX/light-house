@@ -1,3 +1,4 @@
+import { Inventory } from './Inventory';
 import { useEffect, useRef, useState } from 'react';
 import { invoke } from '@forge/bridge';
 import { APPLICATION_METADATA } from '../../../src/domain/value-objects/application-metadata';
@@ -54,8 +55,9 @@ export function App() {
       <section aria-labelledby="foundation">
         <h2 id="foundation">Engineering foundation</h2>
         <p>
-          This application is in development. Monitoring, inventory, SLA
-          policies and Jira Service Management orchestration are not connected.
+          This application is in development. Monitoring, SLA execution and Jira
+          Service Management orchestration are not connected. Inventory requires
+          explicit Forge SQL setup.
         </p>
         <button
           type="button"
@@ -66,7 +68,12 @@ export function App() {
         >
           Run health check
         </button>
-        <p role="status" aria-live="polite" aria-atomic="true">
+        <p
+          role="status"
+          aria-label="Foundation health"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           {announcement}
         </p>
         <dl>
@@ -110,6 +117,7 @@ export function App() {
           </dd>
         </dl>
       </section>
+      <Inventory />
     </main>
   );
 }

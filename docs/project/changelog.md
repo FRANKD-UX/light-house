@@ -60,3 +60,7 @@ Remote CI passed for acceptance commit 85f542c: [Validate run 45775501033](https
 - Owner confirms actual installed diagnostic contract/backend/UUIDv4; independent development log matches correlation at 2026-11-26T08:00:25.634Z. Theme comparison explicitly deferred to Sprint 5 as unverified. Browser Console and protected merge/post-merge acceptance remain separately gated.
 
 - Closed actual installed-runtime acceptance with matched backend success and owner-confirmed scoped iframe Console retry. Installed light/dark comparison is explicitly deferred to Sprint 5, unverified. Foundation proceeds to protected merge/main/post-merge verification; LH-014 stays open and development-only.
+
+## 2026-11-26 — Sprint 1 local implementation
+
+Implemented LH-101/LH-102 persistence, authorised ISP tenancy, network/service inventory, minimal manual teams/access configuration, demonstration SLA policy versions, bounded durable mutation repair, explicit idempotent seed batches and Custom UI. Added SQL/API/Events dependencies and SQL/permission/consumer manifest wiring; preserved real app identity, foundation diagnostics and coverage gates. Added local relational, mock-SDK, UI/security/contract tests and the live acceptance runbook. Reconciled accepted foundation evidence. Sprint 1 deployment/publication/merge remain unauthorised and live acceptance incomplete; no Sprint 2 work.

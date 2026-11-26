@@ -35,3 +35,7 @@ Sprint 1 must verify migrationRunner, composite uniqueness, affectedRows/conditi
 ## Sprint 0.5 refinement — 2026-11-25
 
 Proposed minimal operational representation is in data-model.md: dedicated handoff/validation/impact records later, existing incident SLA snapshot/audit history reused, fixed workflow/checklists in code. Sprint 1 stays inventory/tenancy only. No generic engine or complete future schema is authorised by this design.
+
+## Sprint 1 implementation — 2026-11-26
+
+The current owner request explicitly selects Forge SQL behind repository ports, immutable migrations and repairable single-statement writes. That scope supersedes the earlier pending SQL selection; retention and operational policy decisions are still proposed. Physical columns, binary collation, UTC strings, named DDL snapshot and tenant admission are described in [ADR-0016](ADR-0016-sprint-1-persistence-and-repair.md). No transaction/session/FK/cascade assumption changed. Live Forge SQL verification remains outstanding.

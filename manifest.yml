@@ -6,14 +6,25 @@ modules:
       resolver:
         function: status-resolver
       title: Light House
+  sql:
+    - key: light-house-sql
+      engine: mysql
+  consumer:
+    - key: light-house-schema-consumer
+      queue: light-house-schema
+      function: schema-migration
   function:
+    - key: schema-migration
+      handler: index.migrateInstallation
+      timeoutSeconds: 900
     - key: status-resolver
       handler: index.handler
 resources:
   - key: light-house-ui
     path: dist/ui
 permissions:
-  scopes: []
+  scopes:
+    - read:jira-work
 app:
   runtime:
     name: nodejs22.x

@@ -55,3 +55,19 @@ The prior UI incorrectly equated a resolved invocation with a valid status respo
 ## Final runtime owner disposition — 2026-11-26
 
 Actual installed diagnostic/contract/UUIDv4 success matched independently to backend.status at 08:00:25.634Z. No errors in the queried backend window. Earlier browser Console host/content-script/network-change noise is not globally resolved; owner stable-connection scoped Light House iframe retry passes without app iframe errors. Host light/dark comparison explicitly deferred to Sprint 5 as unverified. No remaining mandatory app runtime blocker for foundation merge; final CI/protection still apply. LH-014 remains open under existing isolated-development-only acceptance; staging/production security blocked. No new sprint or operational integration.
+
+## Sprint 1 current risks — 2026-11-26
+
+| Risk                           | Disposition / next gate                                                                                                                                                                                   |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LH-014 changed exposure        | Three existing advisory roots remain; API/SQL/Events add affected parent paths. Foundation acceptance does not transfer; obtain explicit reassessed development disposition before deployment.            |
+| Forge SQL runtime              | Actual DDL/collation/native duplicate/affectedRows/retry/concurrency/async/repair compatibility is unverified. Local simulation is not acceptance.                                                        |
+| Official lint                  | Final explicit-development lint reports zero errors/warnings and one MAJOR_VERSION_RULE approval (exit 1). Owner major-upgrade authorisation is still required; earlier timeouts are historical attempts. |
+| Installation isolation         | Two-database simulation only; no second authorised installation. Record unavailable evidence, never manufacture a pass.                                                                                   |
+| Durable admission availability | A partial mutation deliberately blocks later writes until an administrator repairs the stored intent. No silent expiry/abandonment.                                                                       |
+| Configuration limits           | Membership selection caps at 50; per-tier policies cap below 100; open-ended published policies need a future explicit supersession operation. Full administration remains later scope.                   |
+| Retention/operational policy   | No cleanup runs; owner retention, SLA clock/start/impact/reopen and project licence decisions remain outstanding.                                                                                         |
+| Scanner limitations            | FSRT reports no actual source path; OpenGrep/manual review cover source but do not prove runtime security or absence of vulnerabilities.                                                                  |
+| Publication                    | Branch is local only; publication, new CI, review and merge remain separate authorised gates. No force push/history rewrite.                                                                              |
+
+Parent-retirement/child-creation write skew identified during review is addressed by the tenant mutation admission primitive and concurrent local regression; live verification is still required.

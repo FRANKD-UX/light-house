@@ -52,3 +52,34 @@ dd {
   margin: 0.25rem 0 0;
   overflow-wrap: anywhere;
 }
+label {
+  display: block;
+  margin-block: var(--ds-space-150, 12px);
+}
+input,
+select {
+  display: block;
+  max-width: 100%;
+  padding: var(--ds-space-100, 8px);
+  background: var(--ds-background-input, #fff);
+  color: var(--ds-text, #292a2e);
+  border: 1px solid var(--ds-border, #8590a2);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  text-align: left;
+  padding: var(--ds-space-100, 8px);
+  border-bottom: 1px solid var(--ds-border, #8590a2);
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+form {
+  border-block-start: 1px solid var(--ds-border, #8590a2);
+  padding-block: var(--ds-space-200, 16px);
+}

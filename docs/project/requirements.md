@@ -35,3 +35,7 @@ Custom UI command centre, workflow board, drawer/full workspace and embedded Jir
 ## Final foundation diagnostic acceptance refinement — 2026-11-26
 
 Owner-requested correction: runtime response validation and a manual sanitised diagnostic interface replace locating the raw Bridge response in browser Network tools. The check must distinguish invocation resolution from contract validity, show validated public metadata/backend/integration readiness and correlation format, reject malformed results, permit retry and prevent overlap. No polling, operational dashboard or Sprint 1 implementation. Actual installed diagnostics, Console review and backend logs remain mandatory; simulated token tests do not satisfy installed host-theme acceptance. Deferring an unavailable installed light/dark comparison to Sprint 5 requires explicit owner approval.
+
+## Sprint 1 delivery refinement — 2026-11-26
+
+LH-101/LH-102 now have executable local implementation: Forge SQL schema/readiness, two-boundary tenancy, secure bootstrap, inventory, controlled lifecycle, basic manual teams, versioned demonstration configuration, durable repair and bounded seed/UI. Their acceptance remains incomplete pending the live procedure and remote review gates. No monitoring, incident workflow, impact engine, external directory, JSM writes, SLA timer or Sprint 2 implementation is included. See sprint-1-execution-report.md for exact implemented versus designed scope.
