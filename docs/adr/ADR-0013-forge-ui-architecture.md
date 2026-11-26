@@ -35,3 +35,9 @@ Build resources, unit-test loading/failure/unmount states and verify installed J
 ## Sprint 0.5 refinement — 2026-11-25
 
 Retain the scaffold. Proposed global-page command centre/board/drawer/workspace, issueContext embedded view and adminPage are documented with verified official module links in project/architecture.md. No new surface is implemented or required in Sprint 0.5; Jira remains the ticketing workspace. Module visibility is not mutation authorisation. Advanced frontend customisation remains deferred.
+
+## Final foundation diagnostic refinement — 2026-11-26
+
+Owner-requested acceptance refinement: use the installed shell's sanitised manual health check to verify the actual Bridge response, instead of locating its raw Network payload. Validate unknown results at runtime; show only projected public metadata and a valid internally generated UUIDv4 correlation. Keep semantic HTML/status announcements and host design tokens, with no polling or additional dependencies. No new extension point or backend capability.
+
+The existing host theme activation follows [Forge theming](https://developer.atlassian.com/platform/forge/design-tokens-and-theming/), verified 2026-11-26. Local injected-token tests are simulated compatibility evidence. Installed theme comparison is unverified; a proposed move to Sprint 5 is pending explicit owner disposition.

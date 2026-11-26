@@ -328,3 +328,11 @@ The temporary publication hold is superseded by explicit owner approval to corre
 Public GitHub execution: https://github.com/FRANKD-UX/light-house is PUBLIC; cleaned main and foundation pushed; PR #1 created. Free secret scanning/push protection/Dependabot alerts/private reporting and main checks configured. Remote CI result must be recorded after actual completion; merge remains conditional on runtime acceptance. No next sprint.
 
 Remote CI passed for acceptance commit 85f542c: [Validate run 45775501033](https://github.com/FRANKD-UX/light-house/actions/runs/45775501033). PR #1 remains open; remaining runtime response/frontend-error/theme verification prevents merge. Main is the cleaned baseline ff2939c; post-merge CI has not run. The evidence-only documentation update is verified again on its own head before handover.
+
+## Focused final runtime correction — current continuation
+
+Within existing Sprint 0 Gates B/C and PR #1: corrected discarded getStatus result with literal runtime contract/UUIDv4 validation, safe public projection and manual diagnostics. No polling, overlap, resolver write, dependency or Sprint 1 feature. Local validate passes with 35 tests/four files, 97.95% statements, 98.36% branches, 100% functions/lines; official elevated lint retry passes. Simulated light/dark token compatibility passes, actual installed theme comparison unverified. Proposed Sprint 5 visual deferral awaits explicit owner disposition. Deployment/installed diagnostics/Console/log confirmation, new PR CI, protected merge/main sync/post-merge CI remain pending and are recorded in the acceptance report as observed. LH-014 remains open, accepted only for isolated development; production security blocked. No new sprint.
+
+Owner approves moving the unavailable installed host-theme comparison to Sprint 5. Carry forward as an unverified visual acceptance item, not a foundation pass. No Sprint 5 implementation starts now. Runtime diagnostic/Console/log, final PR CI and conditional protected merge remain outstanding.
+
+Focused development deployment **2.1.0** succeeded; initial timeout/history verification recorded in audit. Owner has installed diagnostic/Console instructions; runtime confirmation pending. No staging/production deployment or next sprint.

@@ -101,3 +101,19 @@ The temporary publication hold is superseded by explicit owner approval to corre
 Public GitHub execution: https://github.com/FRANKD-UX/light-house is PUBLIC; cleaned main and foundation pushed; PR #1 created. Free secret scanning/push protection/Dependabot alerts/private reporting and main checks configured. Remote CI result must be recorded after actual completion; merge remains conditional on runtime acceptance. No next sprint.
 
 Remote CI passed for acceptance commit 85f542c: [Validate run 45775501033](https://github.com/FRANKD-UX/light-house/actions/runs/45775501033). PR #1 remains open; remaining runtime response/frontend-error/theme verification prevents merge. Main is the cleaned baseline ff2939c; post-merge CI has not run. The evidence-only documentation update is verified again on its own head before handover.
+
+## Focused final runtime correction — current acceptance refinement
+
+Owner-requested acceptance refinement replaces raw Bridge Network inspection with the installed sanitised manual diagnostic interface. Earlier ten-test results are superseded locally by 35 tests/four files; statements 97.95%, branches 98.36%, functions/lines 100%. npm run validate and official elevated Forge lint retry pass. Read-only resolver/dependencies/manifest unchanged. LH-014 remains open and development-only.
+
+- [x] Validate unknown status response metadata/backend/integrations/UUIDv4 and project only public fields; fail malformed responses explicitly.
+- [x] Manual accessible check, retry, no polling/overlap; separate Bridge and validated backend availability.
+- [x] Regression tests and local quality gates, including simulated light/dark token compatibility.
+- [ ] Confirm new development deployment and existing installation after focused correction.
+- [ ] Owner confirms actual installed diagnostics and browser Console; real development logs inspected.
+- [ ] Installed host light/dark comparison OR explicit owner-approved Sprint 5 deferral; unverified visual behaviour must stay labelled.
+- [ ] Focused foundation branch committed/pushed, PR #1 final-head validate passes, conditional protected merge, local main sync and post-merge CI verified.
+
+No next sprint is authorised automatically. Current evidence and limitations: foundation-acceptance-report.md and audit.md.
+
+Owner explicitly approves the conditional Sprint 5 visual deferral if the selector remains unavailable (previously reported unavailable). Installed light/dark comparison is deferred/unverified, not passed; simulated token compatibility passed. Diagnostic/Console/log and CI gates remain mandatory.

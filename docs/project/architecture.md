@@ -1,6 +1,6 @@
 # Architecture baseline
 
-Light House keeps orchestration in Forge. The Sprint 0 deployed surface is intentionally absent: only an unregistered manifest, React shell and status resolver exist locally. Future work follows the diagrams in `../architecture/system-context.md` and `component-model.md`.
+Light House keeps orchestration in Forge. The registered Sprint 0 development surface contains the React foundation shell and a read-only status resolver. Deployment/install success and installed-runtime acceptance are recorded separately in foundation-acceptance-report.md. Future work follows the diagrams in `../architecture/system-context.md` and `component-model.md`.
 
 Use Custom UI React/TypeScript in `jira:globalPage` for the internal NOC workspace. Forge Bridge invokes backend resolvers. Use Atlassian design token CSS variables and host theme support; introduce individual Design System components only after compatibility/bundle review. UI Kit is compatible but less suitable for the planned inventory and lifecycle interface. JSM queue pages are a later focused extension, not required for the shell.
 
@@ -8,7 +8,7 @@ Forge SQL is the relational default and KVS secure storage holds credentials. Da
 
 No general-purpose ORM is selected. No cross-resource transaction or exactly-once claim is made. JSM request creation, workflow transitions, SLAs and notifications need development-site verification. External identity mappings use provider REST APIs only after consent and do not authorise app access.
 
-Approved constraints and proposed defaults are distinguished in the ADR index. Material Forge conclusions and official verification dates are in `forge-capability-assessment.md`. Sprint 0 acceptance excludes registration, deployment, live UI and runtime integration evidence; those remain tracked gates.
+Approved constraints and proposed defaults are distinguished in the ADR index. Material Forge conclusions and official verification dates are in `forge-capability-assessment.md`. Final Sprint 0 Gates B/C include registration, development deployment and installed-runtime acceptance; these gates have separate evidence in the current acceptance report.
 
 ## Sprint 0.5 alignment and application surfaces
 
@@ -26,3 +26,7 @@ Approved constraints and proposed defaults are distinguished in the ADR index. M
 Official module docs verified 2026-11-25: [global page](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-global-page/) supports a single module and subpages; [issue context](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-issue-context/) supports Custom UI issue context; [issue panel](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-issue-panel/) is an alternative in Jira/JSM new issue view, with edit-issue visibility limitations; [admin page](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-admin-page/) provides Jira/JSM admin settings navigation; [Bridge history](https://developer.atlassian.com/platform/forge/apis-reference/ui-api-bridge/view/#createhistory) documents global-page routing. Documentation support is not installed-runtime acceptance. Only globalPage is currently declared; no extra manifest modules are added in Sprint 0.5.
 
 Reuse Jira issue conversations, attachments, native transitions/permissions and notifications. App drawer/workspace add network-specific context, not another ticketing system. UI module visibility and client context cannot authorise access: backend verifies linked issue, membership and permission before incident data/mutations. Native closure enforcement is an explicit site acceptance gate.
+
+## Focused foundation diagnostic correction — 2026-11-26
+
+The existing Custom UI manually invokes getStatus with no payload, polling or concurrent requests. The browser treats the result as unknown. A dependency-free validator checks every literal application metadata field, backend available, integrations not-configured and the resolver's UUIDv4 correlation format. It projects only validated public fields before display; rejected/malformed results cannot establish backend availability. No backend, scope, persistence, tenant-data or integration change. This is foundation diagnostics, not the operational dashboard. Host theme continues through view.theme.enable and CSS design tokens.

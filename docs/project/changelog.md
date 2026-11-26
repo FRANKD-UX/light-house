@@ -49,3 +49,10 @@ Public GitHub execution: https://github.com/FRANKD-UX/light-house is PUBLIC; cle
 Remote CI passed for acceptance commit 85f542c: [Validate run 45775501033](https://github.com/FRANKD-UX/light-house/actions/runs/45775501033). PR #1 remains open; remaining runtime response/frontend-error/theme verification prevents merge. Main is the cleaned baseline ff2939c; post-merge CI has not run. The evidence-only documentation update is verified again on its own head before handover.
 
 - Corrected current tracking/acceptance rows after actual publication/CI. Owner cannot locate runtime response or host theme option; response/frontend-error/theme checks remain unverified and PR stays open. No diagnostic functionality or next sprint added.
+
+## Unreleased — 2026-11-26 — final foundation runtime correction
+
+- Validate the actual unknown getStatus response against literal metadata/backend/integration fields and UUIDv4 correlation; display only projected public values.
+- Add manual accessible runtime diagnostics, sanitised failures/retry and overlap prevention; preserve read-only resolver and existing host theme.
+- Extend mocked regression and simulated token compatibility tests: 35 tests/four files; configured 97.95% statement, 98.36% branch, 100% function/line coverage. No dependency changes.
+- Installed-runtime acceptance, development version, CI and owner theme disposition are tracked in the current acceptance report and audit; no Sprint 1 work.

@@ -11,3 +11,9 @@ Mocks prove local logic and wiring only. No runtime integration, API permission,
 ## Sprint 0.5 verification boundary
 
 Documentation-only architecture changes introduce no pretend behaviour tests. Re-run existing meaningful scaffold tests and builds after clean install. Dependency review includes full/prod audits and local emitted-module/backend graph evidence; actual Forge artifact/runtime remain separate. Development-only scaffold smoke procedure is in operations/deployment.md. Future workflow regression below is planned, not passing evidence.
+
+## Focused runtime-contract regression — 2026-11-26
+
+35 tests in four files pass. Mock Bridge cases cover valid metadata, every metadata field mismatch, invalid backend/integration values, missing fields, non-object responses, invalid UUID version/variant/type, rejected/synchronously thrown invocations, retry after every malformed case, clearing previous success, overlap prevention and unmount. Extra response fields are not displayed. Coverage includes the new status-contract.ts validator: statements 48/49 (97.95%), branches 60/61 (98.36%), functions 15/15 (100%), lines 46/46 (100%); the uncovered defensive in-flight guard is retained.
+
+Three theme tests check computed styles with synthetic light/dark token palettes in jsdom, all colour declarations using tokens (including focus) and existing host API wiring. These do not render pixels, validate host token injection or establish installed Jira visual/accessibility acceptance. No coverage threshold was lowered. Real installed diagnostics/Console/log evidence is separate.

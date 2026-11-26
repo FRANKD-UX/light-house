@@ -1,24 +1,51 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { invoke } from '@forge/bridge';
 import { APPLICATION_METADATA } from '../../../src/domain/value-objects/application-metadata';
-import type { ApplicationStatus } from '../../../src/application/use-cases/get-status';
+import { validateStatus, type StatusValidation } from './status-contract';
+
+type HealthCheck =
+  | { readonly phase: 'idle' | 'checking' | 'rejected' }
+  | { readonly phase: 'received'; readonly validation: StatusValidation };
+
 export function App() {
-  const [status, setStatus] = useState<
-    'checking' | 'available' | 'unavailable'
-  >('checking');
+  const [check, setCheck] = useState<HealthCheck>({ phase: 'idle' });
+  const inFlight = useRef(false);
+  const mounted = useRef(false);
   useEffect(() => {
-    let active = true;
-    void invoke<ApplicationStatus>('getStatus')
-      .then(() => {
-        if (active) setStatus('available');
-      })
-      .catch(() => {
-        if (active) setStatus('unavailable');
-      });
+    mounted.current = true;
     return () => {
-      active = false;
+      mounted.current = false;
     };
   }, []);
+
+  async function checkHealth() {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setCheck({ phase: 'checking' });
+    try {
+      const response: unknown = await invoke<unknown>('getStatus');
+      if (mounted.current)
+        setCheck({ phase: 'received', validation: validateStatus(response) });
+    } catch {
+      if (mounted.current) setCheck({ phase: 'rejected' });
+    } finally {
+      inFlight.current = false;
+    }
+  }
+
+  const validation = check.phase === 'received' ? check.validation : undefined;
+  const status = validation?.valid ? validation.status : undefined;
+  const announcement =
+    check.phase === 'idle'
+      ? 'Health check not run.'
+      : check.phase === 'checking'
+        ? 'Checking runtime health…'
+        : check.phase === 'rejected'
+          ? 'Health check failed: Forge Bridge invocation rejected. You can retry.'
+          : validation?.valid
+            ? 'Health check passed: backend available and response contract valid.'
+            : `Health check failed: invalid ${validation?.reason}. You can retry.`;
+
   return (
     <main>
       <p className="eyebrow">ISP incident orchestration</p>
@@ -30,13 +57,58 @@ export function App() {
           This application is in development. Monitoring, inventory, SLA
           policies and Jira Service Management orchestration are not connected.
         </p>
-        <p role="status">
-          {status === 'checking'
-            ? 'Checking backend availability…'
-            : status === 'available'
-              ? 'Backend status resolver is available.'
-              : 'Backend status is unavailable. Open this application in Jira after Forge installation.'}
+        <button
+          type="button"
+          disabled={check.phase === 'checking'}
+          onClick={() => {
+            void checkHealth();
+          }}
+        >
+          Run health check
+        </button>
+        <p role="status" aria-live="polite" aria-atomic="true">
+          {announcement}
         </p>
+        <dl>
+          <dt>Forge Bridge invocation</dt>
+          <dd>
+            {check.phase === 'received'
+              ? 'Resolved'
+              : check.phase === 'rejected'
+                ? 'Rejected'
+                : check.phase === 'checking'
+                  ? 'Pending'
+                  : 'Not run'}
+          </dd>
+          <dt>Backend resolver availability</dt>
+          <dd>{status ? 'available' : 'Not verified'}</dd>
+          <dt>Runtime response contract</dt>
+          <dd>
+            {validation
+              ? validation.valid
+                ? 'Valid'
+                : `Invalid: ${validation.reason}`
+              : 'Not validated'}
+          </dd>
+          <dt>Application metadata returned by backend</dt>
+          <dd>
+            {status
+              ? `${status.application.name} / ${status.application.repository} / ${status.application.version} / ${status.application.stage}`
+              : 'Not validated'}
+          </dd>
+          <dt>Integration readiness</dt>
+          <dd>{status ? status.integrations : 'Not validated'}</dd>
+          <dt>Correlation ID</dt>
+          <dd>
+            {status
+              ? `${status.correlationId} (valid UUIDv4)`
+              : validation &&
+                  !validation.valid &&
+                  validation.reason === 'correlation ID'
+                ? 'Invalid UUIDv4'
+                : 'Not validated'}
+          </dd>
+        </dl>
       </section>
     </main>
   );

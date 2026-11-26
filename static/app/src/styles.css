@@ -26,3 +26,29 @@ section {
 p {
   line-height: 1.6;
 }
+button {
+  font: inherit;
+  color: var(--ds-text, #172b4d);
+  background: var(--ds-background-neutral, #dcdfe4);
+  border: 1px solid var(--ds-border, #8590a2);
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+button:focus-visible {
+  outline: 2px solid var(--ds-border-focused, #388bff);
+  outline-offset: 2px;
+}
+button:disabled {
+  cursor: wait;
+  color: var(--ds-text-disabled, #626f86);
+  background: var(--ds-background-disabled, #f1f2f4);
+}
+dt {
+  font-weight: 600;
+  margin-top: 1rem;
+}
+dd {
+  margin: 0.25rem 0 0;
+  overflow-wrap: anywhere;
+}

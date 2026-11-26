@@ -47,3 +47,7 @@ RK-01: authenticated elevated access resolved the sandbox blocker; development d
 ## Owner-authorised privacy cleanup and publication continuation — 2026-11-26
 
 The temporary publication hold is superseded by explicit owner approval to correct unpublished author/committer emails and equivalent documentation-only privacy details. Private recovery bundle, original refs, complete old/new commit mapping and redaction record are retained outside the repository. All application/configuration trees, commit messages/names/timestamps and branch relationships are verified unchanged except approved documentation privacy/hash-reference corrections. Both branches are consistent; intended metadata has no Gmail address. Repeated history/current-source review passes. Public repo/push/PR/CI are authorised to continue; runtime/CI remain mandatory before conditional merge. No force push, backup publication or next sprint.
+
+## Focused diagnostic correction — 2026-11-26
+
+The prior UI incorrectly equated a resolved invocation with a valid status response. Corrected by explicit runtime validation, public-field projection and fail-closed diagnostics with negative tests. No tenant-sensitive backend is introduced. LH-014 retains its existing isolated-development-only disposition; production stays blocked. Actual diagnostic/Console confirmation remains pending. Host light/dark comparison remains unverified; deferral to Sprint 5 is proposed and needs owner approval. No additional sprint.
