@@ -12,7 +12,7 @@ The objective is to bring this workflow into Jira Service Management (JSM), with
 
 Sprint 1 implements server-authorised ISP tenancy, Forge SQL repositories and immutable migrations, network inventory, manual teams/assignees, demonstration-only SLA policy versions, bounded mutation repair and explicit synthetic seeding. The Custom UI provides tenant selection, schema readiness, paginated lists and basic configuration. Foundation health diagnostics remain available.
 
-**Local implementation is not installed acceptance.** Sprint 1 SQL migrations have not run on Forge, and no Sprint 1 deployment or publication is authorised yet. The incident engine, monitoring adapters, SLA execution, directory integration and JSM incident creation remain planned. See the [Sprint 1 execution report](docs/project/sprint-1-execution-report.md), [live acceptance procedure](docs/operations/sprint-1-live-acceptance.md) and [security review](docs/project/sprint-1-security-review.md).
+**Deployment is not complete runtime acceptance.** DEVELOPMENT 3.3.0 is deployed and the existing Jira installation is up to date. The native migration/readiness sub-gate is accepted; the bounded inventory LIMIT correction still needs hosted execution evidence. Reusable read-only Playwright acceptance is in [e2e/README.md](e2e/README.md). The incident engine, monitoring adapters, SLA execution, directory integration and JSM incident creation remain planned. See the [Sprint 1 execution report](docs/project/sprint-1-execution-report.md), [live acceptance procedure](docs/operations/sprint-1-live-acceptance.md) and [security review](docs/project/sprint-1-security-review.md).
 
 ## Planned incident workflow
 
@@ -48,6 +48,7 @@ TypeScript, React 18, Forge Custom UI, Forge Functions/Resolvers and Forge Bridg
 | `static/app`         | React Custom UI                                       |
 | `tests`              | Unit tests; future contract/integration gates         |
 | `scripts`            | Local manifest verification                           |
+| `e2e`                | Isolated read-only hosted Playwright acceptance       |
 | `docs`               | Architecture, ADRs, operations, tracking and evidence |
 
 ## Local development and testing
@@ -61,6 +62,19 @@ npm run validate
 ```
 
 Validation runs ESLint, formatting, strict TypeScript, unit coverage, UI/backend builds and local manifest wiring. Individual commands are `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run test`, `npm run test:coverage`, `npm run build` and `npm run check:manifest`. `npm audit` is a separate security gate and currently fails; see [LH-014](docs/project/dependency-security-assessment.md). Do not use a force fix or silently downgrade SDKs.
+
+For automated native acceptance, install the isolated tooling once and complete owner login/MFA in the opened browser:
+
+```sh
+npm ci --prefix e2e
+export LIGHT_HOUSE_E2E_BROWSER_CHANNEL=chrome
+npm run test:e2e:doctor
+npm run test:e2e:auth
+npm run test:e2e:development
+npm run test:e2e:report
+```
+
+Installed Google Chrome Stable is the default browser; developers/CI can explicitly select sandbox-capable `chromium` as documented in the E2E runbook. Use `npm run test:e2e:development:headed` for a visible browser. The suite automates health/readiness and sites/carriers/SLA-tier reads, including available next pages, with no data mutation. Session state and curated JSON/HTML reports remain in gitignored, owner-only `e2e/.local/`; screenshots/traces are disabled. `npm run test:e2e:check` runs credential-free harness tests in CI; `npm run test:e2e:fixture` checks the reader against a local synthetic browser fixture. Keep the Forge tunnel stopped. See the [E2E runbook](e2e/README.md) for target restrictions, evidence limits and exact setup/recovery commands.
 
 The registered Forge application identity is preserved; do not register a duplicate. Fork users need their own owner-approved application registration rather than access to this app. Authenticated deployments and installations require explicit target authorisation. See [setup](docs/operations/development-setup.md) and [deployment](docs/operations/deployment.md). Optional agent skills are local tools, excluded from application code and CI.
 

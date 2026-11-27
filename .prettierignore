@@ -6,3 +6,5 @@ package-lock.json
 .codex/
 security-audit-artifacts/
 .forge/
+e2e/.local/
+e2e/.build/

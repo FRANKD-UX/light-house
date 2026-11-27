@@ -65,11 +65,11 @@ describe('SQL contracts (local adapted SQLite, not Forge runtime)', () => {
       expect(statement.query).toContain('tenant_id = ?');
       expect(statement.params).toContain(tenantId);
     }
-    expect(
-      h.statements
-        .find((s) => s.query.includes('ORDER BY id LIMIT'))
-        ?.params.at(-1),
-    ).toBe(51);
+    const list = h.statements.find((s) =>
+      s.query.includes('ORDER BY id LIMIT'),
+    );
+    expect(list?.query).toMatch(/ORDER BY id LIMIT 51$/);
+    expect(list?.params).toEqual([tenantId, '']);
   });
   it('bounds membership enumeration and rejects readiness from another installation/environment/version', async () => {
     const h = database();

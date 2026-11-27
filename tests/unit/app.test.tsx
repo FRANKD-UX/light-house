@@ -149,6 +149,18 @@ describe('Light House diagnostics (mock Forge Bridge, not installed-runtime evid
     await screen.findByText(/Forge Bridge invocation rejected/);
     expect(document.body.textContent).not.toContain('private');
   });
+  it('identifies a reported timeout without exposing the exception', async () => {
+    invoke.mockRejectedValueOnce(
+      new Error('request timed out: private payload'),
+    );
+    render(<App />);
+    runCheck();
+    await screen.findByText(/reported timeout/);
+    expect(document.body.textContent).toContain(
+      'Backend completion is unverified',
+    );
+    expect(document.body.textContent).not.toContain('private payload');
+  });
   it.each(['resolve', 'reject'])(
     'ignores %s after unmount',
     async (outcome) => {

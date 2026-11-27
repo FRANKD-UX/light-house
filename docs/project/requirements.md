@@ -39,3 +39,63 @@ Owner-requested correction: runtime response validation and a manual sanitised d
 ## Sprint 1 delivery refinement — 2026-11-26
 
 LH-101/LH-102 now have executable local implementation: Forge SQL schema/readiness, two-boundary tenancy, secure bootstrap, inventory, controlled lifecycle, basic manual teams, versioned demonstration configuration, durable repair and bounded seed/UI. Their acceptance remains incomplete pending the live procedure and remote review gates. No monitoring, incident workflow, impact engine, external directory, JSM writes, SLA timer or Sprint 2 implementation is included. See sprint-1-execution-report.md for exact implemented versus designed scope.
+
+## Sprint 1 diagnostic request — 2026-11-26
+
+If native Console evidence is unavailable, prepare a minimal read-only development diagnostic with backend Jira global administrator authorisation: expected/successful/missing migration names through migrationRunner.list(), readiness record presence, trusted environment, readiness value, schema version and returned JavaScript type, and sanitised SQL error code. Bind the trusted installation/environment in a fixed readiness query. Exclude installation identifiers, credentials, arbitrary SQL/raw database contents, migration execution, readiness modification, bootstrap and seed. Prefer the existing resolver and supported development tunnel; report required changes before any separately authorised new deployment. Implementation is local; live evidence remains open.
+
+## Current native acceptance and continuation — 2026-11-26
+
+Owner-provided native DEVELOPMENT tunnel evidence accepts all fifteen named checkpoints and present ready/numeric-v1 metadata with null SQL error codes. Before remaining authorised Sprint 1 mutations, establish existing Lantern Fibre active admin membership/bootstrap outcome and actual eleven-kind inventory state through read-only inspection. Generic completion text is not seed evidence. Preserve the historical HTTP 400 as unverified. Native retry/repair/isolation/persistence/cost gates remain distinct; no Sprint 2 or new deployment authorisation.
+
+Runtime diagnostic refinement (2026-11-26): preserve reported invocation categories, handled backend codes and valid server UUID correlations without raw exception/payload exposure. Schema diagnostic failures must not all become DENIED. Local implementation and synthetic/real-SDK tests are separate from installed acceptance; native fifteen-name/ready-v1 evidence remains accepted. No new sprint or database mutation scope.
+
+## Native hosted inventory investigation — 2026-11-26
+
+Preserve accepted hosted health/contract/metadata and independent correlation, plus fifteen named migrations/ready numeric-v1. Inventory exception attribution and persisted seed state need read-only evidence. No tunnel restart, SQL reset/migration/bootstrap/seed or further deployment authorised. Reproduce a verified defect before correction; UI offset 4 does not establish completion. See [investigation](../operations/sprint-1-inventory-investigation.md).
+
+### Sprint 1 bounded backend observability — owner-authorised 2026-11-26
+
+Inventory list requests retain one internally generated correlation UUID through fixed-stage structured events. Allowlist operation/stage/outcome/duration/category/provider code only; omit raw errors, statements, parameters and identities/records. Preserve tenant membership/lifecycle and role checks and public contracts. Diagnose before proposing a functional correction. Diagnostic-only DEVELOPMENT deployment is authorised after validation, audit review and official Forge lint; no tunnel restart, installation/database mutation or Sprint 2 work.
+
+## DEVELOPMENT 3.2.0 UUID attribution — 2026-11-26
+
+Supplied inventory UUID 878d3b6f-6fec-4e2d-bb07-829509844583 is traced: first failure inventory.sql at 19:29:19.693Z, SQL_ERROR / SQL_EXECUTION_ERROR / ER_WRONG_ARGUMENTS. Readiness, membership, authorisation, parameters and query construction succeed; mapping/response stages are not reached. resolver.completion repeats the original failure. Health UUID 895938f9-2eff-4e56-8d47-7a3c0265dd2b independently matches success at 19:28:18.546Z. This supersedes pending-UUID/unknown-stage instructions above. LIMIT binding is the leading source-based diagnosis, not conclusively distinguished from another argument defect inside the SELECT/driver. Proposed safe-integer 1–51 literal LIMIT with bound tenant/cursor and unchanged paging/security is documented for review, not implemented or deployed. No mutation or repeated UI test; persisted baseline and remaining native gates remain open. See [investigation](../operations/sprint-1-inventory-investigation.md).
+
+## Owner-approved pagination correction — 2026-11-26
+
+Repository fetch limit must accept only number safe integers 1–51 and render only their decimal integer into shared inventory LIMIT; tenant/cursor remain bound in order. Preserve diagnostics, tenant/authorisation/lifecycle/keyset/lookahead behaviour and all eleven types. Owner authorises existing DEVELOPMENT deployment after required gates and explicitly instructs autonomous correction of routine implementation/testing defects. Generic diagnostic mock typing is resolved; all 148 tests and local validation pass. No native diagnosis proof is inferred. No other database/install/tunnel operation, merge or Sprint 2 authorised. See the latest investigation and audit for deployment/runtime evidence.
+
+## Owner-requested automated native acceptance — 2026-11-26
+
+Provide reusable TypeScript/Playwright infrastructure in isolated `e2e/`, pinned only to the existing approved DEVELOPMENT installation. Owner performs initial interactive Atlassian login/MFA; private gitignored session reuse detects missing/expired auth without bypass. Suite uses accessible rendered Custom UI controls for health, schema ready v1, Lantern Fibre admin, sites/carriers/sla_tiers and available next pages. Require fresh loading/completion, actual persisted display counts/fields/lifecycle/version, bounded increasing duplicate-free paging, fixed error categories and UTC duration evidence. Write private JSON/escaped HTML reports and terminal summary; collect allowlisted hosted logs and distinguish displayed UUIDs, unique temporal candidates and ambiguous/unmatched events. Never collect raw screenshots/traces/cookies/error/payload dumps or click mutation controls. No new Forge permission/endpoint/backend, deployment or database mutation. CI validates harness logic without credentials; owner desktop authentication/hosted execution remain separate. See [runbook](../../e2e/README.md).
+
+## Authentication correction requirements — 2026-11-26
+
+Owner requests stage-specific safe diagnostics for authentication, executable/display/dependency and private-storage failures plus credential-free `test:e2e:doctor`. Support normal Ubuntu desktop interactive SSO/MFA with private atomic session storage; preserve all existing application/harness tests and browser fixtures. No deployment, tunnel, hosted data or permission changes. See E2E README for category-specific remedies and audit for actual results.
+
+## Browser compatibility correction — 2026-11-26
+
+E2E browser channel is selected through `LIGHT_HOUSE_E2E_BROWSER_CHANNEL`: installed Chrome Stable (`chrome`, default) or Playwright full Chromium (`chromium`). All browser workflows share sandbox-enabled launch settings; invalid values/root execution fail closed. Never weaken AppArmor/kernel settings or reuse a personal profile. Preserve private atomic session storage and existing read-only target/tenant policy. Investigate audit-count variability separately without dependency upgrades.
+
+## Sprint 1 native evidence refinement — 2026-11-26
+
+DEVELOPMENT 3.3.0 bounded LIMIT correction is functionally accepted for sites/carriers/sla_tiers. Native reads verify four first-batch records plus the additional repair-probe site; full fixture/replay/repair/isolation requirements remain in force. Hosted list lifecycles succeed independently; entity-to-UUID attribution remains unmatched without click intervals. Do not turn the application-specific binding diagnosis into a provider-wide LIMIT restriction. Browser launch is resolved, authenticated hosted automation remains blocked, and isolated read-only harness controls are preserved. Remaining requirements and applicable authorisations are enumerated in the [current completion matrix](sprint-1-execution-report.md#consolidated-sprint-1-completion-plan--2026-11-26); no acceptance requirement or later-sprint boundary is weakened.
+
+## Eleven-kind baseline and bounded acceptance — 2026-11-27
+
+All eleven native UI retrieval kinds now pass; preserve empty-success versus failed/stale distinction and temporal-candidate versus exact UUID attribution. Customers TypeError historical cause stays unverified; no corrective implementation claim. Baseline does not waive total counts, populated rendering, pagination, physical schema, receipts/intents, security/recovery or current usage requirements. Prepare one conditional existing-installation Phase B tranche with explicit writes, identities, estimated 2,000 incremental SQL calls within existing 5,000 cumulative ceiling, stop conditions and browser instructions; held expiry/fault/request-driver/deployment/second-installation gates remain separate. See current execution report/runbook. No requirement or architecture scope expands to Sprint 2.
+
+## Owner-approved Phase B prerequisite boundary — 2026-11-27
+
+The bounded functional session is now approved subject to ALL five prerequisites before ANY mutation, including independent seed/repair. Additional request limit2,000 within cumulative5,000 is unchanged. Missing identities/consent or usage/state evidence cannot be waived by scope approval. Use the self-contained Cloud Browser execution prompt in the live runbook; report inaccessible/untested separately from failed operations. No runtime, integration or architecture scope changes.
+
+## Proposed independent Phase B gates — 2026-11-27
+
+Partition prerequisites, not acceptance criteria: B.1 requires existing consenting admin and all resource/state/receipt/stop gates; B.2 additionally requires named consenting lower-role identities and safe supported grant/expiry/access tests. Missing B.2 identities must not unnecessarily block independently approved B.1. Revised authorisation review precedes mutation. All original shared write limits/2,000 additional/5,000 cumulative ceiling remain. Recovery, full RBAC/expiry/isolation and partial migration retry/concurrency are not completed by clean probe/rerun/admin success. No new runtime/architecture scope.
+
+## Delivery governance reassessment — 2026-11-27
+
+Required classification is separate implementation/development progression, concrete development deployment/runtime authority, protected integration/merge and final release acceptance. Sprint1 may be implementation-complete locally with outstanding native release requirements; full acceptance is not asserted. No tenant/auth/expiry/reference/CAS/receipt/security regression/control may be weakened. Missing native identities/second installation are release evidence dependencies, not an architectural prerequisite for writing Sprint2 port/use-case code. See ADR-0017 and execution-report classification D/DEP/R/O.
+
+R-01–R-14 in acceptance-criteria.md remain mandatory release backlog with owner/environment/test evidence. B.1 independent administrator acceptance remains bounded/reviewed; B.2 identities/expiry/access evidence and genuine second installation remain blocked without appropriate consent. No new tests, infrastructure, identities/installations, implementation scope, deployment, mutation, publication/merge or release is authorised by a governance recommendation.

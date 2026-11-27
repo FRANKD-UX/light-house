@@ -1,5 +1,7 @@
 # Sprint 1 owner decision package
 
+**Current delivery recommendation (2026-11-27):** Implementation-complete locally with mandatory release acceptance outstanding; GO for local Sprint2 after explicit owner scope/governance approval, not deploy/merge/release authority. See [gate classification](sprint-1-execution-report.md#delivery-governance-reassessment--2026-11-27-current-recommendation). Prior evidence and untested requirements remain preserved.
+
 Reviewed 2026-11-26. Scope: existing LH-101/LH-102 only. **Local review complete; development deployment awaits owner decisions. Live acceptance and merge remain incomplete.** No new sprint is proposed. This review records recommendations, not risk acceptance or deployment consent.
 
 ## Independently reproduced baseline
@@ -124,3 +126,9 @@ Remaining owner decisions: (1) approve/reject the specific new development depen
 ## Superseding owner decision — 2026-11-26
 
 The owner now approves the exact reviewed development dependency exception, SQL module, async consumer/function, read:jira-work, MAJOR_VERSION_RULE, development deploy, existing Jira installation major upgrade/admin consent, fifteen migrations, synthetic seeding and bounded native tests with a 5,000 SQL-request planning budget. Public Sprint 1 branch/PR and remote CI are authorised. This supersedes the pending-authorisation statements above, which remain historical review evidence. Second genuine installation and final merge require separate approval. No staging/production, paid resources, real data/integrations, distribution or licence decision is authorised. Current execution evidence is in the execution report and audit.
+
+## Superseding delivery governance recommendation — 2026-11-27
+
+Historical “do not merge until second installation/native matrix” wording above mixes progression and release. Proposed ADR-0017 replaces it with explicit development, deployment/runtime, integration/merge and release gates after owner adoption. Scoped implementation review/local checks support Sprint1 implementation-complete with outstanding release acceptance and GO for explicitly authorised local Sprint2 scope, not release/deploy/merge approval.
+
+PR2 draft/old SHA CI is green, but current dirty corrections/harness/docs need reviewed commit/exact-head CI/protection/owner authority before merge. Native RBAC/expiry/second-installation and other R-01–R-14 remain mandatory release backlog, not blanket local-development dependencies. Current scanner coverage is incomplete, dependency advisories open, full native evidence absent; no clean-security/native certification. See current execution-report classification and security-review update. No application fix, new infrastructure, mutation, deployment or next-sprint implementation performed.

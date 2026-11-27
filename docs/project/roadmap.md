@@ -1,5 +1,9 @@
 # Delivery roadmap — revised 2026-11-25
 
+**Owner decision (2026-11-27):** ADR-0017 accepted; Sprint1 IMPLEMENTATION-COMPLETE LOCALLY — RELEASE ACCEPTANCE OUTSTANDING. Local checkpoint and isolated LH-103 implementation authorised. No release/production/deployment/native mutation/publication/merge authority. Prior proposal/hold entries are dated history.
+
+**Current delivery recommendation (2026-11-27):** Implementation-complete locally with mandatory release acceptance outstanding; GO for local Sprint2 after explicit owner scope/governance approval, not deploy/merge/release authority. See [gate classification](sprint-1-execution-report.md#delivery-governance-reassessment--2026-11-27-current-recommendation). Prior evidence and untested requirements remain preserved.
+
 Internal release target: 19 December 2026; submission: **22 December 2026 at 22:00 SAST (20:00 UTC)**. Sprints are ordered slices, not full weeks. Capacity is a high schedule risk; owner must re-estimate each exit. No Sprint 1 implementation has begun or is authorised automatically.
 
 | Sprint | Outcome                                                                               | Exit gate                                                                                                                                                    |
@@ -21,3 +25,9 @@ Critical path: LH-013 registration/runtime and LH-014 security disposition → L
 Mandatory MVP retains Zabbix/shared adapter design, synthetic multi-site services/inventory, unknown-context triage, distinct impact, versioned configurable P1/P2/P3 deadlines/warnings, real JSM incidents/native notifications, NOC acknowledgement/triage, direct NOC remediation, basic accepted/rejected/returned handoffs, final validation/guarded closure, audit and operational UI, Entra/Google/manual identity mapping and fresh judge installation. Any integration scope reduction requires an explicit owner decision; provider delay is not silent completion.
 
 Outside critical path: Zoho Desk post-resolution (LH-190), advanced workflow customisation/checklist authoring and extra SLA timers (LH-191), topology correlation, arbitrary dependency graphs, sophisticated failover, business-hour calendars, large directory sync and high-volume tuning. No general-purpose workflow designer or BPMN engine. Slice the MVP narrowly within these requirements instead of adding optional engines.
+
+## Development progression critical path — 2026-11-27 (owner review)
+
+Historical exit gates above mixed local implementation and final release. Proposed ADR-0017 separates them without removing mandatory MVP/security/native requirements. Minimal next path: approve governance distinction and explicit LH-103 local scope → preserve a reviewed reproducible Sprint1 baseline and exact-head CI/review for integration → implement Sprint2 authenticated Zabbix/shared adapter/inbox/deduplication locally → separately review concrete development deployment. B.1 runs in parallel under its own authority; R-01–R-14 release evidence, real RBAC/expiry and second installation remain mandatory before release/distribution/submission.
+
+No full native acceptance, identity procurement, infrastructure troubleshooting or arbitrary diagnostics expansion is a blanket prerequisite to writing Sprint2 code. No actual Sprint2 work or deploy/merge began in this reassessment. Original owner-recorded target19Dec/submission22Dec20:00UTC and required integrations remain planning constraints, not a claim of reverified contest terms.

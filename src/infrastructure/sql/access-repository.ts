@@ -1,3 +1,7 @@
+import {
+  noInventoryDiagnostics,
+  type InventoryDiagnostics,
+} from '../../application/ports/inventory-diagnostics';
 import type {
   AccessRepository,
   Membership,
@@ -11,15 +15,18 @@ export class SqlAccessRepository implements AccessRepository {
     private readonly db: SqlDriver,
     private readonly id: () => string,
     private readonly now: () => string,
+    private readonly diagnostic: InventoryDiagnostics = noInventoryDiagnostics,
   ) {}
   async schemaStatus(session: Session) {
     try {
-      const rows = await this.db.rows<{
-        readiness: string;
-        schema_version: number;
-      }>(
-        'SELECT readiness, schema_version FROM installation_metadata WHERE installation_id = ? AND environment = ?',
-        [session.installationId, session.environment],
+      const rows = await this.diagnostic.run('schema.sql', () =>
+        this.db.rows<{
+          readiness: string;
+          schema_version: number;
+        }>(
+          'SELECT readiness, schema_version FROM installation_metadata WHERE installation_id = ? AND environment = ?',
+          [session.installationId, session.environment],
+        ),
       );
       return rows[0] &&
         ['ready', 'provisioning', 'failed'].includes(rows[0].readiness) &&

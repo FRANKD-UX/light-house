@@ -1,4 +1,8 @@
 import {
+  noInventoryDiagnostics,
+  type InventoryDiagnostics,
+} from '../ports/inventory-diagnostics';
+import {
   definitions,
   integer,
   InventoryError,
@@ -18,6 +22,7 @@ export class InventoryService {
   constructor(
     private readonly deps: InventoryDependencies,
     readonly session: Session,
+    private readonly diagnostic: InventoryDiagnostics = noInventoryDiagnostics,
   ) {}
   async admin(): Promise<void> {
     if (!(await this.deps.isJiraAdmin())) throw new InventoryError('DENIED');
@@ -27,18 +32,22 @@ export class InventoryService {
     permission: 'read' | 'write' | 'configure' = 'read',
   ): Promise<TenantContext> {
     const tenantId = uuid(tenant);
-    if (!(await this.deps.access.ready(this.session)))
-      throw new InventoryError('NOT_READY');
-    const memberRole = await this.deps.access.membership(
-      this.session,
-      tenantId,
+    await this.diagnostic.run('schema.readiness', async () => {
+      if (!(await this.deps.access.ready(this.session)))
+        throw new InventoryError('NOT_READY');
+    });
+    // The membership SELECT also enforces installation, active tenant/grant and expiry.
+    const memberRole = await this.diagnostic.run('tenant.membership', () =>
+      this.deps.access.membership(this.session, tenantId),
     );
-    if (
-      !memberRole ||
-      (permission === 'write' && memberRole === 'viewer') ||
-      (permission === 'configure' && memberRole !== 'admin')
-    )
-      throw new InventoryError('DENIED');
+    await this.diagnostic.run('tenant.authorisation', () => {
+      if (
+        !memberRole ||
+        (permission === 'write' && memberRole === 'viewer') ||
+        (permission === 'configure' && memberRole !== 'admin')
+      )
+        throw new InventoryError('DENIED');
+    });
     return {
       installationId: this.session.installationId,
       tenantId,
@@ -122,20 +131,32 @@ export class InventoryService {
     return { saved: true };
   }
   async list(input: unknown) {
-    const data = object(input);
-    const entity = kind(data.entity);
+    const { data, entity } = await this.diagnostic.run(
+      'inventory.parameters',
+      () => {
+        const data = object(input);
+        return { data, entity: kind(data.entity) };
+      },
+    );
     const ctx = await this.context(data.tenantId);
-    const after = data.after === '' ? '' : uuid(data.after);
-    const limit = integer(data.limit, 50);
+    const { after, limit } = await this.diagnostic.run(
+      'inventory.parameters',
+      () => ({
+        after: data.after === '' ? '' : uuid(data.after),
+        limit: integer(data.limit, 50),
+      }),
+    );
     const rows = await this.deps.inventory.list(ctx, entity, after, limit + 1);
-    const page = rows.slice(0, limit);
-    return {
-      rows: page.map((row) => ({
-        ...row,
-        pending: row.pending ? 'repair-required' : null,
-      })),
-      next: rows.length > limit ? page[page.length - 1]!.id : null,
-    };
+    return this.diagnostic.run('response.contract', () => {
+      const page = rows.slice(0, limit);
+      return {
+        rows: page.map((row) => ({
+          ...row,
+          pending: row.pending ? 'repair-required' : null,
+        })),
+        next: rows.length > limit ? page[page.length - 1]!.id : null,
+      };
+    });
   }
   async references(
     ctx: TenantContext,

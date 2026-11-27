@@ -1,6 +1,12 @@
 # Engineering backlog
 
-Updated 2026-11-26 (explicitly authorised Sprint 1 implementation). P0 critical path/security; P1 planned supporting delivery; P3 stretch. “Documented” is design completion, not implemented functionality. Sprint 0 local evidence and external gates are recorded separately in audit and acceptance criteria. Current Sprint 1 evidence supersedes historical foundation blockers; see sprint-1-execution-report.md.
+**Owner decision (2026-11-27):** ADR-0017 accepted; Sprint1 IMPLEMENTATION-COMPLETE LOCALLY — RELEASE ACCEPTANCE OUTSTANDING. Local checkpoint and isolated LH-103 implementation authorised. No release/production/deployment/native mutation/publication/merge authority. Prior proposal/hold entries are dated history.
+
+**Current delivery recommendation (2026-11-27):** Implementation-complete locally with mandatory release acceptance outstanding; GO for local Sprint2 after explicit owner scope/governance approval, not deploy/merge/release authority. See [gate classification](sprint-1-execution-report.md#delivery-governance-reassessment--2026-11-27-current-recommendation). Prior evidence and untested requirements remain preserved.
+
+**Current review:** B.1 admin-only/B.2 consenting-identity partition proposed; revised authorisation review before mutations. Recorded286 SQL requests require lag-aware reconciliation; prior accepted reads preserved.
+
+Updated 2026-11-27 (eleven-kind native baseline; Phase B approved conditionally, prerequisites blocked). P0 critical path/security; P1 planned supporting delivery; P3 stretch. “Documented” is design completion, not implemented functionality. Sprint 0 local evidence and external gates are recorded separately in audit and acceptance criteria. Current Sprint 1 evidence supersedes historical foundation blockers; see sprint-1-execution-report.md.
 
 ## LH-001 — Repository baseline
 
@@ -163,9 +169,9 @@ Updated 2026-11-26 (explicitly authorised Sprint 1 implementation). P0 critical 
 - Priority: P0
 - Dependencies: Accepted foundation cc82f504; LH-004,LH-007.
 - Acceptance criteria: Real SQL migrate/retry; two-tenant/two-installation denial; parameterised operations; durable repair.
-- Status: Implemented locally; acceptance incomplete.
+- Status: IMPLEMENTATION-COMPLETE LOCALLY — RELEASE ACCEPTANCE OUTSTANDING (ADR-0017 accepted).
 - Verification evidence: Executable repositories, application/resolver/UI paths, local relational simulation and mock-SDK tests; Sprint 1 execution/security reports.
-- Known blockers: Native SQL/migration/security/recovery/usage acceptance and actual second-installation evidence; final-head CI/review and separate owner merge approval. Official approved-rule lint, development deploy 3.0.0, existing installation major 3 upgrade, renewed exact-tree dependency disposition, branch publication/PR #2 and initial required CI passed. Foundation is accepted, not reopened.
+- Known blockers: Named migration/ready-v1 sub-gate and exact-UUID hosted health are accepted. DEVELOPMENT 3.3.0 now has native UI retrieval acceptance across eleven types; seven exact windows map to unique temporal candidates, one serialization-success event unavailable. Remaining physical schema, retry/concurrency, native roles/two-ISP/two-installation isolation, CAS/duplicates, repair/receipts, policy and usage gates remain partial/untested. Genuine second installation and final publication/merge require separate approval; final-head CI/review remains open. See current execution-report completion matrix.
 
 ## LH-102 — Synthetic ISP inventory
 
@@ -174,9 +180,9 @@ Updated 2026-11-26 (explicitly authorised Sprint 1 implementation). P0 critical 
 - Priority: P0
 - Dependencies: LH-101.
 - Acceptance criteria: Multi-site primary/backup inventory, same-tenant/lifecycle validation and distinct service identities.
-- Status: Implemented locally; live persistence acceptance incomplete.
+- Status: IMPLEMENTATION-COMPLETE LOCALLY — RELEASE ACCEPTANCE OUTSTANDING (ADR-0017 accepted).
 - Verification evidence: Eleven inventory entity kinds, two-ISP fixtures, UI operations, negative/security and retry/concurrency tests.
-- Known blockers: Installed SQL acceptance and remote review gates. Impact algorithm and operational policy selection remain later work, not Sprint 1 prerequisites to local inventory implementation.
+- Known blockers: All eleven native UI retrieval kinds pass, including seven exact-window empty successes and prior uplinks confirmation. Counts/fields for uplinks are unspecified; total counts/populated empty-kind rendering remain unverified. Physical schema/intents/receipts/current usage are access-blocked; full seed/replay/reload, relationships/roles/expiry, CAS/duplicates, repair, policy/retry and pagination remain unaccepted. Customers TypeError did not recur, historical cause unverified with no correction claimed. Bounded Phase B is now approved conditionally; all mandatory prerequisites remain unverified, so no mutations initiated. Self-contained Cloud Browser prompt is ready. Deployment/publication/merge/Sprint 2 remain prohibited.
 
 ## LH-103 — Authenticated Zabbix ingestion
 
@@ -358,3 +364,79 @@ Owner authorisation now covers the reviewed development dependency exception, de
 Development platform update: official lint passes, deploy 3.0.0 succeeds and existing Jira development installation is independently confirmed major 3/up-to-date. Native SQL/installed behaviour remain pending owner UI execution and backend verification; second installation and merge remain blocked.
 
 Publication/CI update: draft PR #2 exists, Validate run 45804050905 passed on 3926d38; protected main requires strict validate. Native acceptance and genuine second-installation evidence still block completion/merge; no next sprint started.
+
+## LH-101 read-only diagnostic preparation — 2026-11-26
+
+The latest request authorises a fixed development-only Jira-administrator diagnostic if Console cannot show checkpoint names/metadata. Implemented locally via the existing inventory resolver and a manual button: expected/actual/missing known names, redacted unexpected-name count, readiness presence/value, environment, version/type and sanitised list/query errors. No schema/readiness/tenant/inventory writes or arbitrary SQL/context arguments. Mocked boundary/contract/UI checks pass; live tunnel/native result pending. Existing migration/bootstrap/seed hold remains. New deployment and remote publication are not performed; fallback changes and owner-run tunnel are documented in the live runbook. LH-101/LH-102 and Sprint 1 remain incomplete; no Sprint 2.
+
+## LH-101/LH-102 controlled diagnostic deployment — 2026-11-26
+
+Owner-authorised existing-development-only diagnostics deployed successfully as 3.1.0 (official history 2026-11-26T18:37:51.579Z); same single Jira installation remains major 3 (Latest), Up-to-date without upgrade. All 115 tests/13 files, local validation and official lint pass; manifest/scopes/permissions/egress/dependencies/migrations unchanged. Exact reviewed changeset and official package evidence in audit.md. Fresh sanitised invocation category/code and correlation capture remains pending because browser host is unavailable; exact manual controls in live runbook. Runtime/root-cause/inventory acceptance remain open. No database mutation, additional installation, production, publication, merge or Sprint 2; unresolved LH-014 remains accepted for development/synthetic-only use.
+
+Latest owner capture uses pre-3.1.0 generic rejection wording, with no category/time/valid UUID. Submitted UI resource comparison confirms wording mismatch, so this is not verified execution of the new rejection path. Establish fresh DEVELOPMENT UI delivery using the live-runbook private-session step; hosted root cause and inventory acceptance remain open. No further deployment or database action.
+
+## Current bounded diagnostic investigation — 2026-11-26
+
+The new owner request supersedes the LH-101/LH-102 text above that forbids further deployment: a controlled diagnostic-only DEVELOPMENT deployment is now authorised after required engineering gates. No data mutation, additional installation, tunnel restart or functional SQL correction is authorised. Lifecycle instrumentation is deployed to DEVELOPMENT as 3.2.0; hosted history Success at 2026-11-26T19:25:30.461Z. Same existing Jira installation remains major 3 (Latest), Up-to-date. All 124 tests pass, preserving the existing 117 cases plus seven new cases. Hosted log retrieval since deployment returns no events; fresh owner Load inventory UUID/UTC capture is pending because browser access is unavailable. Official Forge lint retry passes (secure-login escalation; prior timeout remains historical). Runtime attribution, LIMIT compatibility and persisted-state baseline are still open; do not mark LH-101/LH-102 complete or start Sprint 2. See the latest audit/investigation entries for deployment and native acceptance status.
+
+## DEVELOPMENT 3.2.0 UUID attribution — 2026-11-26
+
+Supplied inventory UUID 878d3b6f-6fec-4e2d-bb07-829509844583 is traced: first failure inventory.sql at 19:29:19.693Z, SQL_ERROR / SQL_EXECUTION_ERROR / ER_WRONG_ARGUMENTS. Readiness, membership, authorisation, parameters and query construction succeed; mapping/response stages are not reached. resolver.completion repeats the original failure. Health UUID 895938f9-2eff-4e56-8d47-7a3c0265dd2b independently matches success at 19:28:18.546Z. This supersedes pending-UUID/unknown-stage instructions above. LIMIT binding is the leading source-based diagnosis, not conclusively distinguished from another argument defect inside the SELECT/driver. Proposed safe-integer 1–51 literal LIMIT with bound tenant/cursor and unchanged paging/security is documented for review, not implemented or deployed. No mutation or repeated UI test; persisted baseline and remaining native gates remain open. See [investigation](../operations/sprint-1-inventory-investigation.md).
+
+## LH-101/LH-102 pagination correction checkpoint — 2026-11-26
+
+Owner authorised bounded LIMIT correction and conditional existing DEVELOPMENT deployment. Implemented locally across shared eleven-kind list query; regression additions unexecuted. **Stopped: required typecheck TS2345 in new diagnostic test spy; no deployment.** Lint/format passed; tests/coverage/build not reached; official Forge lint blocked by sandbox credential-store access. Audits retain eleven accepted-development-only findings. Last verified hosted version remains 3.2.0; native diagnosis/persisted rows and Sprint 1 acceptance remain open. See investigation/audit for exact results and read-only UI acceptance. Earlier no-correction-authorisation wording is superseded; no merge or Sprint 2.
+
+## Resumed bounded LIMIT engineering gates — 2026-11-26
+
+Supersedes the preceding stopped-at-TS2345 checkpoint and stale no-functional-deployment wording: owner explicitly directs safe defect remediation and retains controlled correction deployment authorisation. Test diagnostic now preserves run<T> using a wrapper plus separate stage spy; production interfaces/compiler settings unchanged. All 148 tests pass, retaining the existing 124 plus 24 new regressions; npm run validate and official Forge lint pass. Fresh-cache audits retain the accepted eleven findings/three advisory roots and unchanged dependency tree. All eleven inventory kinds preserve bounded decimal LIMIT, tenant/cursor bindings, ordering/lookahead/isolation and structured diagnostics. Deployment/postflight and native capture results are recorded in the subsequent investigation/audit entry. Browser host unavailable; LH-101/LH-102 and native ER_WRONG_ARGUMENTS diagnosis remain incomplete pending hosted evidence. No Sprint 2.
+
+## Bounded LIMIT correction deployed — 2026-11-26
+
+Generic test diagnostic now preserves run<T> with a separate typed stage spy; no production interface/compiler weakening or regression removal. npm run validate passes all 148 tests (existing 124 plus 24 new), coverage 97.03% statements/96.57% branches/100% functions/98.03% lines, production build and local manifest checks. Official Forge lint retry passes; prior sandbox/timeout failures are separate external failures. Fresh-cache audits retain eleven known findings (5 high/6 moderate) under exact-tree DEVELOPMENT-only disposition. All eleven kinds retain tenant/cursor bindings, deterministic keyset/lookahead, isolation and diagnostics with safe-integer 1–51 decimal LIMIT. Dependencies/permissions/migrations/egress/app identity unchanged.
+
+Authorised attributed DEVELOPMENT deployment succeeds as **3.3.0**, hosted history **2026-11-26T19:43:47.949Z**. Existing Jira installation remains major 3 Latest/Up-to-date and exactly matches preflight; no installation mutation. Version compatibility metadata unchanged. Deployment acceptance is separate from native acceptance. Browser host unavailable; exact sites/carriers/sla_tiers actions and UTC/outcome request sent to owner. No fresh native correlation-linked result at this checkpoint; ER_WRONG_ARGUMENTS diagnosis remains provisional. No tunnel/database mutation, merge or Sprint 2. See latest audit/investigation for exact commands, hashes, changed files and evidence limits.
+
+## Reusable automated native acceptance infrastructure — 2026-11-26
+
+Implemented isolated TypeScript/Playwright e2e workspace and root test:e2e:auth, test:e2e:development, test:e2e:development:headed, test:e2e:report, test:e2e:check and test:e2e:fixture commands. Pinned development-only tooling has its own lock/audit (zero findings), no Forge runtime/dependency/permission/migration/egress changes. Owner interactive Atlassian login/MFA stores a private ignored session; the suite automates only health, ready-v1 overview, approved ISP selection and sites/carriers/sla_tiers plus available next pages. Fresh rendered transitions, real row counts/fields/lifecycle/version, empty-success distinction, bounded ordering/duplicate checks, fixed errors and UTC durations feed curated private JSON/escaped HTML and terminal summaries. Hosted CLI diagnostics distinguish displayed UUID matches from temporal candidates/ambiguous/unmatched evidence. No screenshots/traces/raw browser/network/error dumps or mutation clicks. CI runs credential-free logic tests; local synthetic Chromium fixture passes and is not native acceptance.
+
+Current hosted run is blocked at AUTH_REQUIRED with reports produced and no app invocation; headed browser probe is sandbox-restricted. Owner desktop first-use commands in e2e/README.md replace manual per-inventory repetition. Local application validation retains all 148 tests and coverage/build; harness logic tests pass (8). Official Forge lint retry passes; prior timeout remains failed external evidence. Root audits retain eleven known findings under existing DEVELOPMENT-only disposition. DEVELOPMENT remains 3.3.0; no new deployment, installation, SQL/tunnel mutation, merge or Sprint 2. Native LIMIT diagnosis and other Sprint 1 acceptance gates remain open. See latest audit for exact commands/results.
+
+Final CLI-format refinement: actual grouped hosted logs carry time-only UTC prefixes. Parser now reconstructs dates only from a unique bounded query interval and labels provenance; ambiguous dates are rejected. Nine credential-free harness checks pass, including midnight/multiple-date cases. Safe projection reproduced the 22 events and SQL_EXECUTION_ERROR/ER_WRONG_ARGUMENTS stages of the historical DEVELOPMENT 3.2.0 UUID, not a fresh 3.3.0 invocation. No native correction success inferred.
+
+## Authentication correction checkpoint — 2026-11-26
+
+Authentication CLI now reports the actual failing stage via fixed safe categories; local-only `test:e2e:doctor` checks desktop/browser/storage prerequisites. Private-directory mkdir now preserves OS error codes internally for permission categorisation. Corrected Ubuntu commands/remedies are in E2E README and live runbook. Owner's previous failure cause remains unverified until the corrected doctor runs there; desktop login/MFA and fresh hosted inventory acceptance remain open. No Sprint 2 or hosted mutation.
+
+## Browser compatibility correction — 2026-11-26
+
+Implemented shared sandboxed launch configuration with Chrome Stable default and explicit Chromium selection for doctor, interactive authentication, both hosted modes and synthetic fixture; six new regression tests preserve the original 14 harness tests. Downloaded Chromium startup failure is now confirmed owner evidence, superseding the earlier unknown-cause checkpoint. Local test/build results and desktop/native limits are in audit.md. LH-101/LH-102 native acceptance stays open; no Sprint 2. LH-014 audit investigation reproduces 17 default-cache versus 11 fresh-cache findings on the unchanged lock, with identical three advisory roots and six additional inherited ProseMirror entries; no remediation claimed.
+
+## Current Sprint 1 continuation — 2026-11-26
+
+Three-kind native SQL correction functional acceptance and five-record persistence are accepted. LH-101/LH-102 remain incomplete for the separately enumerated native gates. The [consolidated completion plan](sprint-1-execution-report.md#consolidated-sprint-1-completion-plan--2026-11-26) is authoritative over historical pending-UUID, unknown-persistence and browser-launch next actions below/above. Preserve harness and current branch ancestry; no mutation, deployment, tunnel, publication, merge or Sprint 2 in this handoff.
+
+## Phase A customers investigation — 2026-11-27
+
+LH-101/LH-102 remain incomplete. Owner reports two customers Bridge rejections (unclassified, then TypeError after hard refresh); ready v1/all fifteen migrations/admin membership/ISP v2 remain available. Four kinds reportedly pass; fourth kind/counts not yet identified in this update. Exact health UUID matches 05:13:07.217Z. Two nearby complete hosted list lifecycles have successful SQL/mapping/serialization/completion but remain entity-unmatched without click intervals. No SQL defect or customer backend completion established. Local comparison finds one scalar payload/resolver/response path across eleven kinds; three new mock-Bridge regressions pass. Owner continues remaining read-only kinds; no deployment, mutation, repeated accepted checks or Sprint 2. See [investigation](../operations/sprint-1-inventory-investigation.md#phase-a-customers-bridge-rejection-investigation--2026-11-27).
+
+## Bounded Phase B approved; prerequisite hold — 2026-11-27 (current)
+
+Owner-approved bounded Phase B is conditional; execution is BLOCKED before mutations. Codex browser inventory returned no apps/browsers and host unavailable. Fresh development usage, tenant/row pending state, receipt evidence, consenting V/O identities/contexts and cumulative SQL headroom remain unverified. No Phase B native action, unsuccessful mutation or deployment occurred; these are inaccessible evidence/prerequisite gaps, not application failures.
+
+LH-101/LH-102 remain incomplete. Owner approved the single bounded session, with all five prerequisites global before any mutation. [Cloud Browser executor prompt](../operations/sprint-1-live-acceptance.md#self-contained-cloud-browser-execution-prompt--2026-11-27) is ready; no individual app clicks requested of the owner. Current task is access/evidence/identity preflight, not further blanket authorisation. Prior native eleven-kind baseline and historical TypeError uncertainty are preserved. No new runtime exercise attempted, no deployment, merge or Sprint2.
+
+## Authenticated Phase B prerequisite checkpoint — 2026-11-27 (current)
+
+Owner approved Phase B conditionally; all mutations held because applicable V/O test identities and consent remain unverified (owner unsure). Authenticated Console now accessible: existing DEVELOPMENT 3.3.0 Latest confirmed; fresh displayed SQL requests 286, SQL compute 0.006 hours/storage 0 GB-hours, Functions 30.2469 GB-seconds/logs 0.0005 GB; current/forecast $0, November 1–27. Up-to-one-hour usage lag means 286+2,000<=5,000 is conditional planning arithmetic, not a verified remaining bound. Lantern tenant v2 pending null; existing repair probe v1 pending null and one matching receipt among five visible receipts. Partial samples do not prove exhaustive clean state/receipt uniqueness. Recovery fault path NOT EXERCISED; all Phase B functional exercises BLOCKED / NOT RUN. No mutation/deploy/tunnel/production/new installation/publication/merge/Sprint 2. Prior native baseline preserved. Full evidence, UTC observations, limitations and browser instructions are in the latest live-acceptance checkpoint and execution report. Consent must be explicitly supplied through private identity mapping; no account creation is inferred.
+
+## Phase B.1 / B.2 independent prerequisite proposal — 2026-11-27 (current)
+
+LH-101/LH-102 incomplete. B.1 administrator functional work can be separated from B.2 consenting-identity authorisation work without waiving acceptance criteria. Revised gates/prompts ready in live runbook, owner review/authorisation required before ANY mutations. Recorded SQL286 and one-hour lag reconciled conditionally; proposed1,750/250 share existing2,000 additional/5,000 cumulative cap, no reset. Probe clean, recovery NOT EXERCISED; RBAC/expiry/foreign-user access/installation isolation and partial migration retry/concurrency remain open. No new native operations or code/dependency/deployment changes.
+
+## Owner-approved Sprint1 checkpoint and LH-103 start — 2026-11-27
+
+ADR-0017 accepted. Sprint1 status: **IMPLEMENTATION-COMPLETE LOCALLY — RELEASE ACCEPTANCE OUTSTANDING**. Owner authorises local reproducible checkpoint commit and isolated Sprint2 LH-103 implementation. Final native R-01–R-14, LH-014 security disposition, licence, release/installation gates remain open. No merge/protection bypass, deployment, new installation or hosted mutation authority is implied. PR2 published ddf0d9d/run45804565939 remains historical until a separately authorised exact-head publication/CI.
+
+Privacy checkpoint removes private site/environment target strings from publication candidates and keeps the exact approved target in ignored owner-only e2e/.local/approved-target.json. Hosted auth/run fails closed without that config; no URL override or session inspection. All151 application tests and20 harness checks retained; added target-input negatives inside existing harness check. Exact local checkpoint SHA recorded after creation in the subsequent audit/handover. LH-103 remains local-only and its release evidence will be distinct from implemented functionality.

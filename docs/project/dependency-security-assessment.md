@@ -141,3 +141,49 @@ Fresh emitted graphs contain 156 UI/122 fully bundled backend inputs, excluding 
 On 2026-11-26 the owner explicitly renewed LH-014 for the exact reviewed Sprint 1 dependency tree: API 8.5.1, Bridge 7.4.0, Events 3.0.11, Resolver 2.0.2, SQL 4.0.11, React/React DOM 18.3.1 and the unchanged pinned development dependencies/lockfile. Lockfile SHA-256: c56853fced1c653c74e998d0d490b0aeb285f8ae5bc23a4315ab007efb97e60c. Fresh full and omit-dev audits each exit 1: five high/six moderate package findings, zero new advisory identifiers. Exact affected installed versions, dependency paths, GHSA-c8x8-7fp4-3x9w, GHSA-3g3m-2fjr-6pw4 and GHSA-g3hv-75wg-m249, and exposure limitations are in the readiness review tables above, incorporated into this disposition.
 
 This exception covers only reviewed LH-101/LH-102, the authorised development environment and existing owner-controlled installation, synthetic data and controlled acceptance exercises. Vulnerabilities are not remediated; LH-014 remains open. No automatic extension to dependency changes or additional installations; staging/production security remains blocked. Existing local graph/sink limitations and the separate official packaging gate remain applicable. No deadline beyond the owner's stated scope is inferred from the earlier proposed recommendation.
+
+## Sprint 1 isolated acceptance-tooling dependency review — 2026-11-26
+
+The owner explicitly requests terminal Playwright engineering infrastructure. Added only isolated e2e/package.json and e2e/package-lock.json: @playwright/test 1.65.1, TypeScript 6.0.3 and @types/node 22.20.5, all dev dependencies. Transitives: playwright/playwright-core 1.65.1 and undici-types 6.21.0. Lock metadata reviewed: Playwright/core/test and TypeScript Apache-2.0, Node/undici types MIT. Playwright requires Node >=20, TypeScript >=14.17; compatible with pinned Node 22.23.4. Root runtime dependencies and root lock unchanged; no override, force fix or SDK downgrade. Isolated lock SHA-256 10198a47b1074d9ba94104caa5646e0ada662f5d8132026c9d2ca1587703bde5.
+
+Registry metadata queried before adoption; fresh isolated audit exits 0, zero findings. npm ci --prefix e2e installs six packages successfully; browser tooling downloaded separately to a temporary path for local checks, outside source/runtime. Fresh root full/production audits still exit 1 with eleven existing findings (5 high/6 moderate), the same three advisory roots under the existing DEVELOPMENT-only application disposition. No vulnerable package is claimed remediated.
+
+Runtime separation: no src/static/app/manifest imports or references to Playwright/e2e; application build entrypoints and manifest resources remain scoped, and application dependency lock hash c56853fced1c653c74e998d0d490b0aeb285f8ae5bc23a4315ab007efb97e60c is unchanged. No deployed package or official archive was rebuilt/deployed for this harness. CI installs isolated tooling and runs only credential-free logic checks; hosted sessions and browser artifacts are never uploaded. Initial owner login/MFA and private local artifact controls are required. See e2e/README.md.
+
+## Authentication correction audit refresh — 2026-11-26
+
+No dependency version or lockfile changed. Node 22.23.4/npm 10.9.9; E2E remains @playwright/test 1.65.1, @types/node 22.20.5, TypeScript 6.0.3. `npm ci --prefix e2e` installs six packages; separate `npm audit --prefix e2e --json` reports zero. Current root `npm audit --json` reports 17 (11 high/6 moderate), versus earlier 11 (5 high/6 moderate); the higher count includes inherited ProseMirror package findings; GHSA-c8x8-7fp4-3x9w was already present in the prior assessment (see the investigation below). Existing glob/minimatch moderate advisories remain. No forced audit fixes, SDK downgrade or dependency mutation. This is an evidence discrepancy, not renewed staging/production risk acceptance.
+
+## Browser correction: 11 versus 17 investigation — 2026-11-26
+
+No dependency manifest, version, installed root package or lockfile was changed for this correction. Root lock SHA-256 remains `c56853fced1c653c74e998d0d490b0aeb285f8ae5bc23a4315ab007efb97e60c`; isolated E2E lock remains `10198a47b1074d9ba94104caa5646e0ada662f5d8132026c9d2ca1587703bde5`. Node 22.23.4/npm 10.9.9. Earlier text calling the paste XSS a new advisory was incorrect: it is already in the foundation/readiness assessment. This section supersedes that interpretation without erasing historical audit observations.
+
+Contemporaneous read-only audits reproduce the discrepancy:
+
+| Command/cache                                                                                       | Package findings        | Advisory roots   | Exit |
+| --------------------------------------------------------------------------------------------------- | ----------------------- | ---------------- | ---- |
+| `npm audit --json` / existing default cache                                                         | 17: 11 high, 6 moderate | Same three below | 1    |
+| `npm audit --json --cache /tmp/light-house-browser-audit/cache` / new isolated cache                | 11: 5 high, 6 moderate  | Same three below | 1    |
+| `npm audit --omit=dev --json --cache /tmp/light-house-browser-audit/prod-cache` / another new cache | 11: 5 high, 6 moderate  | Same three below | 1    |
+| `npm audit --prefix e2e --json --cache /tmp/light-house-browser-audit/e2e-cache`                    | 0                       | None             | 0    |
+
+The six additional high package entries in the default-cache report are inherited meta-vulnerabilities, not six additional direct advisories:
+
+| Installed package      | Version | Reported `via` chain                 |
+| ---------------------- | ------- | ------------------------------------ |
+| prosemirror-commands   | 1.7.1   | prosemirror-state → prosemirror-view |
+| prosemirror-dropcursor | 1.8.2   | prosemirror-state / prosemirror-view |
+| prosemirror-history    | 1.5.0   | prosemirror-state / prosemirror-view |
+| prosemirror-keymap     | 1.2.3   | prosemirror-state → prosemirror-view |
+| prosemirror-state      | 1.4.4   | prosemirror-view                     |
+| prosemirror-utils      | 1.2.2   | prosemirror-state → prosemirror-view |
+
+All root reports contain exactly the same direct advisory URLs: [ProseMirror paste XSS GHSA-c8x8-7fp4-3x9w](https://github.com/advisories/GHSA-c8x8-7fp4-3x9w), [glob cancellation GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4), and [minimatch amplification GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249). Existing affected leaves remain view 1.41.5, glob 13.0.7 and minimatch 10.2.6. Parent paths and exposure analysis in the readiness review remain relevant; eleven is not an assertion that the additional six installed packages are safe.
+
+Interpretation: results vary with audit cache state for an unchanged dependency tree. npm officially documents registry-derived advisories, calculated inherited meta-vulnerabilities, and caching of those calculations; see [npm v10 audit: calculating meta-vulnerabilities](https://docs.npmjs.com/cli/v10/commands/npm-audit/#calculating-meta-vulnerabilities-and-remediations), verified 2026-11-26. Cache-sensitive inherited classification is supported by this controlled comparison; the exact stale entry or registry timing is not proven and no private npm cache/config was inspected or deleted. Treat 17 as the conservative observed affected-package count and retain both results. This is reporting variability, not a remediation or evidence of changed application dependencies. No audit fix, override, SDK downgrade or forced upgrade was run. New staging/production acceptance is not inferred; LH-014 remains open and the owner's prior exact-tree DEVELOPMENT-only decision remains limited to its original scope.
+
+Repeat independently using a new directory for each fresh cache, retain curated counts/package names/advisory IDs and compare lock hashes. Do not delete the owner's cache, expose npm credentials/config or pick the lower count as a passing gate. Dependency remediation remains a separate supported-SDK compatibility review.
+
+## Native acceptance handoff audit — 2026-11-26
+
+Documentation-only native SQL acceptance update changes no dependency, manifest or lock. Current `npm audit --json` and `npm audit --omit=dev --json` each exit 1 with 17 findings (11 high/6 moderate), retaining the same three GHSA roots and previously documented cache-sensitive 11/17 classification. `npm audit --prefix e2e --json` exits 0 with zero findings. No remediation or new/staging/production risk acceptance claimed; LH-014 remains open. Exact lock hashes and unchanged pins plus current local validation are recorded in audit. Functional native LIMIT acceptance does not alter dependency exposure or the owner's development-only risk boundary.

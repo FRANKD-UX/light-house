@@ -10,6 +10,7 @@ export default defineConfig({
         'static/app/src/Inventory.tsx',
         'static/app/src/inventory-contract.ts',
         'static/app/src/status-contract.ts',
+        'static/app/src/invocation-error.ts',
       ],
       thresholds: { lines: 90, functions: 90, branches: 85, statements: 90 },
     },

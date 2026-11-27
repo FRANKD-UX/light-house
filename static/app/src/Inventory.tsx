@@ -1,15 +1,23 @@
+import {
+  BackendFailure,
+  InvocationFailure,
+  inventoryResponse,
+} from './invocation-error';
 import { useRef, useState } from 'react';
 import { invoke } from '@forge/bridge';
 import {
   definitions,
   kinds,
-  object,
   type Fields,
   type InventoryRecord,
   type Kind,
   type Role,
 } from '../../../src/domain/inventory/model';
 import { inventoryValue, validateInventoryList } from './inventory-contract';
+import {
+  schemaDiagnosticValue,
+  type SchemaDiagnostic,
+} from '../../../src/domain/value-objects/schema-diagnostics';
 interface Overview {
   ready: boolean;
   schemaStatus?: string;
@@ -19,6 +27,7 @@ interface Overview {
 }
 export function Inventory() {
   const [overview, setOverview] = useState<Overview>();
+  const [diagnostic, setDiagnostic] = useState<SchemaDiagnostic>();
   const [tenant, setTenant] = useState('');
   const [entity, setEntity] = useState<Kind>('sites');
   const [rows, setRows] = useState<InventoryRecord[]>([]);
@@ -37,14 +46,22 @@ export function Inventory() {
   const [grantStatus, setGrantStatus] = useState('active');
   const lock = useRef(false);
   async function request(action: string, extra: Record<string, unknown> = {}) {
-    const result = object(
-      await invoke('inventory', { action, tenantId: tenant, ...extra }),
-    );
-    if (result.ok !== true)
-      throw new Error(
-        typeof result.code === 'string' ? result.code : 'UNAVAILABLE',
-      );
-    return inventoryValue(action, result.value);
+    let response: unknown;
+    try {
+      response = await invoke('inventory', {
+        action,
+        ...(action === 'schemaDiagnostics' ? {} : { tenantId: tenant }),
+        ...extra,
+      });
+    } catch (error) {
+      throw new InvocationFailure(error);
+    }
+    const value = inventoryResponse(response);
+    try {
+      return inventoryValue(action, value);
+    } catch {
+      throw new Error('INVALID_RESPONSE');
+    }
   }
   async function run(work: () => Promise<void | string>) {
     if (lock.current) return;
@@ -58,16 +75,29 @@ export function Inventory() {
       );
     } catch (error) {
       const code = error instanceof Error ? error.message : '';
+      const suffix =
+        error instanceof BackendFailure
+          ? ` Backend code: ${error.code}.${error.correlationId ? ` Correlation ID: ${error.correlationId}.` : ''}`
+          : '';
       setMessage(
-        code === 'CONFLICT'
-          ? 'Conflict: reload the current version before retrying.'
-          : code === 'INVALID'
-            ? 'Validation failed. Check fields and same-tenant active references.'
-            : code === 'REPAIR_REQUIRED'
-              ? 'Repair required before another mutation.'
-              : code === 'DENIED'
-                ? 'Access denied. An authorised administrator must grant access.'
-                : 'Inventory unavailable. Retry or check schema readiness.',
+        error instanceof InvocationFailure
+          ? `Inventory unavailable. ${error.message}`
+          : (code === 'CONFLICT'
+              ? 'Conflict: reload the current version before retrying.'
+              : code === 'INVALID'
+                ? 'Validation failed. Check fields and same-tenant active references.'
+                : code === 'REPAIR_REQUIRED'
+                  ? 'Repair required before another mutation.'
+                  : code === 'DENIED'
+                    ? 'Access denied. An authorised administrator must grant access.'
+                    : code === 'NOT_READY'
+                      ? 'Inventory unavailable: backend reports schema not ready.'
+                      : code === 'NOT_FOUND'
+                        ? 'Inventory record not found.'
+                        : code === 'UNAVAILABLE'
+                          ? 'Inventory unavailable: backend could not complete the operation.'
+                          : 'Inventory unavailable: invalid backend response.') +
+              suffix,
       );
     } finally {
       lock.current = false;
@@ -79,7 +109,11 @@ export function Inventory() {
   }
   async function list(after = '') {
     const value = await request('list', { entity, after, limit: 20 });
-    validateInventoryList(entity, value);
+    try {
+      validateInventoryList(entity, value);
+    } catch {
+      throw new Error('INVALID_RESPONSE');
+    }
     setRows(value.rows as InventoryRecord[]);
     setCursor(value.next as string | null);
   }
@@ -99,6 +133,25 @@ export function Inventory() {
       <p>
         Development demonstration. No live monitoring or customer information.
       </p>
+      <button
+        disabled={busy}
+        onClick={() =>
+          void run(async () => {
+            setDiagnostic(undefined);
+            setDiagnostic(
+              schemaDiagnosticValue(await request('schemaDiagnostics')),
+            );
+            return 'Read-only schema diagnostic completed.';
+          })
+        }
+      >
+        Read development schema diagnostics (Jira administrators)
+      </button>
+      {diagnostic && (
+        <pre aria-label="Read-only schema diagnostic result">
+          {JSON.stringify(diagnostic, null, 2)}
+        </pre>
+      )}
       <button disabled={busy} onClick={() => void run(refresh)}>
         Load tenants and schema status
       </button>

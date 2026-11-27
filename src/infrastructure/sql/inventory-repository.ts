@@ -1,3 +1,7 @@
+import {
+  noInventoryDiagnostics,
+  type InventoryDiagnostics,
+} from '../../application/ports/inventory-diagnostics';
 import type { InventoryRepository } from '../../application/inventory/ports';
 import type { TenantContext } from '../../application/ports/tenant-context';
 import {
@@ -53,7 +57,10 @@ function flatten(ctx: TenantContext, record: InventoryRecord): Fields {
   };
 }
 export class SqlInventoryRepository implements InventoryRepository {
-  constructor(private readonly db: SqlDriver) {}
+  constructor(
+    private readonly db: SqlDriver,
+    private readonly diagnostic: InventoryDiagnostics = noInventoryDiagnostics,
+  ) {}
   async claim(ctx: TenantContext, intent: string) {
     if (intent.length > 8192) throw new InventoryError('INVALID');
     return (
@@ -100,14 +107,26 @@ export class SqlInventoryRepository implements InventoryRepository {
     );
     return rows[0] ? decode(entity, rows[0]) : null;
   }
-  async list(ctx: TenantContext, entity: Kind, after: string, limit: number) {
-    return (
-      await this.db.rows<Row>(
-        `SELECT * FROM ${entity} WHERE tenant_id = ? AND id > ? ORDER BY id LIMIT ?`,
-        [ctx.tenantId, after, limit],
+  async list(ctx: TenantContext, entity: Kind, after: string, limit: unknown) {
+    const query = await this.diagnostic.run('inventory.query', () => {
+      if (
+        typeof limit !== 'number' ||
+        !Number.isSafeInteger(limit) ||
+        limit < 1 ||
+        limit > 51
       )
-    ).map((row) => decode(entity, row));
+        throw new InventoryError('INVALID');
+      // Only this bounded integer becomes SQL text; tenant and cursor stay bound.
+      return `SELECT * FROM ${entity} WHERE tenant_id = ? AND id > ? ORDER BY id LIMIT ${limit}`;
+    });
+    const rows = await this.diagnostic.run('inventory.sql', () =>
+      this.db.rows<Row>(query, [ctx.tenantId, after]),
+    );
+    return this.diagnostic.run('inventory.mapping', () =>
+      rows.map((row) => decode(entity, row)),
+    );
   }
+
   async create(ctx: TenantContext, entity: Kind, record: InventoryRecord) {
     const cols = columns(entity);
     const values = flatten(ctx, record);

@@ -1,5 +1,7 @@
 # Sprint 1 security and release-readiness review
 
+**Current delivery recommendation (2026-11-27):** Implementation-complete locally with mandatory release acceptance outstanding; GO for local Sprint2 after explicit owner scope/governance approval, not deploy/merge/release authority. See [gate classification](sprint-1-execution-report.md#delivery-governance-reassessment--2026-11-27-current-recommendation). Prior evidence and untested requirements remain preserved.
+
 Date: 2026-11-26. Scope: local implementation, manifest, direct/locked dependencies, frontend/backend boundaries and public-release files. This is not installed-runtime acceptance or a clean vulnerability certification.
 
 ## Execution map and controls
@@ -40,3 +42,15 @@ Initial scanner attempts failed on sandbox cache writes; rerunning the pinned to
 Manifest page/resource/resolver/consumer exports match local builds and invoke names. Domain has no Forge imports; application ports do not import infrastructure; trusted runtime wiring stays in src/forge. All three new direct SDKs are pinned, their Atlassian licence files reviewed and supported Node 22 used. Local full backend graph contains 122 inputs and no affected leaves or tooling references; repeat official --inspect packaging review only under deployment authorisation. CI retains strict TypeScript, coverage gates, npm ci and no credentials/deploy steps.
 
 No polling, schedules or migration-on-read exist. Lists are bounded/keyset paginated; reference/fixture/unique/reverse queries have tenant indexes. Seed batches cap at four records, reruns skip existing fixture rows and initial seed/rerun query budgets are tested. Migration retries cap at three executions per queued job. Exact SQL compute/GB-seconds and savings are unmeasured. Readiness: blocked for deployment/merge pending official major-upgrade approval, refreshed dependency disposition and live acceptance; local implementation is reviewable.
+
+## Delivery progression security review — 2026-11-27
+
+Bounded updated manual review of manifest/current dirty source confirms the same execution map: Custom UI → trusted Forge runtime/user → application permissions/ports → tenant-scoped parameterised SQL. No new asApp/public ingress/egress/secret/runtime-AI surface in Sprint1. Monitoring source binding and web ingress security are Sprint2 work, not implemented by this finding. Source anchors include src/application/inventory/service.ts context role tests, src/infrastructure/sql/access-repository.ts membership installation/tenant/account/expiry predicate, inventory-repository.ts same-tenant references/CAS/admission/receipt writes, and boundary.ts runtime actor/context dispatch. Exact service source: (permission === 'configure' && memberRole !== 'admin'). The source itself, not UI hiding, authorises.
+
+No new confirmed exploitable application finding established; no invented CVSS/no assurance of absence. Known dependency findings remain real residual risks; release blocked pending the appropriate remediation/disposition. No code/test fix was made because this is governance/review scope.
+
+Updated deterministic coverage is INCOMPLETE: skill runner first exit1, FSRTv0.1.1 reported completed/zero but scanned=[""] (coverage unestablished), OpenGrep1.16.2 status not_run after process exit2; bounded XDG_CACHE_HOME writable-cache retry exits1, OpenGrep status not_run/process exit1. Do not call either missing findings or FSRT zero a clean source scan. No further tooling repair/installation expansion pursued. Prior successful OpenGrep record remains historical, not exact-current-tree evidence.
+
+Loaded global; authn-authz/injection/tenant-isolation/auditing/misc indexes; resolver-authorisation, SQL-injection, warm-state and software-composition deep rules. Secrets-storage/egress/webtrigger/Rovo/manifest-config indexes not loaded: no matching current surface; manifest scope and resource/runtime boundaries reviewed directly. Snyk/gitleaks unavailable/not run; independent publication-candidate secret scan separate. Scanner artifacts/logs remain ignored under security-audit-artifacts/, not proposed for Git. Forge/ADS MCP unavailable. Official SQL/app-context-security docs rechecked2026-11-27 in ADR-0017.
+
+Recommendation: evidence supports LOCAL development progression with controls/regressions preserved, not full release/security acceptance. Native roles/expiry/access/isolation/recovery and full platform semantics stay mandatory release backlog; discovered genuine bypass/corruption immediately blocks affected code/deployment. Missing scanner/runtime evidence is explicit and must be resolved/dispositioned in final security/release assessment; no deadline bypass.

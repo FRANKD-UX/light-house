@@ -13,3 +13,5 @@ coverage/
 .codex/
 .aws/
 security-audit-artifacts/
+e2e/.local/
+e2e/.build/

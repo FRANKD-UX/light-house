@@ -11,12 +11,13 @@ import { randomUUID } from 'node:crypto';
 const { invoke } = vi.hoisted(() => ({ invoke: vi.fn() }));
 vi.mock('@forge/bridge', () => ({ invoke }));
 import { Inventory } from '../../static/app/src/Inventory';
+import { expectedMigrationNames } from '../../src/domain/value-objects/schema-diagnostics';
 import { demoPolicy } from '../../src/application/inventory/fixtures';
 import {
   inventoryValue,
   validateInventoryList,
 } from '../../static/app/src/inventory-contract';
-import type { InventoryRecord } from '../../src/domain/inventory/model';
+import { kinds, type InventoryRecord } from '../../src/domain/inventory/model';
 const tenantId = randomUUID();
 const record: InventoryRecord = {
   id: randomUUID(),
@@ -73,6 +74,111 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 describe('inventory Custom UI (mock Bridge, no installed runtime evidence)', () => {
+  it('uses the same serializable list payload and empty response path for all eleven kinds', async () => {
+    render(<Inventory />);
+    await load();
+    for (const entity of kinds) {
+      change('Inventory type', entity);
+      await click('Load inventory');
+      const expected = {
+        action: 'list',
+        tenantId,
+        entity,
+        after: '',
+        limit: 20,
+      };
+      expect(invoke).toHaveBeenLastCalledWith('inventory', expected);
+      expect(JSON.parse(JSON.stringify(invoke.mock.lastCall![1]))).toEqual(
+        expected,
+      );
+      expect(screen.getByText(/Operation completed/)).toBeTruthy();
+      expect(screen.getByText(/Showing 0 records/)).toBeTruthy();
+    }
+  });
+  it('renders serialized customer fields and follows the shared next-page path', async () => {
+    render(<Inventory />);
+    await load();
+    change('Inventory type', 'customers');
+    const customer = {
+      ...record,
+      fields: {
+        reference: 'demo-customer',
+        display_alias: 'Synthetic customer',
+        site_id: randomUUID(),
+        sla_tier_id: randomUUID(),
+      },
+    };
+    invoke.mockResolvedValueOnce(
+      JSON.parse(
+        JSON.stringify({
+          ok: true,
+          value: { rows: [customer], next: record.id },
+        }),
+      ),
+    );
+    await click('Load inventory');
+    expect(screen.getByRole('table').textContent).toContain(
+      'Synthetic customer',
+    );
+    await click('Next page');
+    expect(invoke).toHaveBeenLastCalledWith('inventory', {
+      action: 'list',
+      tenantId,
+      entity: 'customers',
+      after: record.id,
+      limit: 20,
+    });
+    expect(screen.getByText(/Operation completed/)).toBeTruthy();
+  });
+  it('distinguishes customer invocation TypeError from invalid returned fields', async () => {
+    render(<Inventory />);
+    await load();
+    change('Inventory type', 'customers');
+    invoke.mockRejectedValueOnce(new TypeError('private diagnostic'));
+    await click('Load inventory');
+    expect(
+      screen.getByText(/Forge Bridge invocation rejected \(TypeError\)/),
+    ).toBeTruthy();
+    expect(document.body.textContent).not.toContain('private diagnostic');
+    listRows = [{ ...record, fields: { invalid: 'bad' } }];
+    await click('Load inventory');
+    expect(screen.getByText(/invalid backend response/)).toBeTruthy();
+    expect(screen.queryByText(/Forge Bridge invocation rejected/)).toBeNull();
+  });
+  it('runs diagnostics explicitly without loading tenants or invoking mutations, and strips extra fields', async () => {
+    render(<Inventory />);
+    expect(invoke).not.toHaveBeenCalled();
+    invoke.mockResolvedValueOnce({
+      ok: true,
+      value: {
+        environment: 'DEVELOPMENT',
+        actualSuccessfulMigrationNames: [],
+        missingMigrationNames: expectedMigrationNames,
+        unexpectedMigrationCount: 0,
+        migrationSqlErrorCode: null,
+        readinessRecordPresent: false,
+        readiness: null,
+        schemaVersion: null,
+        schemaVersionType: null,
+        readinessSqlErrorCode: null,
+        installationId: 'private',
+      },
+    });
+    await click('Read development schema diagnostics (Jira administrators)');
+    expect(invoke).toHaveBeenCalledExactlyOnceWith('inventory', {
+      action: 'schemaDiagnostics',
+    });
+    expect(
+      screen.getByLabelText('Read-only schema diagnostic result').textContent,
+    ).toContain('v001_mutation_receipts');
+    expect(document.body.textContent).not.toContain('private');
+    invoke.mockResolvedValueOnce({ ok: false, code: 'private' });
+    await click('Read development schema diagnostics (Jira administrators)');
+    expect(
+      screen.queryByLabelText('Read-only schema diagnostic result'),
+    ).toBeNull();
+    expect(screen.getByText(/invalid backend response/)).toBeTruthy();
+  });
   it('starts empty, waits for explicit actions and presents loading and sanitized errors', async () => {
     render(<Inventory />);
     expect(invoke).not.toHaveBeenCalled();
@@ -123,6 +229,33 @@ describe('inventory Custom UI (mock Bridge, no installed runtime evidence)', () 
     invoke.mockResolvedValueOnce({ ok: false });
     await click('Load tenants and schema status');
     expect(screen.getByText(/Inventory unavailable/)).toBeTruthy();
+  });
+  it('distinguishes handled readiness, backend unavailability and rejected invocation', async () => {
+    render(<Inventory />);
+    const correlationId = '12345678-1234-4234-8234-123456789abc';
+    invoke.mockResolvedValueOnce({
+      ok: false,
+      code: 'NOT_READY',
+      correlationId,
+    });
+    await click('Load tenants and schema status');
+    expect(
+      screen.getByText(/backend reports schema not ready/).textContent,
+    ).toContain(correlationId);
+    invoke.mockResolvedValueOnce({
+      ok: false,
+      code: 'UNAVAILABLE',
+      correlationId,
+    });
+    await click('Read development schema diagnostics (Jira administrators)');
+    expect(
+      screen.getByText(/backend could not complete/).textContent,
+    ).toContain('UNAVAILABLE');
+    expect(screen.queryByText(/Access denied/)).toBeNull();
+    invoke.mockRejectedValueOnce({ code: 'ETIMEDOUT', message: 'private' });
+    await click('Load tenants and schema status');
+    expect(screen.getByText(/reported timeout/)).toBeTruthy();
+    expect(document.body.textContent).not.toContain('private');
   });
   it('shows an empty membership state without inventing access or infrastructure', async () => {
     invoke.mockResolvedValueOnce({
@@ -332,7 +465,7 @@ describe('inventory Custom UI (mock Bridge, no installed runtime evidence)', () 
     expect(screen.queryByText('Save record')).toBeNull();
     listRows = [{ ...record, fields: { invalid: 'bad' } }];
     await click('Load inventory');
-    expect(screen.getByText(/Validation failed/)).toBeTruthy();
+    expect(screen.getByText(/invalid backend response/)).toBeTruthy();
   });
 });
 describe('inventory response contract', () => {

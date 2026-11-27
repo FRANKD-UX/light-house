@@ -1,3 +1,5 @@
+import { noInventoryDiagnostics } from '../../application/ports/inventory-diagnostics';
+import { createInventoryDiagnostics } from '../../infrastructure/observability/inventory-diagnostics';
 import api, { getAppContext, route } from '@forge/api';
 import { randomUUID } from 'node:crypto';
 import { InventoryError, object, text } from '../../domain/inventory/model';
@@ -8,6 +10,7 @@ import { SqlAccessRepository } from '../../infrastructure/sql/access-repository'
 import { forgeSql } from '../../infrastructure/sql/driver';
 import { createStructuredLogger } from '../../infrastructure/observability/structured-logger';
 import { enqueueMigration } from './migration';
+import { readSchemaDiagnostic } from '../../infrastructure/sql/schema-diagnostics';
 export async function isJiraAdmin(): Promise<boolean> {
   try {
     const response = await api
@@ -28,28 +31,58 @@ export async function isJiraAdmin(): Promise<boolean> {
 }
 export async function inventoryRequest(context: unknown, payload: unknown) {
   const correlationId = randomUUID();
+  const logger = createStructuredLogger(console);
+  // Invalid/unrecognised actions never become diagnostic labels.
+  let diagnostic = noInventoryDiagnostics;
   try {
-    // Only server resolver context accountId is identity. Payload cannot replace any runtime context.
-    const ctx = object(context);
-    const accountId = text(ctx.accountId, 128);
-    const runtime = getAppContext();
+    const request = object(payload);
+    if (request.action === 'list')
+      diagnostic = createInventoryDiagnostics(logger, correlationId);
+    await diagnostic.run('resolver.entry', () => undefined);
+    const { accountId, runtime, installationId } = await diagnostic.run(
+      'installation.context',
+      () => {
+        // Only server resolver context accountId is identity. Payload cannot replace any runtime context.
+        const ctx = object(context);
+        const accountId = text(ctx.accountId, 128);
+        const runtime = getAppContext();
+        const installationId = text(runtime.installationAri.toString(), 512);
+        return { accountId, runtime, installationId };
+      },
+    );
+    if (request.action === 'schemaDiagnostics') {
+      if (runtime.environmentType !== 'DEVELOPMENT' || !(await isJiraAdmin()))
+        throw new InventoryError('DENIED');
+      if (Object.keys(request).some((key) => key !== 'action'))
+        throw new InventoryError('INVALID');
+      return {
+        ok: true,
+        value: await readSchemaDiagnostic(
+          runtime.installationAri.toString(),
+          runtime.environmentType,
+        ),
+        correlationId,
+      };
+    }
     const session = {
       accountId,
-      installationId: runtime.installationAri.toString(),
+      installationId,
       environment: runtime.environmentType,
     };
     const deps = {
-      inventory: new SqlInventoryRepository(forgeSql),
-      access: new SqlAccessRepository(forgeSql, randomUUID, () =>
-        new Date().toISOString(),
+      inventory: new SqlInventoryRepository(forgeSql, diagnostic),
+      access: new SqlAccessRepository(
+        forgeSql,
+        randomUUID,
+        () => new Date().toISOString(),
+        diagnostic,
       ),
       id: randomUUID,
       now: () => new Date().toISOString(),
       isJiraAdmin,
       migrate: enqueueMigration,
     };
-    const service = new InventoryService(deps, session);
-    const request = object(payload);
+    const service = new InventoryService(deps, session, diagnostic);
     let value: unknown;
     switch (request.action) {
       case 'overview':
@@ -91,9 +124,24 @@ export async function inventoryRequest(context: unknown, payload: unknown) {
       default:
         throw new InventoryError('INVALID');
     }
-    return { ok: true, value, correlationId };
+    const response = { ok: true, value, correlationId };
+    // Resolver SDK performs the same JSON roundtrip after callback return. Check it here
+    // so serialization failures retain correlation and a distinct safe diagnostic stage.
+    if (request.action === 'list')
+      await diagnostic.run('response.serialization', () => {
+        JSON.stringify(response);
+      });
+    await diagnostic.run('resolver.completion', () => undefined);
+    return response;
   } catch (error) {
-    createStructuredLogger(console).error({
+    try {
+      await diagnostic.run('resolver.completion', () => {
+        throw error;
+      });
+    } catch {
+      /* Failure recorded; preserve public contract. */
+    }
+    logger.error({
       event: 'processing.failed',
       correlationId,
       outcome: 'failure',

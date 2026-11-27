@@ -1,3 +1,4 @@
+import { invocationFailure } from './invocation-error';
 import { Inventory } from './Inventory';
 import { useEffect, useRef, useState } from 'react';
 import { invoke } from '@forge/bridge';
@@ -5,7 +6,8 @@ import { APPLICATION_METADATA } from '../../../src/domain/value-objects/applicat
 import { validateStatus, type StatusValidation } from './status-contract';
 
 type HealthCheck =
-  | { readonly phase: 'idle' | 'checking' | 'rejected' }
+  | { readonly phase: 'idle' | 'checking' }
+  | { readonly phase: 'rejected'; readonly diagnostic: string }
   | { readonly phase: 'received'; readonly validation: StatusValidation };
 
 export function App() {
@@ -27,8 +29,9 @@ export function App() {
       const response: unknown = await invoke<unknown>('getStatus');
       if (mounted.current)
         setCheck({ phase: 'received', validation: validateStatus(response) });
-    } catch {
-      if (mounted.current) setCheck({ phase: 'rejected' });
+    } catch (error) {
+      if (mounted.current)
+        setCheck({ phase: 'rejected', diagnostic: invocationFailure(error) });
     } finally {
       inFlight.current = false;
     }
@@ -42,7 +45,7 @@ export function App() {
       : check.phase === 'checking'
         ? 'Checking runtime health…'
         : check.phase === 'rejected'
-          ? 'Health check failed: Forge Bridge invocation rejected. You can retry.'
+          ? `Health check failed: ${check.diagnostic}`
           : validation?.valid
             ? 'Health check passed: backend available and response contract valid.'
             : `Health check failed: invalid ${validation?.reason}. You can retry.`;

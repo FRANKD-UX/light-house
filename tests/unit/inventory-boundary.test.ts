@@ -60,12 +60,264 @@ beforeEach(() => {
   mocks.run.mockResolvedValue([]);
   mocks.list.mockResolvedValue(migrations.map((row) => ({ name: row.name })));
   vi.spyOn(console, 'error').mockImplementation(() => {});
+  vi.spyOn(console, 'info').mockImplementation(() => {});
 });
 afterEach(() => {
   vi.restoreAllMocks();
   vi.clearAllMocks();
 });
 describe('Forge inventory boundary (mock SDK; not runtime evidence)', () => {
+  it.each(['membership', 'inventory'] as const)(
+    'attributes a %s SELECT exception without changing the sanitised response or writing',
+    async (stage) => {
+      const tenantId = randomUUID();
+      mocks.rows.mockResolvedValueOnce([
+        { readiness: 'ready', schema_version: 1 },
+      ]);
+      if (stage === 'inventory')
+        mocks.rows.mockResolvedValueOnce([{ role: 'admin' }]);
+      mocks.rows.mockRejectedValueOnce({
+        code: 'SQL_EXECUTION_ERROR',
+        context: { debug: { code: 'ER_PARSE_ERROR' } },
+        message: 'synthetic-private-error',
+      });
+      const result = await inventoryRequest(ctx, {
+        action: 'list',
+        tenantId,
+        entity: 'sites',
+        after: '',
+        limit: 20,
+      });
+      expect(result).toEqual({
+        ok: false,
+        code: 'UNAVAILABLE',
+        correlationId: expect.any(String),
+      });
+      const log = JSON.parse(
+        vi.mocked(console.error).mock.lastCall![0] as string,
+      );
+      expect(log).toEqual({
+        event: 'processing.failed',
+        correlationId: result.correlationId,
+        outcome: 'failure',
+      });
+      const diagnostics = vi
+        .mocked(console.error)
+        .mock.calls.map(([line]) => JSON.parse(line as string))
+        .filter((event) => event.event === 'inventory.diagnostic');
+      expect(diagnostics[0]).toMatchObject({
+        stage: stage === 'membership' ? 'tenant.membership' : 'inventory.sql',
+        outcome: 'failure',
+        exceptionCategory: 'SQL_ERROR',
+        errorCode: 'SQL_EXECUTION_ERROR',
+        providerCode: 'ER_PARSE_ERROR',
+        correlationId: result.correlationId,
+      });
+      const allLogs = [
+        ...vi.mocked(console.info).mock.calls,
+        ...vi.mocked(console.error).mock.calls,
+      ].map(([line]) => JSON.parse(line as string));
+      expect(
+        allLogs.every((event) => event.correlationId === result.correlationId),
+      ).toBe(true);
+      expect(JSON.stringify([result, allLogs])).not.toMatch(
+        /synthetic-private-error|installation-example|consenting-test-account/,
+      );
+      expect(JSON.stringify(allLogs)).not.toContain(tenantId);
+      expect(mocks.rows).toHaveBeenCalledTimes(stage === 'inventory' ? 3 : 2);
+      expect(mocks.write).not.toHaveBeenCalled();
+      expect(mocks.run).not.toHaveBeenCalled();
+      expect(mocks.push).not.toHaveBeenCalled();
+    },
+  );
+  it.each(['mapping', 'serialization'] as const)(
+    'distinguishes %s failures (mock SQL)',
+    async (stage) => {
+      mocks.rows.mockResolvedValueOnce([
+        { readiness: 'ready', schema_version: 1 },
+      ]);
+      mocks.rows.mockResolvedValueOnce([{ role: 'admin' }]);
+      mocks.rows.mockResolvedValueOnce(
+        stage === 'mapping' ? [null] : [{ version: BigInt(1) }],
+      );
+      const result = await inventoryRequest(ctx, {
+        action: 'list',
+        tenantId: randomUUID(),
+        entity: 'sites',
+        after: '',
+        limit: 20,
+      });
+      expect(result).toMatchObject({ ok: false, code: 'UNAVAILABLE' });
+      const failures = vi
+        .mocked(console.error)
+        .mock.calls.map(([line]) => JSON.parse(line as string))
+        .filter((event) => event.event === 'inventory.diagnostic');
+      expect(failures[0]).toMatchObject({
+        stage:
+          stage === 'mapping' ? 'inventory.mapping' : 'response.serialization',
+        exceptionCategory: 'TYPE_ERROR',
+        correlationId: result.correlationId,
+      });
+      expect(mocks.write).not.toHaveBeenCalled();
+    },
+  );
+  it('retains readiness failure attribution even though the repository fails closed', async () => {
+    mocks.rows.mockRejectedValueOnce({
+      code: 'SQL_POLICY_VIOLATION',
+      message: 'private',
+    });
+    expect(
+      await inventoryRequest(ctx, {
+        action: 'list',
+        tenantId: randomUUID(),
+        entity: 'sites',
+        after: '',
+        limit: 20,
+      }),
+    ).toMatchObject({ ok: false, code: 'NOT_READY' });
+    expect(
+      vi
+        .mocked(console.error)
+        .mock.calls.map(([line]) => JSON.parse(line as string)),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          stage: 'schema.sql',
+          outcome: 'failure',
+          errorCode: 'SQL_POLICY_VIOLATION',
+        }),
+      ]),
+    );
+    expect(mocks.rows).toHaveBeenCalledTimes(1);
+  });
+  it('does not let diagnostic labels or spoofed membership bypass tenant authorisation', async () => {
+    mocks.rows.mockResolvedValueOnce([
+      { readiness: 'ready', schema_version: 1 },
+    ]);
+    mocks.rows.mockResolvedValueOnce([]);
+    const result = await inventoryRequest(ctx, {
+      action: 'list',
+      tenantId: randomUUID(),
+      entity: 'sites',
+      after: '',
+      limit: 20,
+      role: 'admin',
+      diagnostic: true,
+      installationId: 'foreign',
+    });
+    expect(result).toMatchObject({ ok: false, code: 'DENIED' });
+    expect(mocks.rows).toHaveBeenCalledTimes(2);
+    expect(mocks.rows.mock.calls[1]![1]).toContain('installation-example');
+    expect(mocks.rows.mock.calls[1]![1]).not.toContain('foreign');
+    expect(mocks.write).not.toHaveBeenCalled();
+  });
+  it('preserves successful empty inventory and completes the same correlation', async () => {
+    mocks.rows.mockResolvedValueOnce([
+      { readiness: 'ready', schema_version: 1 },
+    ]);
+    mocks.rows.mockResolvedValueOnce([{ role: 'viewer' }]);
+    const result = await inventoryRequest(ctx, {
+      action: 'list',
+      tenantId: randomUUID(),
+      entity: 'sites',
+      after: '',
+      limit: 20,
+    });
+    expect(result).toEqual({
+      ok: true,
+      value: { rows: [], next: null },
+      correlationId: expect.any(String),
+    });
+    expect(
+      vi
+        .mocked(console.info)
+        .mock.calls.map(([line]) => JSON.parse(line as string)),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          stage: 'resolver.completion',
+          outcome: 'success',
+          correlationId: result.correlationId,
+        }),
+      ]),
+    );
+    expect(console.error).not.toHaveBeenCalled();
+    expect(mocks.write).not.toHaveBeenCalled();
+  });
+  it('authorises fixed development diagnostics without readiness or tenant membership', async () => {
+    mocks.rows.mockResolvedValue([{ readiness: 'failed', schema_version: 0 }]);
+    expect(
+      await inventoryRequest(ctx, { action: 'schemaDiagnostics' }),
+    ).toMatchObject({
+      ok: true,
+      value: {
+        environment: 'DEVELOPMENT',
+        readinessRecordPresent: true,
+        readiness: 'failed',
+        schemaVersion: 0,
+        schemaVersionType: 'number',
+        missingMigrationNames: [],
+      },
+    });
+    expect(mocks.rows).toHaveBeenCalledExactlyOnceWith(
+      'SELECT readiness, schema_version FROM installation_metadata WHERE installation_id = ? AND environment = ?',
+      ['installation-example', 'DEVELOPMENT'],
+    );
+    expect(mocks.list).toHaveBeenCalledTimes(1);
+    expect(mocks.write).not.toHaveBeenCalled();
+    expect(mocks.ddl).not.toHaveBeenCalled();
+    expect(mocks.run).not.toHaveBeenCalled();
+    expect(mocks.push).not.toHaveBeenCalled();
+  });
+  it('denies diagnostic spoofing, non-admins, missing identity and non-development before SQL', async () => {
+    for (const environment of ['STAGING', 'PRODUCTION']) {
+      mocks.runtime.environmentType = environment;
+      expect(
+        await inventoryRequest(ctx, { action: 'schemaDiagnostics' }),
+      ).toMatchObject({ ok: false, code: 'DENIED' });
+    }
+    mocks.runtime.environmentType = 'DEVELOPMENT';
+    expect(
+      await inventoryRequest(
+        {},
+        { action: 'schemaDiagnostics', accountId: 'fake' },
+      ),
+    ).toMatchObject({ ok: false });
+    for (const extra of [
+      { installationId: 'foreign' },
+      { environment: 'DEVELOPMENT' },
+      { sql: 'SELECT secret' },
+      { tenantId: 'foreign' },
+    ]) {
+      expect(
+        await inventoryRequest(ctx, { action: 'schemaDiagnostics', ...extra }),
+      ).toMatchObject({ ok: false, code: 'INVALID' });
+    }
+    mocks.request.mockRejectedValueOnce(new Error('private'));
+    expect(
+      await inventoryRequest(ctx, { action: 'schemaDiagnostics' }),
+    ).toMatchObject({ ok: false, code: 'DENIED' });
+    mocks.request.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        permissions: {
+          ADMINISTER: {
+            key: 'ADMINISTER',
+            type: 'GLOBAL',
+            havePermission: false,
+          },
+        },
+      }),
+    });
+    expect(
+      await inventoryRequest(ctx, { action: 'schemaDiagnostics' }),
+    ).toMatchObject({ ok: false, code: 'DENIED' });
+    expect(mocks.rows).not.toHaveBeenCalled();
+    expect(mocks.list).not.toHaveBeenCalled();
+    expect(mocks.write).not.toHaveBeenCalled();
+    expect(mocks.run).not.toHaveBeenCalled();
+    expect(mocks.push).not.toHaveBeenCalled();
+  });
   it('fails closed for missing trusted account, unknown action, raw errors and permission responses', async () => {
     expect(
       await inventoryRequest(
