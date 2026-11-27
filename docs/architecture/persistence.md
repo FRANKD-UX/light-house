@@ -51,3 +51,7 @@ Additive migrations.v002.json defines monitoring schema state, sources, credenti
 ## Current v002 local implementation — 2026-11-27
 
 Six-table registry now includes safe authenticated monitoring_observations and inbox first correlation/atomic duplicate count. Credential references carry intent creation time; bounded cleanup excludes live pointers and applies a one-hour orphan/obsolete grace. Registered dedicated schema consumer checks trusted installation/ready-v1, serialized by queue concurrency; resolver admission requires tenant/Jira admin. Fixed DDL is checkpointed separately; no v001 edits or hosted DDL performed. See ADR-0018.
+
+## Local programme incident/JSM registries — 2026-11-27
+
+Additive unapplied v003/v004 preserve immutable v001/v002. Incident evidence is durable before unique problem snapshot; policy timeline publication is single-row CAS. JSM immutable create snapshots, attempt/lease claims and unique issue mapping/state/audit settle share one row. No multi-statement transaction guarantee or native query-policy acceptance claimed. Registry checks and role-bound serial queue are explicit; no migration-on-read. Complete bounds/limitations in ADR-0019 and programme JSM contract.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-27 — Autonomous local incident orchestration
+
+- Preserved hosted evidence in local3236eb7, established native programme goal, ignored project specialist definitions and durable continuation record. Remaining local roadmap authorised; hosted/release gates unchanged.
+- Added validated incident impact/SLA/pure workflow and durable v003 incident/evidence/policy storage; separated confirmed/potential customer impact and conservative backup capacity/availability.
+- Added JSM configuration/gateway/idempotent creation and v004 atomic intent/link/audit with bounded ambiguity reconciliation; operational UI displays immutable SLA/impact and persistent Jira links. New scopes/serial schema consumer are local only, not deployed.
+- Reproduced audit18-versus12 with unchanged-lock controlled caches; conservative18 retained, no dependency change or unverified fix. Recorded scanner/runtime evidence gaps and corrected local policy UUID/race/SQL ambiguity findings.
+- Specialist usage interruption preserved all written code; integrated validation/checkpoint evidence follows in audit. Full workflow/identity/recovery/native acceptance/release/submission remain unfinished.
+
 ## 2026-11-27 — Sprint 2 hosted deployment and health evidence
 
 - Recorded owner-completed exact2b97545 DEVELOPMENT major4 deployment, major3→4 existing-installation upgrade/storage consent and separate authenticated lint pass; transparently recorded deployment --no-verify bypass.

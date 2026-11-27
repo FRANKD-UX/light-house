@@ -35,3 +35,7 @@ Retaining one blanket gate delays unrelated product work; treating all local tes
 The classification matrix, known defects versus evidence gaps, exact local commands/remote PR evidence, mandatory release backlog and minimal critical path are in docs/project/sprint-1-execution-report.md under Delivery governance reassessment — 2026-11-27. ADR-0004/0008/0012/0016 remain in force for security, idempotency, cost and persistence. This is an owner-approved internal delivery policy, not an Atlassian guarantee.
 
 Official trusted-context and SQL boundary references rechecked 2026-11-27: [app context security](https://developer.atlassian.com/platform/forge/app-context-security/), [SQL operations](https://developer.atlassian.com/platform/forge/storage-reference/sql-api/). Native platform semantics remain separately verified, not inferred from these documents or SQLite tests.
+
+## Autonomous programme scope extension — 2026-11-27
+
+The owner now explicitly assigns the remaining canonical roadmap for autonomous local implementation, coordinated specialist agents and reviewed local checkpoints. This supersedes the earlier requirement to obtain a new local sprint assignment individually. The separate development deployment/native/release gates above are unchanged. Refer to autonomous-execution-state.md and ADR-0019; no additional hosted operation or waiver is implied.

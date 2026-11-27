@@ -161,3 +161,7 @@ Supported KVS SDK retrieval is unavailable (ETIMEDOUT); concrete secret binding/
 ## LH-103 current disposition — 2026-11-27
 
 KVS package retrieval blocker resolved via supported external registry permissions; local runtime/UI/cleanup/source pagination now implemented, superseding earlier local-start gaps. Full Forge lint timed out, native SQL/KVS/queue/Zabbix/role/isolation not exercised, scanners did not run successfully. Public ingress and storage scope remain undeployed; new exposure/advisory risk must be separately approved for DEVELOPMENT. Detailed bounded proposal and stops: ../operations/sprint-2-development-approval.md.
+
+## Autonomous programme local orchestration — 2026-11-27
+
+New local scopes/JSM asApp operations and v003/v004 are undeployed and require exact-artifact native approval; existing scope consent does not cover them. Explicit policy maps and proposed elapsed-UTC/failover assumptions require ISP review. Ready intake skipped while incident schema is unavailable requires explicit receipt processing; durable downstream catch-up remains open. Immutable open-ended policy supersession and persistent operational guards remain programme work. Native query-policy/CAS/queue/JSM metadata/search/permissions/isolation are unverified. Client usageLimited interrupted two specialist turns; checkpoint/continuation state preserve work, no replacement agents or unsupported reset automation. Current conservative dependency18(11high/7moderate), scanner coverage qualifications and all existing mandatory release requirements remain.

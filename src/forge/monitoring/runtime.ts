@@ -1,6 +1,10 @@
 import { forgeMonitoringSecrets } from '../../infrastructure/monitoring/kvs-secrets';
 import { createMonitoringHandlers } from './handlers';
-const handlers = createMonitoringHandlers(forgeMonitoringSecrets);
+import { enrichMonitoringReceipt } from '../incidents/runtime';
+const handlers = createMonitoringHandlers(
+  forgeMonitoringSecrets,
+  enrichMonitoringReceipt,
+);
 export const monitoringIngress = handlers.ingress;
 export const monitoringRequest = handlers.request;
 export const monitoringConsume = handlers.consume;

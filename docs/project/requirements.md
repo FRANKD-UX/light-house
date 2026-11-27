@@ -107,3 +107,7 @@ Owner authorises local Zabbix ingestion and automated Border Control only. [Spri
 ## LH-103 local implementation completion — 2026-11-27
 
 Runtime modules, source credentials, strict ingestion, durable inbox/idempotency/async Border Control, bounded recovery, minimal operational UI and terminal synthetic acceptance tooling are implemented locally. See sprint-2-execution-report.md for exact evidence versus untested native/source compatibility. No incident enrichment, SLA execution, JSM closure, external identity replacement, runtime AI, new hosted backend or additional installation introduced.
+
+## Autonomous programme mandate — 2026-11-27
+
+Owner explicitly authorises autonomous local implementation across the remaining canonical roadmap with coordinated native specialists and durable continuation state. Prioritise the complete authenticated alert→impact/SLA→actual JSM→visibility vertical slice; no routine sprint continuation approvals. ADR-0017 separates local progress from native/release acceptance, which remains mandatory. External mutation/deploy/permission-risk/resource/publication/licence gates persist. ADR-0019 records proposed local incident/SLA/JSM mechanisms and limitations; all original identity/handoff/closure/native-notification requirements remain.

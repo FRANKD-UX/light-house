@@ -4,7 +4,11 @@ import { createCorrelationId } from '../../infrastructure/observability/correlat
 import { createStructuredLogger } from '../../infrastructure/observability/structured-logger';
 import { inventoryRequest } from '../inventory/boundary';
 import { monitoringRequest } from '../monitoring/runtime';
+import { incidentRequest } from '../incidents/runtime';
 const resolver = new Resolver();
+resolver.define('incidents', ({ context, payload }) =>
+  incidentRequest(context, payload),
+);
 resolver.define('monitoring', ({ context, payload }) =>
   monitoringRequest(context, payload),
 );

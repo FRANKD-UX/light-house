@@ -204,8 +204,8 @@ Updated 2026-11-27 (eleven-kind native baseline; Phase B approved conditionally,
 - Priority: P0
 - Dependencies: LH-102,LH-103,LH-006
 - Acceptance criteria: UTC/effective boundary tests, immutable snapshots, no SLA reset on team changes, unknown/failover handling; role/gate/version denial and direct NOC route tests.
-- Status: Not started
-- Verification evidence: SLA and lifecycle designs.
+- Status: In progress locally under autonomous programme — impact/SLA/incident persistence and runtime integration; native acceptance not run.
+- Verification evidence: New domain/application incident core and v003 local adapter tests; see autonomous-execution-state.md.
 - Known blockers: Owner ADR-0009 assumptions.
 
 ## LH-105 — Actual JSM lifecycle and notifications
@@ -215,8 +215,8 @@ Updated 2026-11-27 (eleven-kind native baseline; Phase B approved conditionally,
 - Priority: P0
 - Dependencies: LH-104,LH-005
 - Acceptance criteria: Actual issue key, duplicate/timeout reconciliation; full handoff/rejection/return audit with continuous SLA, direct NOC route, ownership matrix sync and target native-transition restriction evidence. Final recovery/closure hardening in Sprint 7.
-- Status: Not started
-- Verification evidence: JSM integration/event lifecycle designs only.
+- Status: In progress locally — idempotent JSM creation, durable v004 intents and gateway; operational synchronisation/handoffs still pending.
+- Verification evidence: Application/gateway and SQLite intent tests; new JSM programme contract; native permissions/configuration remain external gates.
 - Known blockers: Site project/request-type/field/workflow/recipient configuration.
 
 ## LH-106 — Operational dashboard, incident drawer and Jira context
@@ -226,8 +226,8 @@ Updated 2026-11-27 (eleven-kind native baseline; Phase B approved conditionally,
 - Priority: P0
 - Dependencies: LH-105
 - Acceptance criteria: Honest live states, tenant-isolated views, keyboard/theme checks, forged admin invokes denied.
-- Status: Not started
-- Verification evidence: Sprint 0 shell only.
+- Status: In progress locally — functional incident workspace, policy/configuration controls and safe SLA/impact projection.
+- Verification evidence: New UI/contract tests; full operational board/drawer/embedded context/theme acceptance pending.
 - Known blockers: Lifecycle data and permissions.
 
 ## LH-107 — Directory adapters and manual mapping

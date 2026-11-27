@@ -1,0 +1,29 @@
+# ADR-0019 — Local incident orchestration and programme execution
+
+Date:2026-11-27. Status: local implementation defaults under the owner-authorised autonomous programme; business/runtime/release acceptance outstanding. This decision preserves ADR-0017 and does not grant hosted authority.
+
+The owner authorises remaining canonical roadmap implementation, coordinated native specialist agents, local branches/checkpoints and routine fixes without individual sprint continuation approvals. External mutation, new scopes/exposure, deployment, resource exceptions, licence/publication/merge/submission retain their separate gates. Existing Sprint1 data/release requirements and deployed2b97545 major4 remain unchanged by local implementation.
+
+## Incident and policy mechanisms
+
+Create one immutable incident snapshot per installation/tenant/source/stable problem ID. Persist each validated mapped inbox evidence before enrichment. Recovery/update preceding a problem remains durable and cannot invent an outage start; repeated problems return the original winner. No evidence stops or resets the SLA or grants closure. Domain/application have no Forge dependencies.
+
+Take one bounded parameterised SQL statement snapshot of seven inventory kinds, using closed-registry UNION ALL/JSON_OBJECT projections, active installation-bound tenant and nonpending parent. More than1,000 rows fails closed; no silently truncated known-zero impact. Same-tenant active site/carrier/service/customer/tier references are checked in the domain. Confirmed affected customers/services are distinguished from potentially affected sets. Configured backup alone is not observed availability; fresh up evidence also requires same-site active capacity at least that of the failed link (conservative proposed full-link comparison). Missing/stale/inadequate backup evidence stays unknown. The initial SQL inventory adapter supplies no independent availability observation, so failover remains conservative.
+
+Operational SLA policies are separate from Sprint1 demonstration-only policies. An authorised administrator must explicitly configure severity/unknown-impact/elapsed-UTC clock, priority durations/warnings and effective UTC periods. These defaults are not approved universal ISP terms or native JSM calendars. Per-tier policy timelines are published in one version-checked row, preserving immutable policy definitions; overlaps and duplicate policy versions are rejected. Bounded periods must be planned explicitly: an already open-ended policy cannot silently be edited to permit an overlapping successor. A future append-only supersession design remains a follow-up rather than an undocumented rewrite. Incident snapshots retain original policy/version/inputs/start/warning/deadline across updates/team changes.
+
+## Durable JSM creation
+
+Tenant-admin plus Jira-admin configuration binds installation/tenant to explicit verified project/service desk/request type/priority/custom fields. Forge app authentication only, no directory or bearer replacement. Initial immutable creation intent is durable before POST; atomic CAS claims record lease/attempt before external work. One unique installation/tenant/incident intent and installation/issue mapping. Mapping/state/bounded audit settle together in one row, avoiding unsupported multi-statement transaction promises. Uncertain POST or expired sending state only reconciles exact searchable marker candidates; no zero-result blind recreation. Rate limits have bounded due times and retries. JSM sends native notifications, never an external mail provider. Guarded operational handoffs/closure remain separate from request creation and require persistence/native workflow enforcement before release.
+
+## Runtime and schema
+
+Immutable v001/v002 are untouched. Additive v003 registry holds incident schema/checkpoints, incidents, evidence and policy timelines. Additive v004 holds JSM registry/configuration/intents. A dedicated serial admin-admitted consumer applies v003 then v004 after ready-v002/v001; no migration-on-read. Queued text is admission, not completion. New local scopes read:servicedesk-request/write:servicedesk-request/write:jira-work require exact-artifact review and future installation consent; no deployment has occurred.
+
+Monitoring worker invokes enrichment after mapped processing, including downstream redelivery. If incident schema is unavailable, the ready monitoring receipt is preserved and explicit admin receipt processing can resume later. A transient readiness failure is not durable automatic downstream completion/recovery evidence. No scheduled scan or fabricated delivery guarantee. Native end-to-end queue/SQL/JSM semantics and broader fault phases remain open. UI projects public incident/impact/SLA/JSM link fields and omits installation IDs, raw event JSON, secrets and full intent requests.
+
+## Verification and consequences
+
+Local SQLite and mocked SDK/HTTP tests verify actual code paths, not hosted TiDB/query-policy or installation isolation. JSON_OBJECT/UNION ALL are standard supported database constructs, but exact Forge query policy/native execution still needs acceptance. Operational workflow is currently a pure guarded policy until durable commands and native Jira restrictions are integrated. Local progression continues while native gates stay open.
+
+Official references verified2026-11-27 (Forge/ADS MCP unavailable): [Forge SQL installation model and limitations](https://developer.atlassian.com/platform/forge/storage-reference/sql/), [prepared SQL/JSON response handling](https://developer.atlassian.com/platform/forge/storage-reference/sql-api/), [TiDB JSON functions](https://docs.pingcap.com/tidb/stable/json-functions/), [JSM contracts and exact endpoint references](../integrations/jsm-programme-contract.md). Platform documentation is not runtime acceptance.

@@ -5,7 +5,9 @@ export interface LogRecord {
     | 'inventory.diagnostic'
     | 'monitoring.ingress'
     | 'monitoring.worker'
-    | 'monitoring.control';
+    | 'monitoring.control'
+    | 'incident.control'
+    | 'incident.worker';
   readonly monitoringResult?: import('../../domain/monitoring/model').IngressOutput;
   readonly correlationId: string;
   readonly outcome: 'success' | 'failure' | 'started';

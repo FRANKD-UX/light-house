@@ -22,6 +22,9 @@ assert(
 assert.deepEqual(manifest.permissions.scopes, [
   'read:jira-work',
   'storage:app',
+  'read:servicedesk-request',
+  'write:servicedesk-request',
+  'write:jira-work',
 ]);
 assert.deepEqual(manifest.modules.sql, [
   { key: 'light-house-sql', engine: 'mysql' },
@@ -43,6 +46,7 @@ for (const f of manifest.modules.function)
       'index.monitoringIngress',
       'index.monitoringConsume',
       'index.monitoringMigrate',
+      'index.incidentMigrate',
     ].includes(f.handler),
   );
 assert.equal(manifest.permissions.external, undefined);

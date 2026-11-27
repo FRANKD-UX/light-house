@@ -23,3 +23,5 @@ Sprint 1: [ADR-0016 — physical persistence and bounded repair](ADR-0016-sprint
 
 - [ADR-0017: Development progression and release acceptance](ADR-0017-development-progression-and-release-acceptance.md) — Accepted by owner 2026-11-27; local Sprint2 development authorised, release gates retained.
 - [ADR-0018: Local monitoring intake](ADR-0018-local-monitoring-intake.md) — Implemented local defaults; deployment/risk/native integration acceptance outstanding.
+
+- [ADR-0019 — Local incident orchestration and programme execution](ADR-0019-local-incident-orchestration.md): local proposed mechanisms, accepted programme authority, unchanged hosted/release gates.

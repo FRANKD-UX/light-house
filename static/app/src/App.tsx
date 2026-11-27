@@ -1,6 +1,7 @@
 import { invocationFailure } from './invocation-error';
 import { Inventory } from './Inventory';
 import { Monitoring } from './Monitoring';
+import { Incidents } from './Incidents';
 import { useEffect, useRef, useState } from 'react';
 import { invoke } from '@forge/bridge';
 import { APPLICATION_METADATA } from '../../../src/domain/value-objects/application-metadata';
@@ -123,6 +124,7 @@ export function App() {
       </section>
       <Inventory />
       <Monitoring />
+      <Incidents />
     </main>
   );
 }

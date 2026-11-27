@@ -32,7 +32,10 @@ const responses = {
   unavailable: 503,
 } as const;
 // Every call builds dependencies from trusted current runtime context, with no warm tenant state.
-export function createMonitoringHandlers(secrets: MonitoringSecrets) {
+export function createMonitoringHandlers(
+  secrets: MonitoringSecrets,
+  onProcessed?: (ctx: TenantContext, inboxId: string) => Promise<void>,
+) {
   function build(context?: unknown) {
     const runtime = getAppContext();
     if (runtime.environmentType !== 'DEVELOPMENT')
@@ -243,6 +246,7 @@ export function createMonitoringHandlers(secrets: MonitoringSecrets) {
           return;
         if ((await service.process(ctx, uuid(body.inboxId))) === 'busy')
           throw new InventoryError('UNAVAILABLE');
+        await onProcessed?.(ctx, uuid(body.inboxId));
         createStructuredLogger(console).info({
           event: 'monitoring.worker',
           correlationId,
