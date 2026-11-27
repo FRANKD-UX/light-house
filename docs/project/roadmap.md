@@ -31,3 +31,7 @@ Outside critical path: Zoho Desk post-resolution (LH-190), advanced workflow cus
 Historical exit gates above mixed local implementation and final release. Proposed ADR-0017 separates them without removing mandatory MVP/security/native requirements. Minimal next path: approve governance distinction and explicit LH-103 local scope → preserve a reviewed reproducible Sprint1 baseline and exact-head CI/review for integration → implement Sprint2 authenticated Zabbix/shared adapter/inbox/deduplication locally → separately review concrete development deployment. B.1 runs in parallel under its own authority; R-01–R-14 release evidence, real RBAC/expiry and second installation remain mandatory before release/distribution/submission.
 
 No full native acceptance, identity procurement, infrastructure troubleshooting or arbitrary diagnostics expansion is a blanket prerequisite to writing Sprint2 code. No actual Sprint2 work or deploy/merge began in this reassessment. Original owner-recorded target19Dec/submission22Dec20:00UTC and required integrations remain planning constraints, not a claim of reverified contest terms.
+
+## Current LH-103 checkpoint — 2026-11-27
+
+Local LH-103 implementation complete on isolated Sprint2 branch; development deployment and native acceptance remain separately gated. See sprint-2-execution-report.md and ../operations/sprint-2-development-approval.md. Next action is exact-artifact review/full Forge lint/explicit development approval, not Sprint3. Sprint1 mandatory release backlog retained.

@@ -32,7 +32,7 @@ export function database() {
         throw new InventoryError('UNAVAILABLE');
       }
       let adapted = query.replace(
-        'ON DUPLICATE KEY UPDATE id = id',
+        /ON DUPLICATE KEY UPDATE (?:id = id|correlation_id = correlation_id)/,
         'ON CONFLICT DO NOTHING',
       );
       if (query.includes('ON DUPLICATE KEY UPDATE role'))

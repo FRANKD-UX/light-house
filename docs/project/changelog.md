@@ -195,3 +195,15 @@ Classified Sprint1 obligations as development, development deployment/runtime, r
 ## 2026-11-27 — Owner accepts governance and authorises local checkpoint/LH-103
 
 Finalised ADR-0017; classified Sprint1 IMPLEMENTATION-COMPLETE LOCALLY — RELEASE ACCEPTANCE OUTSTANDING. Prepared reproducible checkpoint with all151 application tests/20 harness checks preserved. Removed private development site/environment path and workstation user paths from publication candidates; exact harness target stays ignored/private with fail-closed hosted loading. No authentication/session data inspected, no remote publication/merge/deployment or native mutation. Local LH-103 explicitly authorised on an isolated Sprint2 branch after checkpoint.
+
+## Unreleased — 2026-11-27 — Authorised LH-103 local start
+
+- Preserved Sprint1 checkpoint e1d12ffdb57910ba7c5873294ea6f9aaeb04d044 and created isolated sprint-2/zabbix-border-control.
+- Added local Zabbix normalization, authenticated bounded intake, durable duplicate/inbox/queue recovery, tenant mapping and triage projections, source credential lifecycle and additive v002 migration proposal.
+- Added synthetic SQL/mock Forge behavior and negative tests. KVS SDK installation is blocked; no concrete runtime registration, new UI, transport integration or native acceptance claimed. Existing security/release gates remain open.
+
+## Unreleased — 2026-11-27 — LH-103 local implementation complete
+
+- Resolved sandbox npm timeout using permitted external registry access; pinned @forge/kvs2.1.3 and reviewed storage:app, license, dependency and advisory disposition.
+- Wired static v2 authenticated webtrigger, monitoring and serialized schema consumers/resolver; additive six-table v002 preserves v001. Added correlation/outcome observability, durable concurrent duplicates, bounded recovery and inactive credential cleanup.
+- Added minimal operational UI and strict response contracts, synthetic terminal HTTP acceptance runner and self-contained runbook/deployment proposal. All188 baseline tests/20 harness checks preserved;203 app tests now pass. Full Forge lint/scanners and native/runtime acceptance remain explicit gaps. No push/merge/deployment/URL/provisioning/hosted SQL or Sprint3.

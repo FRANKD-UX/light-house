@@ -11,6 +11,20 @@ function serialize(record: LogRecord): string {
     event: record.event,
     correlationId: record.correlationId,
     outcome: record.outcome,
+    ...(record.event === 'monitoring.ingress'
+      ? {
+          monitoringResult: [
+            'accepted',
+            'invalid',
+            'unauthorised',
+            'conflict',
+            'too_large',
+            'method',
+            'rate_limited',
+            'unavailable',
+          ].find((code) => code === record.monitoringResult),
+        }
+      : {}),
     ...(record.event === 'inventory.diagnostic'
       ? {
           operation:

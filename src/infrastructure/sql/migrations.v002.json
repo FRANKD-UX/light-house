@@ -1,0 +1,26 @@
+[
+  {
+    "name": "v002_monitoring_schema_state",
+    "ddl": "CREATE TABLE IF NOT EXISTS monitoring_schema_state (installation_id VARCHAR(255) PRIMARY KEY, schema_version INT NOT NULL, ready INT NOT NULL, checkpoints VARCHAR(2048) NOT NULL, updated_at VARCHAR(24) NOT NULL) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v002_monitoring_sources",
+    "ddl": "CREATE TABLE IF NOT EXISTS monitoring_sources (tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL, installation_id VARCHAR(255) NOT NULL, name VARCHAR(80) NOT NULL, source_type VARCHAR(24) NOT NULL, status VARCHAR(24) NOT NULL, version INT NOT NULL, current_key_id VARCHAR(36) NULL, previous_key_id VARCHAR(36) NULL, previous_until VARCHAR(24) NULL, rate_bucket VARCHAR(16) NULL, rate_count INT NOT NULL, PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_source_name (tenant_id, name), INDEX ix_source_installation (installation_id, id)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v002_monitoring_credentials",
+    "ddl": "CREATE TABLE IF NOT EXISTS monitoring_credentials (tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL, installation_id VARCHAR(255) NOT NULL, source_id VARCHAR(36) NOT NULL, secret_ref VARCHAR(255) NOT NULL, created_at VARCHAR(24) NOT NULL, PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_credential (installation_id, id), INDEX ix_credential_source (tenant_id, source_id)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v002_monitoring_resource_mappings",
+    "ddl": "CREATE TABLE IF NOT EXISTS monitoring_resource_mappings (tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL, source_id VARCHAR(36) NOT NULL, external_resource_id VARCHAR(128) NOT NULL, uplink_id VARCHAR(36) NOT NULL, version INT NOT NULL, PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_resource (tenant_id, source_id, external_resource_id), INDEX ix_mapping_uplink (tenant_id, uplink_id)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v002_monitoring_inbox",
+    "ddl": "CREATE TABLE IF NOT EXISTS monitoring_inbox (tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL, installation_id VARCHAR(255) NOT NULL, source_id VARCHAR(36) NOT NULL, correlation_id VARCHAR(36) NOT NULL, duplicate_count INT NOT NULL, dedupe_key VARCHAR(64) NOT NULL, fingerprint VARCHAR(64) NOT NULL, event_json VARCHAR(4096) NOT NULL, status VARCHAR(24) NOT NULL, reason VARCHAR(32) NULL, received_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL, attempts INT NOT NULL, dispatches INT NOT NULL, version INT NOT NULL, lease_token VARCHAR(36) NULL, lease_until VARCHAR(24) NULL, uplink_id VARCHAR(36) NULL, site_id VARCHAR(36) NULL, PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_inbox_identity (tenant_id, source_id, dedupe_key), INDEX ix_inbox_status (tenant_id, status, id)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v002_monitoring_observations",
+    "ddl": "CREATE TABLE IF NOT EXISTS monitoring_observations (tenant_id VARCHAR(36) NOT NULL, installation_id VARCHAR(255) NOT NULL, correlation_id VARCHAR(36) NOT NULL, source_id VARCHAR(36) NOT NULL, received_at VARCHAR(24) NOT NULL, result VARCHAR(24) NOT NULL, PRIMARY KEY (tenant_id, correlation_id), INDEX ix_monitoring_observation (tenant_id, received_at)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  }
+]

@@ -99,3 +99,11 @@ Partition prerequisites, not acceptance criteria: B.1 requires existing consenti
 Required classification is separate implementation/development progression, concrete development deployment/runtime authority, protected integration/merge and final release acceptance. Sprint1 may be implementation-complete locally with outstanding native release requirements; full acceptance is not asserted. No tenant/auth/expiry/reference/CAS/receipt/security regression/control may be weakened. Missing native identities/second installation are release evidence dependencies, not an architectural prerequisite for writing Sprint2 port/use-case code. See ADR-0017 and execution-report classification D/DEP/R/O.
 
 R-01–R-14 in acceptance-criteria.md remain mandatory release backlog with owner/environment/test evidence. B.1 independent administrator acceptance remains bounded/reviewed; B.2 identities/expiry/access evidence and genuine second installation remain blocked without appropriate consent. No new tests, infrastructure, identities/installations, implementation scope, deployment, mutation, publication/merge or release is authorised by a governance recommendation.
+
+## LH-103 implementation boundary — 2026-11-27
+
+Owner authorises local Zabbix ingestion and automated Border Control only. [Sprint2 report](sprint-2-execution-report.md) distinguishes local adapter/intake/inbox/lease/mapping behavior from missing SDK binding, runtime modules, UI and actual Zabbix transport. No incident/SLA/JSM implementation or operational recovery closure is included. All canonical security/isolation/release requirements remain mandatory.
+
+## LH-103 local implementation completion — 2026-11-27
+
+Runtime modules, source credentials, strict ingestion, durable inbox/idempotency/async Border Control, bounded recovery, minimal operational UI and terminal synthetic acceptance tooling are implemented locally. See sprint-2-execution-report.md for exact evidence versus untested native/source compatibility. No incident enrichment, SLA execution, JSM closure, external identity replacement, runtime AI, new hosted backend or additional installation introduced.

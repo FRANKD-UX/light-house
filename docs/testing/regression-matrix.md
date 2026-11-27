@@ -47,3 +47,7 @@ A planned row is not test coverage. Audit records executable counts only.
 | UI/foundation          | Explicit loading/empty/error/conflict/validation, selection/configuration/grants, repair and all foundation diagnostic regressions                 | jsdom/mock Bridge; installed visual comparison remains deferred |
 
 Historical R-05 is now foundation-accepted for diagnostics/Bridge; actual visual theme comparison remains deferred to Sprint 5. R-06 has local evidence above and an open live gate. No mocked result closes it.
+
+## LH-103 local regressions — 2026-11-27
+
+203 application tests across23 files preserve all188 prior tests;20 isolated harness checks unchanged. Synthetic SQL/in-memory ports/mock SDK/UI/injected Fetch cover valid/missing/wrong/revoked/bound credentials, strict malformed/unsupported/tenant-spoof events, same/foreign tenant mappings, concurrent duplicate uniqueness/counts/content conflicts, partial SQL/KVS/queue persistence, stale-worker fencing, bounded retries/exhaustion, migration resume, inactive cleanup, UI roles/contracts/loading and redaction. These are local behavior tests, not native Forge/TiDB/KVS/queue/Zabbix acceptance. Full Forge lint and scanners did not successfully complete; deployment/native gates remain open.

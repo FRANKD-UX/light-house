@@ -19,10 +19,33 @@ assert(
       existsSync(`${resource.path}/index.html`),
   ),
 );
-assert.deepEqual(manifest.permissions.scopes, ['read:jira-work']);
+assert.deepEqual(manifest.permissions.scopes, [
+  'read:jira-work',
+  'storage:app',
+]);
 assert.deepEqual(manifest.modules.sql, [
   { key: 'light-house-sql', engine: 'mysql' },
 ]);
+const ingress = manifest.modules.webtrigger[0];
+assert.equal(ingress.urlFormat, 'v2');
+assert.equal(ingress.response.type, 'static');
+assert.deepEqual(
+  ingress.response.outputs.map((o) => o.statusCode),
+  [202, 400, 401, 409, 413, 405, 429, 503],
+);
+for (const consumer of manifest.modules.consumer)
+  assert(manifest.modules.function.some((f) => f.key === consumer.function));
+for (const f of manifest.modules.function)
+  assert(
+    [
+      'index.handler',
+      'index.migrateInstallation',
+      'index.monitoringIngress',
+      'index.monitoringConsume',
+      'index.monitoringMigrate',
+    ].includes(f.handler),
+  );
+assert.equal(manifest.permissions.external, undefined);
 console.info(
   'Local manifest wiring and built resources passed. This is not Forge CLI validation.',
 );

@@ -55,3 +55,11 @@ No new permissions, ingress, workflow mutations or data stores are implemented i
 ## Sprint 1 reviewed surface — 2026-11-26
 
 The actual implementation, trust-boundary traces, scanner coverage/limitations, dependency reassessment and pre-release findings are recorded in [Sprint 1 security review](../project/sprint-1-security-review.md). Scope is read:jira-work and Forge SQL; no egress, public ingress, asApp, external identity or operational JSM writes. Account/installation identity, active grants, same-tenant references, durable mutation admission and sanitized logs/errors are enforced server-side. No live SQL or second-installation acceptance is claimed.
+
+## LH-103 local boundary review — 2026-11-27
+
+New local factory denies non-DEVELOPMENT runtime; trusts installation from getAppContext and Atlassian actor from resolver context, never event body. Source authentication binds secret metadata and SQL references; public outcomes/logs omit payloads/tokens. Input, replay, duplicate and worker-claim bounds have synthetic regressions. No ingress module is exposed. Remaining deployment blockers include concrete supported KVS binding, manifest/scope review, credential lifecycle reconciliation, full UI contracts and native SQL/queue/isolation/security acceptance. No security certification or new scanner result is claimed. See ADR-0018.
+
+## Current LH-103 implementation review — 2026-11-27
+
+The earlier unexposed local factory is now manifest/index wired on the local branch, not deployed. Supported KVS2.1.3 secret client/storage:app, reference-before-secret-before-activation lifecycle, static v2 outcomes, source authentication before trusted JSON processing, scoped observations, generated correlations and safe operational UI are implemented. Full trace, residual advisories and scanner/native evidence gaps are in ../project/sprint-2-security-review.md. Separate deployment/new-exposure risk approval required.

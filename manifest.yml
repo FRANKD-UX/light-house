@@ -13,7 +13,60 @@ modules:
     - key: light-house-schema-consumer
       queue: light-house-schema
       function: schema-migration
+    - key: light-house-monitoring-consumer
+      queue: light-house-monitoring
+      function: monitoring-consumer
+    - key: light-house-monitoring-schema-consumer
+      queue: light-house-monitoring-schema
+      function: monitoring-migration
+  webtrigger:
+    - key: light-house-zabbix-intake
+      function: monitoring-ingress
+      urlFormat: v2
+      response:
+        type: static
+        outputs:
+          - key: accepted
+            statusCode: 202
+            contentType: application/json
+            body: '{"outcome":"accepted"}'
+          - key: invalid
+            statusCode: 400
+            contentType: application/json
+            body: '{"outcome":"invalid"}'
+          - key: unauthorised
+            statusCode: 401
+            contentType: application/json
+            body: '{"outcome":"unauthorised"}'
+          - key: conflict
+            statusCode: 409
+            contentType: application/json
+            body: '{"outcome":"conflict"}'
+          - key: too_large
+            statusCode: 413
+            contentType: application/json
+            body: '{"outcome":"too_large"}'
+          - key: method
+            statusCode: 405
+            contentType: application/json
+            body: '{"outcome":"method"}'
+          - key: rate_limited
+            statusCode: 429
+            contentType: application/json
+            body: '{"outcome":"rate_limited"}'
+          - key: unavailable
+            statusCode: 503
+            contentType: application/json
+            body: '{"outcome":"unavailable"}'
   function:
+    - key: monitoring-ingress
+      handler: index.monitoringIngress
+    - key: monitoring-consumer
+      handler: index.monitoringConsume
+      timeoutSeconds: 55
+    - key: monitoring-migration
+      handler: index.monitoringMigrate
+      timeoutSeconds: 900
     - key: schema-migration
       handler: index.migrateInstallation
       timeoutSeconds: 900
@@ -25,6 +78,7 @@ resources:
 permissions:
   scopes:
     - read:jira-work
+    - storage:app
 app:
   runtime:
     name: nodejs22.x

@@ -1,6 +1,12 @@
 export interface LogRecord {
   readonly event:
-    'backend.status' | 'processing.failed' | 'inventory.diagnostic';
+    | 'backend.status'
+    | 'processing.failed'
+    | 'inventory.diagnostic'
+    | 'monitoring.ingress'
+    | 'monitoring.worker'
+    | 'monitoring.control';
+  readonly monitoringResult?: import('../../domain/monitoring/model').IngressOutput;
   readonly correlationId: string;
   readonly outcome: 'success' | 'failure' | 'started';
   readonly operation?: 'inventory.list';

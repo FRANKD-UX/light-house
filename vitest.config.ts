@@ -8,6 +8,8 @@ export default defineConfig({
         'src/**/*.ts',
         'static/app/src/App.tsx',
         'static/app/src/Inventory.tsx',
+        'static/app/src/Monitoring.tsx',
+        'static/app/src/monitoring-contract.ts',
         'static/app/src/inventory-contract.ts',
         'static/app/src/status-contract.ts',
         'static/app/src/invocation-error.ts',

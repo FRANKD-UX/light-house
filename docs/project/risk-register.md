@@ -151,3 +151,11 @@ Proposed B.1 admin gate removes unnecessary dependency on unavailable V/O only a
 Recommend implementation-complete locally / release acceptance outstanding under ADR-0017. No confirmed prerequisite architectural/auth/mutation defect found in bounded review; preserve controls and151-test suite. Native RBAC/expiry/real-installation isolation and other R-01–R-14 remain mandatory release gates; unavailable identities may block final release, not unrelated authorised local Sprint2 coding. Any actual bypass/tenant leak/corruption/test failure promotes affected scope immediately to D/DEP blocker.
 
 Current PR2 head CI green does not cover dirty/untracked final corrections/harness/docs; exact-head CI/review and owner authority block merge. Dependency advisories remain scoped development risk, not release acceptance. Latest deterministic scan incomplete (FSRT source coverage unknown, OpenGrep not_run), explicitly retained security evidence gap. No diagnostic/tunnel/auth expansion justified solely to perfect reports. B.1 remains separately bounded/authorised with recorded286 lag reconciliation; no writes during this reassessment.
+
+## LH-103 local start — 2026-11-27
+
+Supported KVS SDK retrieval is unavailable (ETIMEDOUT); concrete secret binding/runtime registration is blocked, not replaced by legacy API. Local source/receipt projections do not provide deployed triage UI. Credential partial-write reconciliation, bounded cleanup/source pagination and migration caller serialization remain incomplete. No ingress is exposed, so this work has not changed the deployed attack surface. Complete implementation review and native SQL/KVS/queue/transport/isolation gates before any deployment/release claim; see ADR-0018 and Sprint2 report. Sprint1 native/security/licence backlog remains unchanged.
+
+## LH-103 current disposition — 2026-11-27
+
+KVS package retrieval blocker resolved via supported external registry permissions; local runtime/UI/cleanup/source pagination now implemented, superseding earlier local-start gaps. Full Forge lint timed out, native SQL/KVS/queue/Zabbix/role/isolation not exercised, scanners did not run successfully. Public ingress and storage scope remain undeployed; new exposure/advisory risk must be separately approved for DEVELOPMENT. Detailed bounded proposal and stops: ../operations/sprint-2-development-approval.md.

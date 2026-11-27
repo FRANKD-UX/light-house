@@ -1,5 +1,6 @@
 import { invocationFailure } from './invocation-error';
 import { Inventory } from './Inventory';
+import { Monitoring } from './Monitoring';
 import { useEffect, useRef, useState } from 'react';
 import { invoke } from '@forge/bridge';
 import { APPLICATION_METADATA } from '../../../src/domain/value-objects/application-metadata';
@@ -58,9 +59,9 @@ export function App() {
       <section aria-labelledby="foundation">
         <h2 id="foundation">Engineering foundation</h2>
         <p>
-          This application is in development. Monitoring, SLA execution and Jira
-          Service Management orchestration are not connected. Inventory requires
-          explicit Forge SQL setup.
+          This application is in development. Monitoring intake and inventory
+          require explicit source and Forge SQL setup. SLA execution and Jira
+          Service Management orchestration are not connected.
         </p>
         <button
           type="button"
@@ -121,6 +122,7 @@ export function App() {
         </dl>
       </section>
       <Inventory />
+      <Monitoring />
     </main>
   );
 }

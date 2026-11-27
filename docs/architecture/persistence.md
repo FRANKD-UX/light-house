@@ -43,3 +43,11 @@ Bounded inventory lifecycle telemetry now distinguishes readiness SQL, membershi
 ## Bounded inventory list SQL — 2026-11-26
 
 Shared list change validates repository fetch limit as unknown number/safe integer 1–51, then renders only its bounded decimal integer. Tenant and cursor remain separately bound in that order; keyset predicate/order/lookahead/lifecycle semantics and diagnostics persist. No schema/migration/other-query change. This is a conditional compatibility correction, not a proven Forge LIMIT-placeholder prohibition. The generic test diagnostic contract is corrected without production interface changes; all 148 tests and local validation pass. Hosted acceptance remains separate; see the latest investigation/audit for deployment and runtime evidence.
+
+## Local monitoring proposal — 2026-11-27
+
+Additive migrations.v002.json defines monitoring schema state, sources, credential references, resource mappings and durable inbox. It does not alter immutable v001. Secret material remains behind the KVS-secret port; SQL contains references only. Local checkpoint helper preserves completed v002 DDL and inventory-ready-v1, with separate monitoring readiness. No deployed migration entrypoint or concurrency authority exists yet. See ADR-0018 and Sprint2 report; SQLite adaptation does not establish Forge SQL compatibility.
+
+## Current v002 local implementation — 2026-11-27
+
+Six-table registry now includes safe authenticated monitoring_observations and inbox first correlation/atomic duplicate count. Credential references carry intent creation time; bounded cleanup excludes live pointers and applies a one-hour orphan/obsolete grace. Registered dedicated schema consumer checks trusted installation/ready-v1, serialized by queue concurrency; resolver admission requires tenant/Jira admin. Fixed DDL is checkpointed separately; no v001 edits or hosted DDL performed. See ADR-0018.

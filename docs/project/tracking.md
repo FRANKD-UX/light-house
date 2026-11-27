@@ -191,9 +191,9 @@ Updated 2026-11-27 (eleven-kind native baseline; Phase B approved conditionally,
 - Priority: P0
 - Dependencies: LH-101,LH-102
 - Acceptance criteria: Pinned source version; wrong/replayed/oversized/tenant-spoof payload denied; duplicates one receipt; queue gap repair.
-- Status: Not started
-- Verification evidence: Adapter contract and zabbix/security design.
-- Known blockers: Live ingress and auth parameter review.
+- Status: Implementation-complete locally — native acceptance and deployment approval outstanding (2026-11-27)
+- Verification evidence: sprint-2-execution-report.md;203 synthetic application tests,20 harness checks; manifest/runtime/UI/runner wired.
+- Known blockers: Full Forge lint inaccessible; separate DEVELOPMENT scope/dependency-risk/deployment approval and native/source-version compatibility required.
 
 ## LH-104 — Incident enrichment and SLA engine
 
@@ -440,3 +440,11 @@ LH-101/LH-102 incomplete. B.1 administrator functional work can be separated fro
 ADR-0017 accepted. Sprint1 status: **IMPLEMENTATION-COMPLETE LOCALLY — RELEASE ACCEPTANCE OUTSTANDING**. Owner authorises local reproducible checkpoint commit and isolated Sprint2 LH-103 implementation. Final native R-01–R-14, LH-014 security disposition, licence, release/installation gates remain open. No merge/protection bypass, deployment, new installation or hosted mutation authority is implied. PR2 published ddf0d9d/run45804565939 remains historical until a separately authorised exact-head publication/CI.
 
 Privacy checkpoint removes private site/environment target strings from publication candidates and keeps the exact approved target in ignored owner-only e2e/.local/approved-target.json. Hosted auth/run fails closed without that config; no URL override or session inspection. All151 application tests and20 harness checks retained; added target-input negatives inside existing harness check. Exact local checkpoint SHA recorded after creation in the subsequent audit/handover. LH-103 remains local-only and its release evidence will be distinct from implemented functionality.
+
+## LH-103 local implementation start — 2026-11-27
+
+Status: **IN PROGRESS** on sprint-2/zabbix-border-control, based on e1d12ffdb57910ba7c5873294ea6f9aaeb04d044. Authenticated adapter/intake, durable inbox/dispatch/retry, tenant mapping and local triage projections implemented with synthetic tests. Concrete KVS dependency retrieval is blocked by ETIMEDOUT; manifest/index, UI, Zabbix transport and hosted acceptance remain outstanding. No dependency/lock/runtime deployment change. See sprint-2-execution-report.md and ADR-0018. Sprint1 checkpoint preserved; PR2 exact-head publication/CI remains separate, no merge.
+
+## LH-103 implementation completion — 2026-11-27 (current)
+
+**IMPLEMENTATION-COMPLETE LOCALLY — NATIVE ACCEPTANCE AND DEPLOYMENT APPROVAL OUTSTANDING.** KVS2.1.3 installed/pinned through supported external registry access; encrypted secret lifecycle, static authenticated v2 ingress, durable inbox/duplicate/worker/recovery, additive v002 migration, operational source/receipt/outcome UI and terminal acceptance runner wired.203 application tests/20 harness checks pass after final validation; all188 baseline tests retained. Full Forge lint inaccessible after platform timeout; local official manifest schema passes. New scope storage:app and12 advisory findings require separate development risk/scope/target approval. No hosted operation executed. See sprint-2-execution-report.md and ../operations/sprint-2-development-approval.md; prior IN PROGRESS/KVS-blocked entries are dated history.
