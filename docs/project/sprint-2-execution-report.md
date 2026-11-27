@@ -1,5 +1,7 @@
 # Sprint 2 LH-103 execution report
 
+**Hosted update — 2026-11-27:** Owner reports exact `2b97545fe87e5d3d371ab2982da7e41b7614d834` DEVELOPMENT major4 deployment/install upgrade and separate authenticated lint pass (zero errors/warnings; one MAJOR_VERSION_RULE approval). Deployment used `--no-verify`; pre-deployment checks were bypassed. Exact health UUID independently matched backend.status/success at18:31:37.509Z. Migration/source/URL/native intake remain unexecuted by this review; fresh usage/pending/bounded authority and current dependency-risk disposition remain prerequisites. See [consolidated hosted checkpoint and next controls](../operations/sprint-2-hosted-acceptance.md). This dated update supersedes deployment/lint-pending wording below; Sprint1 release gates remain open.
+
 2026-11-27. **IMPLEMENTATION-COMPLETE LOCALLY — NATIVE ACCEPTANCE AND DEPLOYMENT APPROVAL OUTSTANDING.** Branch sprint-2/zabbix-border-control, base e1d12ffdb57910ba7c5873294ea6f9aaeb04d044. Exact final checkpoint and artifact hashes are recorded in the approval cover/final handover. Sprint1 branch and R-01–R-14 mandatory release backlog are preserved. No push, merge, deployed version change, URL creation, hosted secret/SQL mutation or new installation performed.
 
 ## Implemented and reviewed

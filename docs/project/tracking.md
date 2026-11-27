@@ -1,5 +1,7 @@
 # Engineering backlog
 
+**Hosted update — 2026-11-27:** Owner reports exact `2b97545fe87e5d3d371ab2982da7e41b7614d834` DEVELOPMENT major4 deployment/install upgrade and separate authenticated lint pass (zero errors/warnings; one MAJOR_VERSION_RULE approval). Deployment used `--no-verify`; pre-deployment checks were bypassed. Exact health UUID independently matched backend.status/success at18:31:37.509Z. Migration/source/URL/native intake remain unexecuted by this review; fresh usage/pending/bounded authority and current dependency-risk disposition remain prerequisites. See [consolidated hosted checkpoint and next controls](../operations/sprint-2-hosted-acceptance.md). This dated update supersedes deployment/lint-pending wording below; Sprint1 release gates remain open.
+
 **Owner decision (2026-11-27):** ADR-0017 accepted; Sprint1 IMPLEMENTATION-COMPLETE LOCALLY — RELEASE ACCEPTANCE OUTSTANDING. Local checkpoint and isolated LH-103 implementation authorised. No release/production/deployment/native mutation/publication/merge authority. Prior proposal/hold entries are dated history.
 
 **Current delivery recommendation (2026-11-27):** Implementation-complete locally with mandatory release acceptance outstanding; GO for local Sprint2 after explicit owner scope/governance approval, not deploy/merge/release authority. See [gate classification](sprint-1-execution-report.md#delivery-governance-reassessment--2026-11-27-current-recommendation). Prior evidence and untested requirements remain preserved.
@@ -191,9 +193,9 @@ Updated 2026-11-27 (eleven-kind native baseline; Phase B approved conditionally,
 - Priority: P0
 - Dependencies: LH-101,LH-102
 - Acceptance criteria: Pinned source version; wrong/replayed/oversized/tenant-spoof payload denied; duplicates one receipt; queue gap repair.
-- Status: Implementation-complete locally — native acceptance and deployment approval outstanding (2026-11-27)
+- Status: Deployed to DEVELOPMENT major4; exact health accepted — monitoring native acceptance outstanding (2026-11-27)
 - Verification evidence: sprint-2-execution-report.md;203 synthetic application tests,20 harness checks; manifest/runtime/UI/runner wired.
-- Known blockers: Full Forge lint inaccessible; separate DEVELOPMENT scope/dependency-risk/deployment approval and native/source-version compatibility required.
+- Known blockers: Native v002/source/intake not yet accepted; fresh lag-aware usage/pending baseline, current dependency-risk disposition and bounded mutation/URL authority required. Separate authenticated lint and major4 scope/install completed per owner; deployment used --no-verify. See operations/sprint-2-hosted-acceptance.md.
 
 ## LH-104 — Incident enrichment and SLA engine
 

@@ -1,5 +1,7 @@
 # Sprint 0 acceptance
 
+**Hosted update — 2026-11-27:** Owner reports exact `2b97545fe87e5d3d371ab2982da7e41b7614d834` DEVELOPMENT major4 deployment/install upgrade and separate authenticated lint pass (zero errors/warnings; one MAJOR_VERSION_RULE approval). Deployment used `--no-verify`; pre-deployment checks were bypassed. Exact health UUID independently matched backend.status/success at18:31:37.509Z. Migration/source/URL/native intake remain unexecuted by this review; fresh usage/pending/bounded authority and current dependency-risk disposition remain prerequisites. See [consolidated hosted checkpoint and next controls](../operations/sprint-2-hosted-acceptance.md). This dated update supersedes deployment/lint-pending wording below; Sprint1 release gates remain open.
+
 **Owner decision (2026-11-27):** ADR-0017 accepted; Sprint1 IMPLEMENTATION-COMPLETE LOCALLY — RELEASE ACCEPTANCE OUTSTANDING. Local checkpoint and isolated LH-103 implementation authorised. No release/production/deployment/native mutation/publication/merge authority. Prior proposal/hold entries are dated history.
 
 **Current delivery recommendation (2026-11-27):** Implementation-complete locally with mandatory release acceptance outstanding; GO for local Sprint2 after explicit owner scope/governance approval, not deploy/merge/release authority. See [gate classification](sprint-1-execution-report.md#delivery-governance-reassessment--2026-11-27-current-recommendation). Prior evidence and untested requirements remain preserved.

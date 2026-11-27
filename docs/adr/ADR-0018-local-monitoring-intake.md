@@ -1,5 +1,7 @@
 # ADR-0018 — Zabbix intake and durable Border Control
 
+Hosted evidence update2026-11-27: owner reports exact2b97545 DEVELOPMENT major4 deployment with --no-verify, separate authenticated lint pass and existing-installation storage:app consent/upgrade. Health independently correlated. This supersedes lint/deployment-pending evidence below without approving the remaining defaults, migration/source/URL session or release gates; see [hosted checkpoint](../operations/sprint-2-hosted-acceptance.md).
+
 Status: Implemented local defaults, pending deployment/security/native acceptance review — 2026-11-27. Owner authorises LH-103 implementation under ADR-0017. This ADR grants no deployment, scope-upgrade, URL, credential or migration execution authority. Mechanism/default values below are engineering choices, not owner-approved production constraints.
 
 Use existing MonitoringAdapter with strict Zabbix v1 normalization and application-owned intake/processing. Public v2 webtrigger uses static allowlisted HTTP outcomes, preserving the documented Runs on Atlassian eligibility condition; generated correlation IDs are available only in authorised receipts/observations/logs. Do not switch to dynamic response to expose IDs without reviewing eligibility/egress/version implications. No actual eligibility certification is claimed.

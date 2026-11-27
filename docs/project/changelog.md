@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-27 — Sprint 2 hosted deployment and health evidence
+
+- Recorded owner-completed exact2b97545 DEVELOPMENT major4 deployment, major3→4 existing-installation upgrade/storage consent and separate authenticated lint pass; transparently recorded deployment --no-verify bypass.
+- Independently matched health UUID to backend.status/success at18:31:37.509Z. Verified retained Sprint1 metadata/not-configured constants and committed monitoring controls; no cosmetic change or redeployment.
+- Prepared consolidated preflight, precise v002/readiness/physical-schema checks, private synthetic source/URL/terminal commands. Fresh usage/pending/bounded authority remain open; current audits18 affected packages(11high/7moderate), same three roots, require current risk disposition. Sprint1 data/release gates preserved; no hosted writes or publication.
+
 ## 0.1.0 — 2026-11-24 — Sprint 0 foundation
 
 - Established minimal main baseline and isolated engineering-foundation branch in the empty repository.

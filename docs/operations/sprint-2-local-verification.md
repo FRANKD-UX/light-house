@@ -1,5 +1,7 @@
 # LH-103 terminal and native acceptance runbook
 
+**Current hosted checkpoint — 2026-11-27:** Deployment/install and separate authenticated lint are now owner-reported complete for exact2b97545; `--no-verify` bypass recorded. Exact health independently correlated. The remaining consolidated procedure and authority/resource/security prerequisites are in [sprint-2-hosted-acceptance.md](sprint-2-hosted-acceptance.md); earlier proposal-only/deployment-pending text below is history, not an instruction to redeploy. No native mutation or URL generation was performed by this review.
+
 Status 2026-11-27: local implementation only. This document prepares execution; it does not authorise deployment, URL creation, credential provisioning or hosted SQL writes. Preserve Sprint1 checkpoint e1d12ffdb57910ba7c5873294ea6f9aaeb04d044 and all release gates. No production, reset, new installation, tunnel or Playwright authentication work.
 
 ## Prerequisites after separate approval

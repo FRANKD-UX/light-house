@@ -1,5 +1,7 @@
 # Risk register — current review 2026-11-26
 
+**Hosted update — 2026-11-27:** Owner reports exact `2b97545fe87e5d3d371ab2982da7e41b7614d834` DEVELOPMENT major4 deployment/install upgrade and separate authenticated lint pass (zero errors/warnings; one MAJOR_VERSION_RULE approval). Deployment used `--no-verify`; pre-deployment checks were bypassed. Exact health UUID independently matched backend.status/success at18:31:37.509Z. Migration/source/URL/native intake remain unexecuted by this review; fresh usage/pending/bounded authority and current dependency-risk disposition remain prerequisites. See [consolidated hosted checkpoint and next controls](../operations/sprint-2-hosted-acceptance.md). This dated update supersedes deployment/lint-pending wording below; Sprint1 release gates remain open.
+
 | ID    | Risk / likelihood / impact                                                  | Mitigation and owner                                                                                | Exit evidence / status                                        |
 | ----- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | RK-01 | Development deployed/installed; actual runtime pending; certain / high      | Preserve real ID; official lint passed; require owner runtime evidence and post-test usage review   | LH-013; open                                                  |

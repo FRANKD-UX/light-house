@@ -1,5 +1,7 @@
 # Sprint 2 DEVELOPMENT deployment and native session proposal
 
+**Current hosted checkpoint — 2026-11-27:** Deployment/install and separate authenticated lint are now owner-reported complete for exact2b97545; `--no-verify` bypass recorded. Exact health independently correlated. The remaining consolidated procedure and authority/resource/security prerequisites are in [sprint-2-hosted-acceptance.md](sprint-2-hosted-acceptance.md); earlier proposal-only/deployment-pending text below is history, not an instruction to redeploy. No native mutation or URL generation was performed by this review.
+
 **REVIEW REQUIRED — NOT AUTHORISATION.** Exact proposed commit and artifact hashes are supplied in the local approval cover after checkpoint creation. Branch sprint-2/zabbix-border-control, parent/base Sprint1 e1d12ffdb57910ba7c5873294ea6f9aaeb04d044. Do not approve a moving dirty tree. No push, merge, production or new installation requested. See sprint-2-execution-report.md and sprint-2-local-verification.md.
 
 | Change               | Proposed scope                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
