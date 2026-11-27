@@ -9,13 +9,14 @@ Deliver authenticated Zabbix → durable intake → Border Control → enrichmen
 - Sprint1 checkpoint: `e1d12ffdb57910ba7c5873294ea6f9aaeb04d044`, implementation-complete locally; R-01–R-14 release acceptance remains open.
 - Sprint2 implementation: `2b97545fe87e5d3d371ab2982da7e41b7614d834`, tree `0e5623879a3a05cb09e3d9ef7703148c3b606c25`.
 - Preserved Sprint2 hosted documentation: `3236eb7`, twelve documentation files committed locally; no runtime change. DEVELOPMENT major4/install/health evidence is in operations/sprint-2-hosted-acceptance.md. Do not repeat deployment/health merely to resume.
+- Integrated local implementation: `a16a5ba1238aa7ffae7bad505b8847bc980bd8b3`,295 tests validated; full POC integration test/native acceptance still pending.
 - Current branch: `sprint-3/incident-orchestration`, same existing `/tmp/light-house-sprint1` worktree. Other existing main worktree is untouched. No additional worktree was created.
 
 ## Active assignments and integration
 
 Four total slots including lead; three specialist subagents, no duplicate writers. Backend owns new domain/incidents + application/incidents + incidents unit tests. Integration owns application/jsm + infrastructure/jsm + jsm unit tests + jsm-programme-contract.md. Security owns programme-security-assessment.md and ignored scanner outputs. Lead owns SQL/Forge integration, existing shared contracts/configuration/docs/manifest/lock. Integration specialist subsequently implemented the incident UI and backend specialist supplied SQL/runtime quality tests; security specialist implemented v004 SQL and reviewed integration. Agents must return exact files, checks, risks and remaining integration; no independent shared-file commits.
 
-Prior successful baseline:203 application tests/23 files,20 harness checks, builds/local manifest, dry-run. All source/manifest/locks unchanged at startup; prior docs now preserved. Integrated milestone npm run validate now exits0:295 tests/30 files, coverage96.61 statements/94.87 branches/97.69 functions/97.68 lines, strict types/lint/build/local manifest all pass. Harness20 and webhook dry-run pass. All203 baseline retained; no root dependency/immutable migration changes. Exact checkpoint SHA is recorded after commit below.
+Prior successful baseline:203 application tests/23 files,20 harness checks, builds/local manifest, dry-run. All source/manifest/locks unchanged at startup; prior docs now preserved. Integrated milestone npm run validate now exits0:295 tests/30 files, coverage96.61 statements/94.87 branches/97.69 functions/97.68 lines, strict types/lint/build/local manifest all pass. Harness20 and webhook dry-run pass. All203 baseline retained; no root dependency/immutable migration changes. Validated implementation checkpoint: `a16a5ba1238aa7ffae7bad505b8847bc980bd8b3` (52 files; local only). Source commit follows preserved documentation3236eb7; existing deployment remains2b97545.
 
 ## Dependency graph and execution status
 
