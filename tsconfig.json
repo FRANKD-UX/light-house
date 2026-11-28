@@ -23,6 +23,8 @@
     "static/app/src",
     "tests",
     "vite.config.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "static/issue-context/src",
+    "vite.issue-context.config.ts"
   ]
 }

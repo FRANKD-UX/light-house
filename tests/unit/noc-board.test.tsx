@@ -147,6 +147,7 @@ it('does not infer current operations from absent readiness and disables control
   render(<NocBoard {...p} operationsReady={false} busy selectedId={id(1)} />);
   expect(screen.getByText(/Creation snapshots do not establish/)).toBeTruthy();
   expect(screen.queryByText('In progress', { selector: 'strong' })).toBeNull();
+  expect(screen.getByText('P1 — operational-unverified')).toBeTruthy();
   const button = screen.getByRole('button', {
     name: 'Open incident ' + id(1),
   }) as HTMLButtonElement;

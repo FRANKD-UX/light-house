@@ -6,6 +6,13 @@ modules:
       resolver:
         function: status-resolver
       title: Light House
+  jira:issueContext:
+    - key: light-house-incident-context
+      resource: light-house-issue-ui
+      resolver:
+        function: issue-context-resolver
+      title: Light House incident
+      label: Light House incident
   sql:
     - key: light-house-sql
       engine: mysql
@@ -62,6 +69,8 @@ modules:
             contentType: application/json
             body: '{"outcome":"unavailable"}'
   function:
+    - key: issue-context-resolver
+      handler: index.embeddedHandler
     - key: incident-migration
       handler: index.incidentMigrate
       timeoutSeconds: 900
@@ -79,6 +88,8 @@ modules:
     - key: status-resolver
       handler: index.handler
 resources:
+  - key: light-house-issue-ui
+    path: dist/issue-ui
   - key: light-house-ui
     path: dist/ui
 permissions:

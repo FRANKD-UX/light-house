@@ -42,6 +42,7 @@ for (const f of manifest.modules.function)
   assert(
     [
       'index.handler',
+      'index.embeddedHandler',
       'index.migrateInstallation',
       'index.monitoringIngress',
       'index.monitoringConsume',
@@ -50,10 +51,23 @@ for (const f of manifest.modules.function)
     ].includes(f.handler),
   );
 assert.equal(manifest.permissions.external, undefined);
-console.info(
-  'Local manifest wiring and built resources passed. This is not Forge CLI validation.',
-);
 if (!manifest.app.id)
   console.info(
     'Registration pending: app.id intentionally absent. forge register is required before deployment.',
   );
+
+const embedded = manifest.modules['jira:issueContext'];
+assert.equal(embedded.length, 1);
+assert.equal(embedded[0].key, 'light-house-incident-context');
+assert.equal(embedded[0].resource, 'light-house-issue-ui');
+assert.equal(embedded[0].resolver.function, 'issue-context-resolver');
+assert(
+  manifest.resources.some(
+    (r) => r.key === 'light-house-issue-ui' && r.path === 'dist/issue-ui',
+  ),
+);
+assert(existsSync('dist/issue-ui/index.html'));
+
+console.info(
+  'Local manifest wiring and built resources passed. This is not Forge CLI validation.',
+);

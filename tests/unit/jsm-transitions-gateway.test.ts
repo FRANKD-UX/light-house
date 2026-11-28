@@ -4,8 +4,8 @@ import { beforeEach, expect, it, vi } from 'vitest';
 const sdk = vi.hoisted(() => ({ request: vi.fn(), asUser: vi.fn() }));
 vi.mock('@forge/api', () => ({
   default: {
-    asUser: () => {
-      sdk.asUser();
+    asUser: (...args: unknown[]) => {
+      sdk.asUser(...args);
       return { requestJira: sdk.request };
     },
   },
@@ -47,7 +47,6 @@ const response = (status: number, value: unknown = {}) => ({
   json: vi.fn(async () => value),
 });
 function fixture(value = plan()) {
-  const actor = response(200, { accountId: value.accountId });
   const issue = response(200, {
     id: value.issueId,
     fields: {
@@ -67,12 +66,10 @@ function fixture(value = plan()) {
   });
   const request = vi
     .fn<JiraRequest>()
-    .mockResolvedValueOnce(actor)
     .mockResolvedValueOnce(issue)
     .mockResolvedValueOnce(transitions);
   return {
     plan: value,
-    actor,
     issue,
     transitions,
     request,
@@ -84,14 +81,14 @@ beforeEach(() => {
   sdk.asUser.mockClear();
 });
 
-it('checks actual resolver user, exact issue/project/from/target and available transition without unsafe query flags', async () => {
+it('checks exact issue/project/from/target and available transition without extra identity scopes or unsafe query flags', async () => {
   const f = fixture();
   expect(await f.gateway.eligible(f.plan)).toBe(true);
-  expect(String(f.request.mock.calls[0]?.[0])).toBe('/rest/api/3/myself');
-  expect(String(f.request.mock.calls[1]?.[0])).toBe(
+  expect(String(f.request.mock.calls[0]?.[0])).toBe(
     '/rest/api/3/issue/10000?fields=status,project',
   );
-  const query = String(f.request.mock.calls[2]?.[0]);
+  const query = String(f.request.mock.calls[1]?.[0]);
+  expect(f.request).toHaveBeenCalledTimes(2);
   expect(query).toBe(
     '/rest/api/3/issue/10000/transitions?expand=transitions.fields',
   );
@@ -106,7 +103,6 @@ it('allows only reviewed resolution screen data and fails closed for missing/una
   const f = fixture({ ...plan(), resolutionId: '100' });
   f.request
     .mockReset()
-    .mockResolvedValueOnce(f.actor)
     .mockResolvedValueOnce(f.issue)
     .mockResolvedValueOnce(
       response(200, {
@@ -145,32 +141,22 @@ it('allows only reviewed resolution screen data and fails closed for missing/una
     const g = fixture();
     g.request
       .mockReset()
-      .mockResolvedValueOnce(g.actor)
       .mockResolvedValueOnce(g.issue)
       .mockResolvedValueOnce(response(200, { transitions }));
     expect(await g.gateway.eligible(g.plan)).toBe(false);
   }
 });
 
-it('rejects mismatched actor/project/issue/from status and malformed numeric mapping before write', async () => {
-  const f = fixture();
-  f.request
-    .mockReset()
-    .mockResolvedValue(response(200, { accountId: 'other-user' }));
-  expect(await f.gateway.eligible(f.plan)).toBe(false);
-  expect(f.request).toHaveBeenCalledTimes(1);
+it('rejects mismatched project/issue/from status and malformed mapping before write', async () => {
   for (const issue of [
     { id: '99999', fields: { project: { id: '20000' }, status: { id: '1' } } },
     { id: '10000', fields: { project: { id: '99999' }, status: { id: '1' } } },
     { id: '10000', fields: { project: { id: '20000' }, status: { id: '5' } } },
   ]) {
     const g = fixture();
-    g.request
-      .mockReset()
-      .mockResolvedValueOnce(g.actor)
-      .mockResolvedValueOnce(response(200, issue));
+    g.request.mockReset().mockResolvedValueOnce(response(200, issue));
     expect(await g.gateway.eligible(g.plan)).toBe(false);
-    expect(g.request).toHaveBeenCalledTimes(2);
+    expect(g.request).toHaveBeenCalledTimes(1);
   }
   const g = fixture();
   expect(await g.gateway.eligible({ ...g.plan, issueId: '../foreign' })).toBe(
@@ -230,17 +216,14 @@ it('unknown status/network failures remain ambiguous without automatic retries',
   expect(f.request).toHaveBeenCalledTimes(2);
 });
 
-it('observations bind actual actor/issue/project and use server read time, never exact transition time', async () => {
+it('observations bind exact issue/project and use server read time, never exact transition time', async () => {
   const f = fixture();
-  f.request
-    .mockReset()
-    .mockResolvedValueOnce(f.actor)
-    .mockResolvedValueOnce(
-      response(200, {
-        id: '10000',
-        fields: { project: { id: '20000' }, status: { id: '5' } },
-      }),
-    );
+  f.request.mockReset().mockResolvedValueOnce(
+    response(200, {
+      id: '10000',
+      fields: { project: { id: '20000' }, status: { id: '5' } },
+    }),
+  );
   expect(await f.gateway.observe(f.plan)).toEqual({
     issueId: '10000',
     projectId: '20000',
@@ -249,10 +232,7 @@ it('observations bind actual actor/issue/project and use server read time, never
     causality: 'postcondition-only',
   });
   const g = fixture();
-  g.request
-    .mockReset()
-    .mockResolvedValueOnce(g.actor)
-    .mockResolvedValueOnce(response(404));
+  g.request.mockReset().mockResolvedValueOnce(response(404));
   expect(await g.gateway.observe(g.plan)).toBeNull();
   const failed = fixture();
   failed.request.mockReset().mockRejectedValueOnce(new Error('private'));
@@ -267,5 +247,25 @@ it('default transport uses current asUser with no accountId impersonation or app
     kind: 'accepted',
   });
   expect(sdk.asUser).toHaveBeenCalledTimes(1);
+  expect(sdk.asUser).toHaveBeenCalledWith();
   expect(sdk.request).toHaveBeenCalledTimes(1);
+});
+
+it('default eligibility and observation use only resolver-bound asUser without a user-profile read', async () => {
+  const f = fixture();
+  sdk.request
+    .mockResolvedValueOnce(f.issue)
+    .mockResolvedValueOnce(f.transitions)
+    .mockResolvedValueOnce(f.issue);
+  const gateway = new ForgeJiraTransitionsGateway(undefined, () => now);
+  expect(await gateway.eligible(f.plan)).toBe(true);
+  expect(await gateway.observe(f.plan)).toMatchObject({
+    issueId: f.plan.issueId,
+  });
+  expect(sdk.asUser.mock.calls).toEqual([[], [], []]);
+  expect(sdk.request.mock.calls.map(([path]) => String(path))).toEqual([
+    '/rest/api/3/issue/10000?fields=status,project',
+    '/rest/api/3/issue/10000/transitions?expand=transitions.fields',
+    '/rest/api/3/issue/10000?fields=status,project',
+  ]);
 });

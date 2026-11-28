@@ -6,3 +6,5 @@ export {
   monitoringConsume,
   monitoringMigrate,
 } from './forge/monitoring/runtime';
+
+export { embeddedHandler } from './forge/resolvers/embedded';

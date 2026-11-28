@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-28 — Embedded Jira incident context
+
+- Added a separate read-only issue-context resource/resolver, exact asUser issue/project visibility and server-side linked tenant access.
+- Added explicit current-state/SLA readiness, retry, safe projection and dual UI production builds; no new scopes or dependencies.
+- Removed redundant user-profile API calls that required an unnecessary scope.
+- Added monitoring failure/retry regressions; no backend reset or browser-error cause established.
+- Validated512tests/51files. Authenticated read-only CLI confirmed major4/up-to-date and new exact health UUID; JSM connection and native mutation prerequisites remain open.
+
 ## 2026-11-28 — Durable transition intents and read-only discovery
 
 - Added unregistered v006 transition-intent storage/migration with one-send, bounded reconciliation and scoped lease/token/version guards; no native closure confirmation.

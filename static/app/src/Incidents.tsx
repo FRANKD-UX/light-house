@@ -597,7 +597,9 @@ export function Incidents() {
                   <dd>{selected.sla.snapshot.deadlineAt}</dd>
                   <dt>SLA status at {now}</dt>
                   <dd>
-                    {incidentSlaStatus(selected, selectedOperation, now)}
+                    {overview.operationsReady
+                      ? incidentSlaStatus(selected, selectedOperation, now)
+                      : 'Operational SLA unverified'}
                     {selectedOperation?.resolvedAt
                       ? ` (confirmed resolution UTC ${selectedOperation.resolvedAt})`
                       : ' (resolution not confirmed in this overview)'}

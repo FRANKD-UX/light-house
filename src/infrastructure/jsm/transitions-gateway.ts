@@ -23,23 +23,16 @@ function identifiers(plan: TransitionPlan): void {
   if (plan.resolutionId !== null) identifier(plan.resolutionId);
   text(plan.accountId, 128);
 }
-/** Invoke only in the authenticated resolver user's context. Never queued asUser or implicit impersonation. */
+/** Interactive resolver only: trusted preflight binds plan.accountId to the server principal.
+ * asUser() uses that current resolver user; never queue, impersonate or fall back to asApp.
+ * No /myself read: it needs read:jira-user, outside the reviewed manifest scopes.
+ */
 export class ForgeJiraTransitionsGateway implements TransitionGateway {
   constructor(
     private readonly request: JiraRequest = (path, options) =>
       api.asUser().requestJira(path, options),
     private readonly now: () => string = () => new Date().toISOString(),
   ) {}
-  private async actor(plan: TransitionPlan): Promise<boolean> {
-    const response = await this.request(route`/rest/api/3/myself`, {
-      method: 'GET',
-      headers,
-    });
-    return (
-      response.status === 200 &&
-      object(await response.json()).accountId === plan.accountId
-    );
-  }
   private async issue(
     plan: TransitionPlan,
   ): Promise<TransitionObservation | null> {
@@ -66,7 +59,6 @@ export class ForgeJiraTransitionsGateway implements TransitionGateway {
   async eligible(plan: TransitionPlan): Promise<boolean> {
     try {
       identifiers(plan);
-      if (!(await this.actor(plan))) return false;
       const issue = await this.issue(plan);
       if (!issue || issue.statusId !== plan.fromStatusId) return false;
       const response = await this.request(
@@ -148,7 +140,6 @@ export class ForgeJiraTransitionsGateway implements TransitionGateway {
   async observe(plan: TransitionPlan): Promise<TransitionObservation | null> {
     try {
       identifiers(plan);
-      if (!(await this.actor(plan))) return null;
       return await this.issue(plan);
     } catch {
       return null;

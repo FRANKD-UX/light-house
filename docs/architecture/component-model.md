@@ -29,3 +29,7 @@ Inventory list lifecycle diagnostics use an application-owned port with a no-op 
 ## Sprint 1 native acceptance harness — 2026-11-26
 
 `e2e/` is an isolated development tool, outside application TypeScript/Vitest/runtime entrypoints. Owner-authenticated Playwright → hosted Jira page → uniquely identified rendered Custom UI → ordinary button actions → existing Forge Bridge/resolver/SQL. The tool does not import backend code, intercept Bridge responses or call application endpoints directly. A separate supported Forge CLI log read projects only allowlisted diagnostics into private curated JSON/HTML reports. Exact displayed UUID matches and temporal candidates have separate labels. Local synthetic browser fixtures validate harness behaviour only; actual hosted execution remains an independent acceptance gate. No application/module/resource/authentication architecture changes.
+
+## Embedded context — local Sprint5
+
+A dedicated static issue-context resource and resolver expose only a linked-incident read. Server context supplies account/installation/issue/project candidates; interactive asUser GET confirms exact Jira visibility/project, SQL reverse lookup supplies tenant, and final active/readgrant/expiry/nonpending predicates authorise projection. No UI selectors grant access, no new scope/egress/SQLwrite is introduced. Public globalworkspace remains separate. Nativehostcontext/modulekeycompatibility, theme/layout and permissions await acceptance; no deployment performed.

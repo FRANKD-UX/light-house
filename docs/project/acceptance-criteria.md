@@ -328,3 +328,17 @@ Local final aggregate outcomes/checkpoint are recorded in audit/continuation sta
 - [ ] Explicit engineer reassignment, verified native Jira transition writer/confirmation, native bypass prevention and full closure acceptance.
 - [ ] Scheduled warnings/native SLA reconciliation, full board/drawer/embedded context, directory adapters and remaining canonical roadmap.
 - [ ] New exact-artifact authenticated Forge lint/deployment/upgrade approval and native schema/queue/permissions/JSM/RBAC/two-installation/resource acceptance; all prior release gates remain mandatory.
+
+## Current local extension — 2026-11-28
+
+The earlier393-test checklist is historical. Explicit same-team reassignment, current-page NOC board/workspace and embedded Jira issue-context read are now locally implemented and validated;512tests/51files pass with unchanged coverage gates. Additive v006 transition persistence is implemented/unregistered. These local checks do not establish native controls, Jira workflow enforcement or release acceptance.
+
+- [x] Stored administrator/team-lead reassignment with target membership/expiry/final SQL guards; original team/state/SLA retained.
+- [x] Explicit operational readiness and current state separate from creation snapshots; no fabricated live SLA when state unavailable.
+- [x] Dedicated selector-free embedded read, exact asUser issue/project visibility and final current tenant/readgrant checks, safe projection and separate scoped UI build.
+- [x] Local read-only discovery tooling and authenticated CLI health/install/deployment correlation; no native mutations.
+- [ ] Actual authenticated JSM project/desk/request-type/required-field discovery and reviewed integration configuration.
+- [ ] Native v002 and later schema/queue/durable intake/processing/recovery/end-to-end Jira creation acceptance under approved limits.
+- [ ] Native embedded module/context compatibility, Jira and tenant permission denials, theme/accessibility/layout and installation isolation.
+- [ ] Concrete enforcement/preflight/causal native confirmation, bypass prevention and guarded closure.
+- [ ] Scheduled warnings/native SLA reconciliation, full remaining UI/directory/recovery functionality and mandatory release/CI/security/licence/publication gates.

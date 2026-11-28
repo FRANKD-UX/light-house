@@ -16,7 +16,12 @@ export function useNocClock(): string {
   return now;
 }
 export type DisplaySla =
-  'on-track' | 'warning' | 'breached' | 'blocked' | 'time-unverified';
+  | 'on-track'
+  | 'warning'
+  | 'breached'
+  | 'blocked'
+  | 'time-unverified'
+  | 'operational-unverified';
 export function incidentSlaStatus(
   incident: PublicIncident,
   operation: PublicOperationSummary | undefined,
@@ -72,7 +77,10 @@ export function NocBoard({
       stage:
         operation?.state ??
         (operationsReady ? 'not-initialised' : 'unverified'),
-      sla: incidentSlaStatus(incident, operation, now),
+      sla:
+        !operationsReady && incident.sla.kind === 'selected'
+          ? ('operational-unverified' as const)
+          : incidentSlaStatus(incident, operation, now),
     };
   });
   const visible = rows.filter(
@@ -119,9 +127,13 @@ export function NocBoard({
         <dd>
           {count('on-track')} / {count('warning')} / {count('breached')}
         </dd>
-        <dt>SLA blocked / local time unverified on this page</dt>
+        <dt>
+          SLA blocked / local time unverified / operational state unverified on
+          this page
+        </dt>
         <dd>
-          {count('blocked')} / {count('time-unverified')}
+          {count('blocked')} / {count('time-unverified')} /{' '}
+          {count('operational-unverified')}
         </dd>
       </dl>
       {!operationsReady && (
@@ -159,6 +171,7 @@ export function NocBoard({
                 'breached',
                 'blocked',
                 'time-unverified',
+                'operational-unverified',
               ] as const
             ).map((status) => (
               <option key={status} value={status}>

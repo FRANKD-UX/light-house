@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -263,6 +264,111 @@ it('discards stale data and exposes only fixed backend/Bridge failures; prevents
     target: { value: '' },
   });
   expect(screen.queryByText(/duplicates 3/)).toBeNull();
+});
+it('retains the selected tenant after rejected load, clears stale overview and retries only on explicit action', async () => {
+  // Mocked Bridge behaviour only: this does not diagnose a hosted browser failure.
+  render(<Monitoring />);
+  await choose();
+  await load();
+  expect(screen.getByText(/duplicates 3/)).toBeTruthy();
+  let reject: (reason: unknown) => void = () => {};
+  call.mockImplementationOnce(
+    () =>
+      new Promise((_resolve, rejectPromise) => {
+        reject = rejectPromise;
+      }),
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Load monitoring' }));
+  expect(
+    screen.getByRole('status', { name: 'Monitoring status' }).textContent,
+  ).toBe('Loading monitoring…');
+  expect(screen.queryByText(/duplicates 3/)).toBeNull();
+  expect(
+    screen.queryByRole('heading', { name: 'Configured monitoring sources' }),
+  ).toBeNull();
+  expect(
+    (screen.getByLabelText('Monitoring tenant') as HTMLSelectElement).value,
+  ).toBe(tenantId);
+  await act(async () =>
+    reject(new Error('private network or IndexedDB diagnostic')),
+  );
+  await waitFor(() =>
+    expect(
+      screen.getByRole('status', { name: 'Monitoring status' }).textContent,
+    ).not.toContain('Loading monitoring'),
+  );
+  expect(document.body.textContent).not.toContain(
+    'private network or IndexedDB diagnostic',
+  );
+  expect(
+    (screen.getByLabelText('Monitoring tenant') as HTMLSelectElement).value,
+  ).toBe(tenantId);
+  expect(
+    (
+      screen.getByRole('button', {
+        name: 'Load monitoring',
+      }) as HTMLButtonElement
+    ).disabled,
+  ).toBe(false);
+  expect(screen.queryByText(/duplicates 3/)).toBeNull();
+  const callsAfterFailure = call.mock.calls.length;
+  vi.useFakeTimers();
+  try {
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300_000);
+    });
+    expect(call).toHaveBeenCalledTimes(callsAfterFailure);
+  } finally {
+    vi.useRealTimers();
+  }
+  await load();
+  expect(screen.getByText(/duplicates 3/)).toBeTruthy();
+  expect(
+    screen.getByRole('status', { name: 'Monitoring status' }).textContent,
+  ).toContain('Monitoring loaded. Correlation ID:');
+  expect(
+    (screen.getByLabelText('Monitoring tenant') as HTMLSelectElement).value,
+  ).toBe(tenantId);
+  expect(call.mock.calls).toEqual([
+    ['inventory', { action: 'overview' }],
+    ...Array.from({ length: 3 }, () => [
+      'monitoring',
+      { action: 'overview', tenantId, after: '', sourceAfter: '' },
+    ]),
+  ]);
+});
+it('deliberately resets tenant selection on explicit successful tenant reload without database mutations', async () => {
+  render(<Monitoring />);
+  await choose();
+  await load();
+  expect(
+    (screen.getByLabelText('Monitoring tenant') as HTMLSelectElement).value,
+  ).toBe(tenantId);
+  await click('Load monitoring tenants');
+  expect(
+    (screen.getByLabelText('Monitoring tenant') as HTMLSelectElement).value,
+  ).toBe('');
+  expect(screen.queryByText(/duplicates 3/)).toBeNull();
+  expect(
+    (
+      screen.getByRole('button', {
+        name: 'Load monitoring',
+      }) as HTMLButtonElement
+    ).disabled,
+  ).toBe(true);
+  expect(
+    screen.getByRole('status', { name: 'Monitoring status' }).textContent,
+  ).toBe('Choose an authorised monitoring tenant.');
+  expect(
+    call.mock.calls.map(([name, payload]) => [
+      name,
+      (payload as { action: string }).action,
+    ]),
+  ).toEqual([
+    ['inventory', 'overview'],
+    ['monitoring', 'overview'],
+    ['inventory', 'overview'],
+  ]);
 });
 it('rejects malformed monitoring contracts and unknown mutation results', () => {
   expect(monitoringOverview(snapshot)).toEqual(snapshot);

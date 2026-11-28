@@ -2,7 +2,7 @@
   "name": "light-house",
   "version": "0.1.0",
   "private": true,
-  "description": "Light House — ISP incident orchestration foundation",
+  "description": "Light House \u2014 ISP incident orchestration foundation",
   "type": "module",
   "engines": {
     "node": ">=22.23.4 <23"
@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "build": "npm run typecheck && vite build && esbuild src/index.ts --bundle --platform=node --target=node22 --format=cjs --external:@forge/resolver --external:@forge/sql --external:@forge/api --external:@forge/events --external:@forge/kvs --outfile=dist/backend/index.cjs",
+    "build": "npm run typecheck && vite build && vite build --config vite.issue-context.config.ts && esbuild src/index.ts --bundle --platform=node --target=node22 --format=cjs --external:@forge/resolver --external:@forge/sql --external:@forge/api --external:@forge/events --external:@forge/kvs --outfile=dist/backend/index.cjs",
     "validate": "npm run lint && npm run format:check && npm run typecheck && npm run test:coverage && npm run build && npm run check:manifest",
     "check:manifest": "node scripts/check-manifest.mjs",
     "test:e2e:auth": "npm --prefix e2e run auth",
