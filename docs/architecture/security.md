@@ -1,6 +1,6 @@
 # Security architecture and threat model
 
-Design reviewed 2026-11-24; not a penetration test. Current surface is a read-only metadata resolver with no scopes, egress, customer data or public ingress. Future surface includes authenticated monitoring, tenant inventory/configuration and JSM write access. See [capability assessment](../project/forge-capability-assessment.md) for platform source URLs.
+Design reviewed 2026-11-24; not a penetration test. The historical Sprint 0 surface was a read-only metadata resolver. Sprint 1 now adds server-authorised synthetic inventory SQL, membership/configuration and explicit development migration/seed/repair actions; see the current Sprint 1 security review. Future surface includes authenticated monitoring, tenant inventory/configuration and JSM write access. See [capability assessment](../project/forge-capability-assessment.md) for platform source URLs.
 
 Assets: credentials, tenant boundaries, topology/customer relationships, incident integrity, SLA history, JSM permissions and billing allowance. Actors: anonymous internet caller, compromised monitoring source, malicious or mistaken ISP admin, low-privilege Atlassian user and failing upstream provider. Boundaries: public webtrigger, Forge resolver context, ISP scope within an installation, SQL/KVS, JSM project and directory/support providers.
 
@@ -51,3 +51,15 @@ No scopes or egress are requested in Sprint 0. Introduce `storage:app` for KVS o
 | Inventory gaps hide outages                        | Authenticated valid receipts visible to NOC triage with unknown impact and original start                                                | Missing site/customer mapping does not discard incident; security-invalid inputs still rejected                                                         |
 
 No new permissions, ingress, workflow mutations or data stores are implemented in Sprint 0.5. Native Jira guards must be proven on the authorised site; reconciliation alone cannot prevent a bypass. See event-lifecycle.md ownership matrix and dependency-security-assessment.md for residual SDK risks.
+
+## Sprint 1 reviewed surface — 2026-11-26
+
+The actual implementation, trust-boundary traces, scanner coverage/limitations, dependency reassessment and pre-release findings are recorded in [Sprint 1 security review](../project/sprint-1-security-review.md). Scope is read:jira-work and Forge SQL; no egress, public ingress, asApp, external identity or operational JSM writes. Account/installation identity, active grants, same-tenant references, durable mutation admission and sanitized logs/errors are enforced server-side. No live SQL or second-installation acceptance is claimed.
+
+## LH-103 local boundary review — 2026-11-27
+
+New local factory denies non-DEVELOPMENT runtime; trusts installation from getAppContext and Atlassian actor from resolver context, never event body. Source authentication binds secret metadata and SQL references; public outcomes/logs omit payloads/tokens. Input, replay, duplicate and worker-claim bounds have synthetic regressions. No ingress module is exposed. Remaining deployment blockers include concrete supported KVS binding, manifest/scope review, credential lifecycle reconciliation, full UI contracts and native SQL/queue/isolation/security acceptance. No security certification or new scanner result is claimed. See ADR-0018.
+
+## Current LH-103 implementation review — 2026-11-27
+
+The earlier unexposed local factory is now manifest/index wired on the local branch, not deployed. Supported KVS2.1.3 secret client/storage:app, reference-before-secret-before-activation lifecycle, static v2 outcomes, source authentication before trusted JSON processing, scoped observations, generated correlations and safe operational UI are implemented. Full trace, residual advisories and scanner/native evidence gaps are in ../project/sprint-2-security-review.md. Separate deployment/new-exposure risk approval required.

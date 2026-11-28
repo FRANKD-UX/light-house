@@ -33,3 +33,21 @@ A planned row is not test coverage. Audit records executable counts only.
 | W-08 | Authenticated unmapped event remains visible, unknown count never zero; original start preserved     | 2/3 planned                        |
 | W-09 | Fault after incident write before handoff/audit materialisation blocks next command and repairs once | 1 primitive; 3/4 behaviour planned |
 | W-10 | Evidence HTML/URL/cross-tenant attachment cannot execute/fetch/leak data                             | 4/5/7 planned                      |
+
+## Sprint 1 executed local regressions — 2026-11-26
+
+| Case                   | Implemented evidence                                                                                                                               | Runtime boundary                                                |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Schema/order/readiness | Immutable DDL digest/order, absent/wrong-install/environment/version denial, mocked retry/checkpoints                                              | Live TiDB and async acceptance pending                          |
+| Tenant security        | Two ISP tenants, direct-ID/reference injection denial, viewer/operator/admin, revocation/expiry, trusted identity and global permission denial     | Genuine second-installation unavailable                         |
+| Inventory              | Creates/retrieves, binary-case natural identifiers, uniqueness, parent retirement, invalid backup/self/cross-site protection, independent services | Local adapted SQLite                                            |
+| Configuration          | SLA positive duration/zero warning/boundaries, publication immutability/overlap/version claims, manual assignee versus access grant                | No SLA execution                                                |
+| Concurrency/repair     | Stale writes, tenant admission, injected pre-target/receipt/policy failures, concurrent replay/original and old-completion isolation               | No transaction guarantee; actual SQL pending                    |
+| Seed/bounds            | Four-record batches, deterministic relations, idempotent reruns with no writes, unknown service mapping, query budget, max pages                   | No real ISP data                                                |
+| UI/foundation          | Explicit loading/empty/error/conflict/validation, selection/configuration/grants, repair and all foundation diagnostic regressions                 | jsdom/mock Bridge; installed visual comparison remains deferred |
+
+Historical R-05 is now foundation-accepted for diagnostics/Bridge; actual visual theme comparison remains deferred to Sprint 5. R-06 has local evidence above and an open live gate. No mocked result closes it.
+
+## LH-103 local regressions — 2026-11-27
+
+203 application tests across23 files preserve all188 prior tests;20 isolated harness checks unchanged. Synthetic SQL/in-memory ports/mock SDK/UI/injected Fetch cover valid/missing/wrong/revoked/bound credentials, strict malformed/unsupported/tenant-spoof events, same/foreign tenant mappings, concurrent duplicate uniqueness/counts/content conflicts, partial SQL/KVS/queue persistence, stale-worker fencing, bounded retries/exhaustion, migration resume, inactive cleanup, UI roles/contracts/loading and redaction. These are local behavior tests, not native Forge/TiDB/KVS/queue/Zabbix acceptance. Full Forge lint and scanners did not successfully complete; deployment/native gates remain open.

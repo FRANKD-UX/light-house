@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 const { definitions } = vi.hoisted(() => ({
-  definitions: new Map<string, () => unknown>(),
+  definitions: new Map<string, (request?: unknown) => unknown>(),
 }));
 vi.mock('@forge/resolver', () => ({
   default: class {
-    define(name: string, fn: () => unknown) {
+    define(name: string, fn: (request?: unknown) => unknown) {
       definitions.set(name, fn);
     }
     getDefinitions() {
@@ -14,6 +14,16 @@ vi.mock('@forge/resolver', () => ({
 }));
 import { handler } from '../../src/index';
 describe('Forge status wiring (mock SDK)', () => {
+  it('registers the inventory boundary and rejects absent trusted identity', async () => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect(
+      await definitions.get('inventory')?.({
+        context: {},
+        payload: { action: 'overview' },
+      }),
+    ).toMatchObject({ ok: false, code: 'INVALID' });
+    log.mockRestore();
+  });
   it('registers and executes the read-only status resolver', () => {
     const log = vi.spyOn(console, 'info').mockImplementation(() => {});
     expect(handler).toBe(definitions);

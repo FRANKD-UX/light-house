@@ -11,6 +11,8 @@ export default tseslint.config(
     '.agents/**',
     '.codex/**',
     'security-audit-artifacts/**',
+    'e2e/.local/**',
+    'e2e/.build/**',
   ]),
   js.configs.recommended,
   ...tseslint.configs.recommended,

@@ -1,0 +1,56 @@
+# Sprint 1 security and release-readiness review
+
+**Current delivery recommendation (2026-11-27):** Implementation-complete locally with mandatory release acceptance outstanding; GO for local Sprint2 after explicit owner scope/governance approval, not deploy/merge/release authority. See [gate classification](sprint-1-execution-report.md#delivery-governance-reassessment--2026-11-27-current-recommendation). Prior evidence and untested requirements remain preserved.
+
+Date: 2026-11-26. Scope: local implementation, manifest, direct/locked dependencies, frontend/backend boundaries and public-release files. This is not installed-runtime acceptance or a clean vulnerability certification.
+
+## Execution map and controls
+
+Custom UI invoke('inventory') → trusted resolver accountId/getAppContext → explicit application permission → tenant/installation-scoped SQL. Bootstrap/recovery and migration admission additionally use backend asUser Jira GLOBAL ADMINISTER permission. There are no asApp, public webtrigger, external fetch, secret-store, Rovo or directory endpoints. The async migration consumer accepts only a backend-queued installation binding and DEVELOPMENT runtime; production migration is refused.
+
+Payload action/tenant/entity/record inputs are unknown and validated before sinks. Entity kinds/columns are code allowlists; values use prepare/bindParams. Same-tenant active references are checked under a complete durable ISP intent. Aggregate expected versions, pending intents and unique command/version receipts prevent stale writes and conflicting mutations until repair. Actor grants come from stored active/unexpired membership; teams/manual mapping cannot escalate access. Bootstrap is unavailable to the first arbitrary caller. Revoked grants are checked on subsequent requests; in-flight authorised work may finish.
+
+React renders escaped text; unknown responses are validated before lists/tenant selection. No dangerouslySetInnerHTML, arbitrary URLs, client secrets or backend implementation imports occur in the UI. Error responses contain only a code and internally generated correlation ID. Structured failure logging receives only event/correlation/outcome; no payload, SQL parameters, membership record or raw exception message is logged.
+
+## Findings and residual risks
+
+No confirmed exploitable source finding remains from the scoped manual trace. The observed parent-retirement/child-creation race was fixed with durable tenant admission and a concurrent original/replay regression. This conclusion does not prove the absence of vulnerabilities.
+
+| Severity                         | Source                                                                                                                 | Location / exact excerpt                                                              | Finding and disposition                                                                                                                                       |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| High concern                     | dependencies                                                                                                           | package-lock.json:4377, prosemirror-view; <pre><code>"version": "1.41.5"</code></pre> | Existing paste-handling XSS advisory. No editor/paste/HTML sink is implemented and no application exploit established; Sprint 1 needs a new risk disposition. |
+| Moderate concern                 | dependencies                                                                                                           | package-lock.json:3231/3995; <pre><code>"version": "13.0.7"                           |
+| "version": "10.2.6"</code></pre> | Existing glob/minimatch advisories now also reach API/SQL/Events via Manifest. Changed exposure requires owner review. |
+| Warning                          | tests                                                                                                                  | tests/support/sqlite.ts:1; <pre><code>Local relational simulation ONLY.</code></pre>  | Adapted SQLite is not Forge SQL runtime, collation, concurrency or installation evidence.                                                                     |
+| Warning                          | manifest                                                                                                               | manifest.yml:11/27; <pre><code>engine: mysql                                          |
+
+- read:jira-work</code></pre> | Final lint has zero errors/warnings and one MAJOR_VERSION_RULE approval (exit 1). Upgrade authorisation and official packaging remain open. |
+  | Info | resolver | src/application/inventory/service.ts:254; <pre><code>throw new InventoryError('REPAIR_REQUIRED');</code></pre> | Durable admission blocks later writes until an authorised administrator repairs pending work. No unsafe expiry. |
+
+Dependency concerns are recorded with package paths/ranges and official GHSA links in dependency-security-assessment.md. They are not labelled new application exploit findings or assigned invented CVSS scores. Actual application exploitability and official artifact composition require further evidence.
+
+## Coverage and evidence gaps
+
+The installed builder, security-review, debugger, application-review and cost skills were read; hashes are recorded in the execution report. Security routing loaded the global baseline, authn/authz, injection, tenant isolation, auditing and miscellaneous indexes; deep checks covered resolver identity/authorisation, SQL injection and warm-state isolation. Secrets/egress/webtrigger/Rovo-specific indexes were not selected because no such runtime surface exists; manifest permissions and packaging were independently checked. Local tools remain ignored and are not app dependencies.
+
+FSRT v0.1.1 exits 0 with zero reported findings but reports scanned=[""]; actual source coverage is unestablished and must not be called a clean FSRT source scan. OpenGrep 1.16.2 with the bundled Forge rules completed on the final source with zero findings/file errors across 33 source/config paths; the final run is recorded in audit. Its language/rule coverage does not include arbitrary JSON migration semantics, live permission configuration or tests. Gitleaks and Snyk were unavailable/not run. Staged-file secret/privacy review is separate; ignored artifacts are never proposed for commit.
+
+Initial scanner attempts failed on sandbox cache writes; rerunning the pinned tools with normal cache access succeeded. Raw reports remain in ignored security-audit-artifacts and must not be published. No third-party fixture/rule was edited to produce a pass. Forge MCP and ADS MCP responded; exact official SQL/API/schema/query-policy/context/concurrency/pricing pages were consulted on 2026-11-26. A Forge MCP search briefly failed and guessed obsolete URLs were unavailable; the linked canonical pages replaced them.
+
+## General application and cost review
+
+Manifest page/resource/resolver/consumer exports match local builds and invoke names. Domain has no Forge imports; application ports do not import infrastructure; trusted runtime wiring stays in src/forge. All three new direct SDKs are pinned, their Atlassian licence files reviewed and supported Node 22 used. Local full backend graph contains 122 inputs and no affected leaves or tooling references; repeat official --inspect packaging review only under deployment authorisation. CI retains strict TypeScript, coverage gates, npm ci and no credentials/deploy steps.
+
+No polling, schedules or migration-on-read exist. Lists are bounded/keyset paginated; reference/fixture/unique/reverse queries have tenant indexes. Seed batches cap at four records, reruns skip existing fixture rows and initial seed/rerun query budgets are tested. Migration retries cap at three executions per queued job. Exact SQL compute/GB-seconds and savings are unmeasured. Readiness: blocked for deployment/merge pending official major-upgrade approval, refreshed dependency disposition and live acceptance; local implementation is reviewable.
+
+## Delivery progression security review — 2026-11-27
+
+Bounded updated manual review of manifest/current dirty source confirms the same execution map: Custom UI → trusted Forge runtime/user → application permissions/ports → tenant-scoped parameterised SQL. No new asApp/public ingress/egress/secret/runtime-AI surface in Sprint1. Monitoring source binding and web ingress security are Sprint2 work, not implemented by this finding. Source anchors include src/application/inventory/service.ts context role tests, src/infrastructure/sql/access-repository.ts membership installation/tenant/account/expiry predicate, inventory-repository.ts same-tenant references/CAS/admission/receipt writes, and boundary.ts runtime actor/context dispatch. Exact service source: (permission === 'configure' && memberRole !== 'admin'). The source itself, not UI hiding, authorises.
+
+No new confirmed exploitable application finding established; no invented CVSS/no assurance of absence. Known dependency findings remain real residual risks; release blocked pending the appropriate remediation/disposition. No code/test fix was made because this is governance/review scope.
+
+Updated deterministic coverage is INCOMPLETE: skill runner first exit1, FSRTv0.1.1 reported completed/zero but scanned=[""] (coverage unestablished), OpenGrep1.16.2 status not_run after process exit2; bounded XDG_CACHE_HOME writable-cache retry exits1, OpenGrep status not_run/process exit1. Do not call either missing findings or FSRT zero a clean source scan. No further tooling repair/installation expansion pursued. Prior successful OpenGrep record remains historical, not exact-current-tree evidence.
+
+Loaded global; authn-authz/injection/tenant-isolation/auditing/misc indexes; resolver-authorisation, SQL-injection, warm-state and software-composition deep rules. Secrets-storage/egress/webtrigger/Rovo/manifest-config indexes not loaded: no matching current surface; manifest scope and resource/runtime boundaries reviewed directly. Snyk/gitleaks unavailable/not run; independent publication-candidate secret scan separate. Scanner artifacts/logs remain ignored under security-audit-artifacts/, not proposed for Git. Forge/ADS MCP unavailable. Official SQL/app-context-security docs rechecked2026-11-27 in ADR-0017.
+
+Recommendation: evidence supports LOCAL development progression with controls/regressions preserved, not full release/security acceptance. Native roles/expiry/access/isolation/recovery and full platform semantics stay mandatory release backlog; discovered genuine bypass/corruption immediately blocks affected code/deployment. Missing scanner/runtime evidence is explicit and must be resolved/dispositioned in final security/release assessment; no deadline bypass.

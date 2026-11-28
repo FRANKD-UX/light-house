@@ -66,15 +66,21 @@ describe('Light House diagnostics (mock Forge Bridge, not installed-runtime evid
       'Light House',
     );
     expect(invoke).not.toHaveBeenCalled();
-    expect(screen.getByRole('status').textContent).toBe(
-      'Health check not run.',
-    );
+    expect(
+      screen.getByRole('status', { name: 'Foundation health' }).textContent,
+    ).toBe('Health check not run.');
     runCheck();
     runCheck();
-    expect(screen.getByRole('status').textContent).toContain('Checking');
-    expect((screen.getByRole('button') as HTMLButtonElement).disabled).toBe(
-      true,
-    );
+    expect(
+      screen.getByRole('status', { name: 'Foundation health' }).textContent,
+    ).toContain('Checking');
+    expect(
+      (
+        screen.getByRole('button', {
+          name: 'Run health check',
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
     expect(invoke).toHaveBeenCalledTimes(1);
     await act(async () => {
       resolve({
@@ -83,9 +89,9 @@ describe('Light House diagnostics (mock Forge Bridge, not installed-runtime evid
         application: { ...valid.application, accountId: 'must-not-display' },
       });
     });
-    expect(screen.getByRole('status').textContent).toContain(
-      'Health check passed',
-    );
+    expect(
+      screen.getByRole('status', { name: 'Foundation health' }).textContent,
+    ).toContain('Health check passed');
     expect(screen.getByText('Resolved')).toBeTruthy();
     expect(screen.getByText('available')).toBeTruthy();
     expect(screen.getByText('Valid')).toBeTruthy();
@@ -142,6 +148,18 @@ describe('Light House diagnostics (mock Forge Bridge, not installed-runtime evid
     runCheck();
     await screen.findByText(/Forge Bridge invocation rejected/);
     expect(document.body.textContent).not.toContain('private');
+  });
+  it('identifies a reported timeout without exposing the exception', async () => {
+    invoke.mockRejectedValueOnce(
+      new Error('request timed out: private payload'),
+    );
+    render(<App />);
+    runCheck();
+    await screen.findByText(/reported timeout/);
+    expect(document.body.textContent).toContain(
+      'Backend completion is unverified',
+    );
+    expect(document.body.textContent).not.toContain('private payload');
   });
   it.each(['resolve', 'reject'])(
     'ignores %s after unmount',

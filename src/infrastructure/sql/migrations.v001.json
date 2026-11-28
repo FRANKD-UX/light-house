@@ -1,0 +1,62 @@
+[
+  {
+    "name": "v001_installation_metadata",
+    "ddl": "CREATE TABLE IF NOT EXISTS installation_metadata (\n installation_id VARCHAR(255) PRIMARY KEY, environment VARCHAR(24) NOT NULL, schema_version INT NOT NULL,\n readiness VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL\n ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_isp_tenants",
+    "ddl": "CREATE TABLE IF NOT EXISTS isp_tenants (\n id VARCHAR(36) PRIMARY KEY, installation_id VARCHAR(255) NOT NULL, name VARCHAR(120) NOT NULL,\n slug VARCHAR(48) NOT NULL UNIQUE, unknown_impact_policy VARCHAR(24) NOT NULL,\n pending_mutation VARCHAR(8192) NULL, status VARCHAR(24) NOT NULL, version INT NOT NULL, created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n INDEX ix_installation (installation_id, status, id)\n ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_tenant_memberships",
+    "ddl": "CREATE TABLE IF NOT EXISTS tenant_memberships (\n tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL, account_id VARCHAR(128) NOT NULL,\n role VARCHAR(16) NOT NULL, granted_by VARCHAR(128) NOT NULL, expires_at VARCHAR(24) NULL,\n status VARCHAR(24) NOT NULL, version INT NOT NULL, created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_account (tenant_id, account_id),\n INDEX ix_account (account_id, status, tenant_id), INDEX ix_role (tenant_id, role, status)\n ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_sites",
+    "ddl": "CREATE TABLE IF NOT EXISTS sites (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    code VARCHAR(48) NOT NULL, display_name VARCHAR(120) NOT NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, code),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_carriers",
+    "ddl": "CREATE TABLE IF NOT EXISTS carriers (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    code VARCHAR(48) NOT NULL, display_name VARCHAR(120) NOT NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, code),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_uplinks",
+    "ddl": "CREATE TABLE IF NOT EXISTS uplinks (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    site_id VARCHAR(36) NOT NULL, carrier_id VARCHAR(36) NOT NULL, code VARCHAR(48) NOT NULL, role VARCHAR(48) NOT NULL, capacity_mbps INT NOT NULL, protected_uplink_id VARCHAR(36) NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, site_id, code),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id), INDEX ix_0 (tenant_id, site_id, status), INDEX ix_1 (tenant_id, carrier_id, status), INDEX ix_2 (tenant_id, protected_uplink_id, status)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_customers",
+    "ddl": "CREATE TABLE IF NOT EXISTS customers (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    reference VARCHAR(48) NOT NULL, display_alias VARCHAR(120) NOT NULL, site_id VARCHAR(36) NOT NULL, sla_tier_id VARCHAR(36) NOT NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, reference),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id), INDEX ix_0 (tenant_id, site_id, status), INDEX ix_1 (tenant_id, sla_tier_id, status)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_customer_services",
+    "ddl": "CREATE TABLE IF NOT EXISTS customer_services (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    customer_id VARCHAR(36) NOT NULL, site_id VARCHAR(36) NOT NULL, tier_id VARCHAR(36) NOT NULL, code VARCHAR(48) NOT NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, customer_id, code),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id), INDEX ix_0 (tenant_id, site_id, status), INDEX ix_1 (tenant_id, tier_id, status)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_service_dependencies",
+    "ddl": "CREATE TABLE IF NOT EXISTS service_dependencies (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    service_id VARCHAR(36) NOT NULL, uplink_id VARCHAR(36) NOT NULL, dependency_mode VARCHAR(48) NOT NULL, failover_group VARCHAR(48) NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, service_id, uplink_id),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id), INDEX ix_0 (tenant_id, uplink_id, service_id, status)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_teams",
+    "ddl": "CREATE TABLE IF NOT EXISTS teams (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    code VARCHAR(48) NOT NULL, name VARCHAR(120) NOT NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, code),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_assignees",
+    "ddl": "CREATE TABLE IF NOT EXISTS assignees (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    atlassian_account_id VARCHAR(128) NULL, display_alias VARCHAR(120) NOT NULL, mapping_method VARCHAR(48) NOT NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, atlassian_account_id),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_team_memberships",
+    "ddl": "CREATE TABLE IF NOT EXISTS team_memberships (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    team_id VARCHAR(36) NOT NULL, assignee_id VARCHAR(36) NOT NULL, role VARCHAR(48) NOT NULL, effective_until VARCHAR(24) NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, team_id, assignee_id),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id), INDEX ix_0 (tenant_id, assignee_id, status)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_sla_tiers",
+    "ddl": "CREATE TABLE IF NOT EXISTS sla_tiers (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    code VARCHAR(48) NOT NULL, name VARCHAR(120) NOT NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, code),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_sla_policy_versions",
+    "ddl": "CREATE TABLE IF NOT EXISTS sla_policy_versions (\n    tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL,\n    status VARCHAR(24) NOT NULL, version INT NOT NULL,\n    created_at VARCHAR(24) NOT NULL, updated_at VARCHAR(24) NOT NULL,\n    fixture_key VARCHAR(64) NULL, pending VARCHAR(4096) NULL,\n    approved_by VARCHAR(128) NULL, tier_id VARCHAR(36) NOT NULL, version_number INT NOT NULL, effective_from VARCHAR(24) NOT NULL, effective_until VARCHAR(24) NULL, unknown_impact_rule VARCHAR(48) NOT NULL, priority_map VARCHAR(48) NOT NULL, p1_duration_seconds INT NOT NULL, p1_warning_seconds INT NOT NULL, p2_duration_seconds INT NOT NULL, p2_warning_seconds INT NOT NULL, p3_duration_seconds INT NOT NULL, p3_warning_seconds INT NOT NULL,\n    PRIMARY KEY (tenant_id, id), UNIQUE KEY uq_identity (tenant_id, tier_id, version_number),\n    UNIQUE KEY uq_fixture (tenant_id, fixture_key), INDEX ix_status (tenant_id, status, id), INDEX ix_0 (tenant_id, tier_id, effective_from, status)\n  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v001_mutation_receipts",
+    "ddl": "CREATE TABLE IF NOT EXISTS mutation_receipts (\n tenant_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL, entity VARCHAR(32) NOT NULL,\n resource_id VARCHAR(36) NOT NULL, aggregate_version INT NOT NULL, action VARCHAR(16) NOT NULL,\n occurred_at VARCHAR(24) NOT NULL, PRIMARY KEY (tenant_id, id),\n UNIQUE KEY uq_revision (tenant_id, entity, resource_id, aggregate_version)\n ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  }
+]

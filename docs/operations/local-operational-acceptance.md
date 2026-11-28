@@ -1,0 +1,19 @@
+# Local operational slice and native preparation
+
+2026-11-28. Local simulation/preparation only, not authority for hosted writes. Existing deployed2b97545 major4 and Sprint1 data remain intact. Current local artifact includes uninstalled scopes and unapplied v003/v004/v005; exact-artifact review, authenticated Forge lint, dependency disposition, target/usage/pending checks and explicit deployment/upgrade/native authority remain separate.
+
+Local evidence uses adapted SQLite, mocked SDK/Bridge/Jira and synthetic fixtures. Reproduce with npm run validate, npm ci --prefix e2e, npm run test:e2e:check and npm run test:webhook:dry-run. The four POC tests run actual intake, mapping, impact/SLA, SQL incident/intent and one mocked JSM POST; they do not establish an actual Zabbix or Jira connection.
+
+## Prepared native sequence after separate applicable approval
+
+Use the existing exact private DEVELOPMENT installation and bounded resource ledger. First complete the deployed Sprint2 v002/source/HTTP procedure in sprint-2-hosted-acceptance.md when its prerequisites permit. A future reviewed local artifact needs its own deployment/permission consent; never redeploy for the retained sprint label. The old600 reservation does not automatically include new catch-up/operational/JSM calls.
+
+On the reviewed new artifact, Queue incident schema setup admits the serial v003→v004→v005 job after v002. Queued is not ready; separately inspect named checkpoints/tables/indexes and fresh read completion. Never reset/seed/rewrite earlier migrations to clear readiness. Configure explicit operational policy, verified JSM fields and an active same-tenant NOC team. Map the consenting Atlassian account through existing manual assignee/team membership controls, with current tenant role and expiry. No account is fabricated or silently granted access.
+
+Load incidents and select the relevant synthetic incident. Scan up to20 ready receipts/Next recovery page explicitly resumes downstream gaps, displaying every result. Unknown impact/policy remains manual triage; it is not silently recomputed. Already-linked intents remain idempotent. A failed row stays durable even when the cursor advances; inspect/retry it explicitly after resolving the cause. No broad hidden polling or arbitrary SQL.
+
+Load operational state; configure NOC if separately approved, initialise queue ownership, acknowledge as a mapped engineer, triage and record the required operational checklist before direct work or handoff. Handoff/return acceptance needs the current receiving/NOC engineer and fresh required checks. Pending/rejected handoffs and returns retain prior accountability and original SLA. Restore/validation records do not close the incident.
+
+Explicit same-team reassignment is now implemented locally: a stored administrator or active owner-team lead selects an active mapped engineer and records a reason; final SQL rechecks memberships and expiry. Native acceptance remains outstanding. Resolve/close remain disabled; new transition components are unregistered and establish no native confirmation or workflow enforcement. Do not use direct Jira transition/UI paths to claim app guard acceptance. Projection repair is administrator-only and completes an existing saved envelope, including after original actor revocation, without another state transition. Stop on a lease/unknown write outcome rather than clearing state.
+
+Keep actual version/UTC/correlation/command IDs, state/owner/engineer revisions, gate expiry/evidence revisions, immutable SLA, receipt/audit/history and before/after resource evidence curated and private where appropriate. Never export account IDs, raw pending envelopes, secrets/URLs or arbitrary error dumps. Preserve all Sprint1 and final release gates; native roles/isolation, workflow bypass, confirmed native transitions, warning sweeps and licence/CI/publication remain outstanding.

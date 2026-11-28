@@ -1,10 +1,15 @@
+import { invocationFailure } from './invocation-error';
+import { Inventory } from './Inventory';
+import { Monitoring } from './Monitoring';
+import { Incidents } from './Incidents';
 import { useEffect, useRef, useState } from 'react';
 import { invoke } from '@forge/bridge';
 import { APPLICATION_METADATA } from '../../../src/domain/value-objects/application-metadata';
 import { validateStatus, type StatusValidation } from './status-contract';
 
 type HealthCheck =
-  | { readonly phase: 'idle' | 'checking' | 'rejected' }
+  | { readonly phase: 'idle' | 'checking' }
+  | { readonly phase: 'rejected'; readonly diagnostic: string }
   | { readonly phase: 'received'; readonly validation: StatusValidation };
 
 export function App() {
@@ -26,8 +31,9 @@ export function App() {
       const response: unknown = await invoke<unknown>('getStatus');
       if (mounted.current)
         setCheck({ phase: 'received', validation: validateStatus(response) });
-    } catch {
-      if (mounted.current) setCheck({ phase: 'rejected' });
+    } catch (error) {
+      if (mounted.current)
+        setCheck({ phase: 'rejected', diagnostic: invocationFailure(error) });
     } finally {
       inFlight.current = false;
     }
@@ -41,7 +47,7 @@ export function App() {
       : check.phase === 'checking'
         ? 'Checking runtime health…'
         : check.phase === 'rejected'
-          ? 'Health check failed: Forge Bridge invocation rejected. You can retry.'
+          ? `Health check failed: ${check.diagnostic}`
           : validation?.valid
             ? 'Health check passed: backend available and response contract valid.'
             : `Health check failed: invalid ${validation?.reason}. You can retry.`;
@@ -54,8 +60,9 @@ export function App() {
       <section aria-labelledby="foundation">
         <h2 id="foundation">Engineering foundation</h2>
         <p>
-          This application is in development. Monitoring, inventory, SLA
-          policies and Jira Service Management orchestration are not connected.
+          This application is in development. Monitoring intake and inventory
+          require explicit source and Forge SQL setup. SLA execution and Jira
+          Service Management orchestration are not connected.
         </p>
         <button
           type="button"
@@ -66,7 +73,12 @@ export function App() {
         >
           Run health check
         </button>
-        <p role="status" aria-live="polite" aria-atomic="true">
+        <p
+          role="status"
+          aria-label="Foundation health"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           {announcement}
         </p>
         <dl>
@@ -110,6 +122,9 @@ export function App() {
           </dd>
         </dl>
       </section>
+      <Inventory />
+      <Monitoring />
+      <Incidents />
     </main>
   );
 }

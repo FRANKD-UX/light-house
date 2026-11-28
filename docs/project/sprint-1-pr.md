@@ -1,0 +1,15 @@
+Implement LH-101/LH-102 with native Forge SQL tenancy and synthetic ISP network inventory. The Custom UI supports schema readiness, administrator bootstrap, membership-scoped tenant selection, bounded inventory/configuration, versioned demonstration policies, idempotent fixture batches and durable mutation repair. Existing health diagnostics remain available.
+
+Tenant operations derive actor/installation/environment server-side, enforce membership and same-tenant active references, use parameterised SQL/composite keys and optimistic versions, and block competing mutations during durable repair. Fifteen immutable non-destructive migrations run through an explicitly queued development-admin consumer. No later-sprint integration or operational SLA engine is added.
+
+Validation: npm ci and npm run validate pass, 83 tests/10 files; coverage 96.79% statements, 96.30% branches, 100% functions, 97.91% lines. Local SQLite-adapted/mock-SDK tests do not establish native SQL acceptance. Official Forge CLI 16.0.0 lint passes with only the owner-approved MAJOR_VERSION_RULE. Development deployment **3.0.0** succeeded; existing authorised Jira development installation independently confirms major **3 (Latest)**/Up-to-date. Official bundle/resource review preserves identity/scope/pins and excludes agent tooling/sensitive artifacts; backend map excludes affected leaf sources.
+
+LH-014 remains open: five high/six moderate package findings, three unchanged advisory identifiers, no remediation claimed. Owner renewed the exception only for the exact reviewed tree, existing development installation, synthetic data and controlled acceptance. No extension to future dependency changes or a second installation; staging/production blocked.
+
+Native SQL provisioning/migrations, readiness, fixture counts/persistence/idempotence, tenant security/concurrency/recovery and final consumption remain pending installed execution. Owner-provided pre-SQL baseline at 10:40:37Z: USD 0.00 current/forecast, SQL requests/compute/storage zero, function compute 2.548 GB-seconds. Browser host is unavailable to the agent; owner UI steps are requested and backend evidence will be checked. No native pass is inferred from deploy/install success.
+
+Keep draft: genuine second-installation isolation remains required and separately unauthorised; final merge needs explicit owner approval. No staging/production, paid provisioning, real data/integrations, distribution, licence selection or Sprint 2.
+
+Evidence: [execution report](docs/project/sprint-1-execution-report.md), [audit](docs/project/audit.md), [security review](docs/project/sprint-1-security-review.md), [readiness review](docs/project/sprint-1-readiness-review.md), [live acceptance and second-installation procedure](docs/operations/sprint-1-live-acceptance.md). Remote CI results are recorded after publication.
+
+Remote validation: [Validate run 45804050905](https://github.com/FRANKD-UX/light-house/actions/runs/45804050905) passed on 3926d38; required context is validate with strict branch protection. Later documentation heads require their own successful required check.

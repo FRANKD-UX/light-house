@@ -1,0 +1,678 @@
+// Full local vertical slice using adapted SQLite + injected mock Jira gateway.
+// This is NOT native Forge, real Zabbix transport, or Jira acceptance evidence.
+import { createHash, randomUUID } from 'node:crypto';
+import { describe, expect, it, vi } from 'vitest';
+import { monitoringFixture } from '../support/monitoring';
+import { IncidentService } from '../../src/application/incidents/service';
+import { JsmCreationService } from '../../src/application/jsm/service';
+import type {
+  JsmConfiguration,
+  JsmCreateOutcome,
+  JsmRequest,
+} from '../../src/application/jsm/contracts';
+import type { IncidentPolicy } from '../../src/domain/incidents/model';
+import {
+  SqlIncidentInventory,
+  SqlIncidentRepository,
+} from '../../src/infrastructure/sql/incident-repository';
+import { SqlJsmRepository } from '../../src/infrastructure/sql/jsm-repository';
+import { migrateIncidents } from '../../src/infrastructure/sql/incident-migrations';
+import { migrateJsm } from '../../src/infrastructure/sql/jsm-migrations';
+import type { SqlDriver } from '../../src/infrastructure/sql/driver';
+import { JsmContextService } from '../../src/application/jsm-context/service';
+import type { JsmContextSession } from '../../src/application/jsm-context/contracts';
+import { SqlJsmContextRepository } from '../../src/infrastructure/sql/jsm-context-repository';
+import { migrateOperations } from '../../src/infrastructure/sql/operations-migrations';
+import { SqlOperationsRepository } from '../../src/infrastructure/sql/operations-repository';
+import { SqlOperationAuthority } from '../../src/infrastructure/operations/authority';
+import { OperationService } from '../../src/application/operations/service';
+
+async function orchestration() {
+  const f = await monitoringFixture();
+  const db: SqlDriver = {
+    rows: f.h.db.rows,
+    write: (query, params) =>
+      f.h.db.write(
+        query
+          .replace(
+            'ON DUPLICATE KEY UPDATE ready = 0',
+            'ON CONFLICT (installation_id) DO UPDATE SET ready = 0',
+          )
+          .replace(
+            'ON DUPLICATE KEY UPDATE command_id = command_id',
+            'ON CONFLICT DO NOTHING',
+          ),
+        params,
+      ),
+  };
+  const ddl = async (statement: string) =>
+    f.h.sqlite.exec(
+      statement
+        .replace(/ CHARACTER SET utf8mb4 COLLATE utf8mb4_bin/g, '')
+        .replace(/,\s*INDEX \w+ \([^)]*\)/g, '')
+        .replace(/UNIQUE KEY \w+/g, 'UNIQUE'),
+    );
+  await migrateIncidents(db, ddl, f.ctx.installationId, f.deps.now);
+  await migrateJsm(db, ddl, f.ctx.installationId, f.deps.now);
+  const incidentRepository = new SqlIncidentRepository(db),
+    jsmRepository = new SqlJsmRepository(db, f.deps.now);
+  const incidents = new IncidentService({
+    repository: incidentRepository,
+    inventory: new SqlIncidentInventory(incidentRepository),
+    now: f.deps.now,
+    id: randomUUID,
+  });
+  const gateway = {
+    verifyConfiguration: vi.fn(async () => true),
+    create: vi.fn<
+      (
+        config: JsmConfiguration,
+        request: JsmRequest,
+      ) => Promise<JsmCreateOutcome>
+    >(async () => ({
+      kind: 'created',
+      issue: { id: '90001', key: 'SYNTH-1' },
+    })),
+    find: vi.fn(async () => ({
+      complete: true,
+      issues: [{ id: '90001', key: 'SYNTH-1' }],
+    })),
+  };
+  const jsm = new JsmCreationService({
+    repository: jsmRepository,
+    gateway,
+    now: f.deps.now,
+    id: randomUUID,
+    authoriseConfiguration: async (ctx) => {
+      expect(ctx).toEqual(f.ctx);
+    },
+  });
+  const config: JsmConfiguration = {
+    installationId: f.ctx.installationId,
+    tenantId: f.tenantId,
+    version: 1,
+    projectId: '10000',
+    serviceDeskId: '1',
+    requestTypeId: '2',
+    fields: {
+      marker: 'customfield_10001',
+      deadline: 'customfield_10002',
+      warning: 'customfield_10003',
+      policy: 'customfield_10004',
+    },
+    priorityIds: { P1: '1', P2: '2', P3: '3' },
+  };
+  await jsm.configure(f.ctx, config, 0);
+  const link = await f.topology();
+  const save = async (
+    entity: string,
+    fields: Record<string, string | number | null>,
+  ) =>
+    (
+      await f.h.service.save({
+        tenantId: f.tenantId,
+        entity,
+        fields,
+        status: 'active',
+      })
+    ).id;
+  const gold = await save('sla_tiers', {
+      code: 'poc-gold',
+      name: 'Synthetic gold',
+    }),
+    silver = await save('sla_tiers', {
+      code: 'poc-silver',
+      name: 'Synthetic silver',
+    });
+  const customer = await save('customers', {
+    reference: 'poc-customer',
+    display_alias: 'Synthetic POC customer',
+    site_id: link.siteId,
+    sla_tier_id: gold,
+  });
+  const services: string[] = [];
+  for (const [code, tier] of [
+    ['poc-access', gold],
+    ['poc-voice', silver],
+  ]) {
+    const service = await save('customer_services', {
+      customer_id: customer,
+      site_id: link.siteId,
+      tier_id: tier!,
+      code: code!,
+    });
+    services.push(service);
+    await save('service_dependencies', {
+      service_id: service,
+      uplink_id: link.uplinkId,
+      dependency_mode: 'required',
+      failover_group: null,
+    });
+  }
+  const policies: IncidentPolicy[] = [gold, silver].map((tierId, index) => ({
+    id: randomUUID(),
+    tenantId: f.tenantId,
+    tierId,
+    version: 1,
+    status: 'published',
+    effectiveFrom: '2026-01-01T00:00:00.000Z',
+    effectiveUntil: null,
+    clock: 'elapsed-utc',
+    severityMap: { '4': 'P1' },
+    unknownImpact: 'manual-review',
+    targets: {
+      P1: {
+        durationSeconds: index ? 120 : 60,
+        warningSeconds: index ? 90 : 45,
+      },
+      P2: { durationSeconds: 240, warningSeconds: 180 },
+      P3: { durationSeconds: 1440, warningSeconds: 1080 },
+    },
+  }));
+  for (const policy of policies)
+    expect(await incidentRepository.publishPolicy(f.ctx, policy, 0)).toBe(true);
+  const process = async (inboxId: string) => {
+    const result = await incidents.process(f.ctx, { inboxId });
+    if (result.kind === 'incident' && result.incident.sla.kind === 'selected')
+      await jsm.create(f.ctx, result.incident.id);
+    return result;
+  };
+  const counts = () =>
+    Object.fromEntries(
+      ['monitoring_inbox', 'incident_evidence', 'incidents', 'jsm_intents'].map(
+        (table) => [
+          table,
+          (
+            f.h.sqlite
+              .prepare(`SELECT COUNT(*) AS total FROM ${table}`)
+              .get() as { total: number }
+          ).total,
+        ],
+      ),
+    );
+  return {
+    ...f,
+    db,
+    ddl,
+    incidentRepository,
+    jsmRepository,
+    gateway,
+    incidents,
+    jsm,
+    config,
+    customer,
+    services,
+    gold,
+    policies,
+    processIncident: process,
+    counts,
+  };
+}
+
+// Reconstructed after temporary-worktree loss; not byte-for-byte recovery.
+async function linkedFixture() {
+  const f = await orchestration();
+  expect(await f.service.receive(f.request(), randomUUID())).toBe('accepted');
+  await f.process();
+  const receipt = (await f.service.overview({ tenantId: f.tenantId }))
+    .receipts[0]!;
+  await f.processIncident(receipt.id);
+  const incident = (await f.incidentRepository.list(f.ctx))[0]!;
+  const session: JsmContextSession = {
+    installationId: f.ctx.installationId,
+    accountId: f.h.session.accountId,
+    projectId: f.config.projectId,
+  };
+  const visibility = {
+    verify: vi.fn(async (current: JsmContextSession, issueId: string) => ({
+      mode: 'asUser',
+      accountId: current.accountId,
+      projectId: current.projectId,
+      issueId,
+      browseAllowed: true,
+      issueSecurityAllowed: true,
+    })),
+  };
+  const contextRepository = new SqlJsmContextRepository(f.db, f.deps.now);
+  const context = new JsmContextService(contextRepository, visibility);
+  return {
+    ...f,
+    receipt,
+    incident,
+    session,
+    visibility,
+    context,
+    contextRepository,
+  };
+}
+
+describe('synthetic Zabbix to JSM local vertical slice', () => {
+  it('authenticates, persists, enriches two distinct services for one customer and links exactly one Jira request under concurrent replays', async () => {
+    const f = await orchestration();
+    expect(
+      await Promise.all(
+        Array.from({ length: 4 }, () =>
+          f.service.receive(f.request(), randomUUID()),
+        ),
+      ),
+    ).toEqual(['accepted', 'accepted', 'accepted', 'accepted']);
+    await f.process();
+    const receipts = (await f.service.overview({ tenantId: f.tenantId }))
+      .receipts;
+    expect(receipts).toHaveLength(1);
+    const receipt = receipts[0]!;
+    expect(receipt).toMatchObject({
+      status: 'ready',
+      duplicates: 3,
+      siteId: expect.any(String),
+      uplinkId: expect.any(String),
+      occurredAt: f.event.occurredAt,
+    });
+    await Promise.all([
+      f.processIncident(receipt.id),
+      f.processIncident(receipt.id),
+      f.processIncident(receipt.id),
+    ]);
+    const saved = (await f.incidentRepository.list(f.ctx))[0]!;
+    expect(saved.impact.affectedCustomerIds).toEqual([f.customer]);
+    expect(saved.impact.affectedServiceIds).toEqual([...f.services].sort());
+    expect(saved.impact.potentiallyAffectedServiceIds).toEqual(
+      [...f.services].sort(),
+    );
+    expect(saved.sla).toMatchObject({
+      kind: 'selected',
+      snapshot: {
+        tierId: f.gold,
+        policyId: f.policies[0]!.id,
+        consideredTierIds: [f.gold, f.policies[1]!.tierId].sort(),
+        startedAt: f.event.occurredAt,
+        warningAt: '2026-11-26T00:00:45.000Z',
+        deadlineAt: '2026-11-26T00:01:00.000Z',
+      },
+    });
+    expect(f.counts()).toEqual({
+      monitoring_inbox: 1,
+      incident_evidence: 1,
+      incidents: 1,
+      jsm_intents: 1,
+    });
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+    expect(
+      f.h.sqlite
+        .prepare('SELECT state, attempts, issue_id, issue_key FROM jsm_intents')
+        .get(),
+    ).toMatchObject({
+      state: 'linked',
+      attempts: 1,
+      issue_id: '90001',
+      issue_key: 'SYNTH-1',
+    });
+    expect(await f.jsm.create(f.ctx, saved.id)).toMatchObject({
+      state: 'linked',
+      issue: { id: '90001', key: 'SYNTH-1' },
+    });
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+    const [configuredTarget, request] = f.gateway.create.mock.calls[0]!;
+    expect(configuredTarget).toEqual(f.config);
+    expect(request).toMatchObject({
+      serviceDeskId: f.config.serviceDeskId,
+      requestTypeId: f.config.requestTypeId,
+      requestFieldValues: {
+        priority: { id: '1' },
+        [f.config.fields.deadline]: '2026-11-26T00:01:00.000Z',
+        [f.config.fields.warning]: '2026-11-26T00:00:45.000Z',
+        [f.config.fields.policy]: f.policies[0]!.id,
+      },
+    });
+    expect(request.requestFieldValues[f.config.fields.marker]).toMatch(
+      /^light-house-[0-9a-f-]{36}$/,
+    );
+    expect(request.requestFieldValues.description).toContain(
+      'confirmed customers 1, potential customers 1; confirmed services 2, potential services 2',
+    );
+    expect(request.requestFieldValues.description).toContain(
+      'Impact known (COMPLETE)',
+    );
+  });
+  it('persists monitoring recovery as evidence without closing, changing the SLA snapshot or creating another Jira issue', async () => {
+    const f = await orchestration();
+    expect(await f.service.receive(f.request(), randomUUID())).toBe('accepted');
+    await f.process();
+    const problem = (await f.service.overview({ tenantId: f.tenantId }))
+      .receipts[0]!;
+    await f.processIncident(problem.id);
+    const before = (await f.incidentRepository.list(f.ctx))[0]!;
+    f.setNow('2026-11-26T00:00:20.000Z');
+    const recovery = {
+      ...f.event,
+      externalEventId: '101',
+      kind: 'recovery',
+      occurredAt: '2026-11-26T00:00:10.000Z',
+    };
+    expect(await f.service.receive(f.request(recovery), randomUUID())).toBe(
+      'accepted',
+    );
+    await f.process();
+    const receipt = (
+      await f.service.overview({ tenantId: f.tenantId })
+    ).receipts.find((r) => r.kind === 'recovery')!;
+    const result = await f.processIncident(receipt.id);
+    expect(result).toMatchObject({
+      kind: 'incident',
+      recoveryObservedAt: recovery.occurredAt,
+    });
+    const after = (await f.incidentRepository.list(f.ctx))[0]!;
+    expect(after).toEqual(before);
+    expect(after.state).toBe('new');
+    expect(f.counts()).toEqual({
+      monitoring_inbox: 2,
+      incident_evidence: 2,
+      incidents: 1,
+      jsm_intents: 1,
+    });
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+  });
+  it('rejects incorrect authentication before inbox, incident, outcome or Jira writes', async () => {
+    const f = await orchestration();
+    expect(
+      await f.service.receive(
+        f.request(f.event, { authorization: ['Bearer ' + 'b'.repeat(43)] }),
+        randomUUID(),
+      ),
+    ).toBe('unauthorised');
+    expect(f.counts()).toEqual({
+      monitoring_inbox: 0,
+      incident_evidence: 0,
+      incidents: 0,
+      jsm_intents: 0,
+    });
+    expect(
+      f.h.sqlite
+        .prepare('SELECT COUNT(*) AS total FROM monitoring_observations')
+        .get(),
+    ).toMatchObject({ total: 0 });
+    expect(f.jobs).toHaveLength(0);
+    expect(f.gateway.create).not.toHaveBeenCalled();
+  });
+  it('reconciles an uncertain creation through the durable marker without a second POST', async () => {
+    const f = await orchestration();
+    f.gateway.create.mockRejectedValueOnce(
+      new Error('synthetic transport timeout'),
+    );
+    expect(await f.service.receive(f.request(), randomUUID())).toBe('accepted');
+    await f.process();
+    const receipt = (await f.service.overview({ tenantId: f.tenantId }))
+      .receipts[0]!;
+    await f.processIncident(receipt.id);
+    const saved = (await f.incidentRepository.list(f.ctx))[0]!;
+    const uncertain = f.h.sqlite
+      .prepare(
+        'SELECT id, marker, state, attempts, reconciliations FROM jsm_intents',
+      )
+      .get();
+    expect(uncertain).toMatchObject({
+      state: 'ambiguous',
+      attempts: 1,
+      reconciliations: 0,
+    });
+    const linked = await f.jsm.create(f.ctx, saved.id);
+    expect(linked).toMatchObject({
+      state: 'linked',
+      issue: { id: '90001', key: 'SYNTH-1' },
+    });
+    expect(f.gateway.find).toHaveBeenCalledWith(
+      f.config,
+      (uncertain as { marker: string }).marker,
+    );
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+    expect(
+      f.h.sqlite
+        .prepare('SELECT state, attempts, reconciliations FROM jsm_intents')
+        .get(),
+    ).toMatchObject({ state: 'linked', attempts: 1, reconciliations: 1 });
+    expect(f.counts()).toEqual({
+      monitoring_inbox: 1,
+      incident_evidence: 1,
+      incidents: 1,
+      jsm_intents: 1,
+    });
+  });
+  it('reconstructs linked context and current operational visibility from the actual locally orchestrated incident', async () => {
+    const f = await linkedFixture();
+    await migrateOperations(f.db, f.ddl, f.ctx.installationId, f.deps.now);
+    const save = async (
+      entity: string,
+      fields: Record<string, string | null>,
+    ) =>
+      (
+        await f.h.service.save({
+          tenantId: f.tenantId,
+          entity,
+          fields,
+          status: 'active',
+        })
+      ).id;
+    const noc = await save('teams', { code: 'poc-noc', name: 'Synthetic NOC' });
+    const assignee = await save('assignees', {
+      atlassian_account_id: f.session.accountId,
+      display_alias: 'Synthetic POC engineer',
+      mapping_method: 'manual',
+    });
+    await save('team_memberships', {
+      team_id: noc,
+      assignee_id: assignee,
+      role: 'engineer',
+      effective_until: null,
+    });
+    const operations = new SqlOperationsRepository(f.db, f.deps.now);
+    expect(
+      await operations.configure(f.ctx, { nocTeamId: noc, version: 1 }, 0),
+    ).toBe(true);
+    const authority = new SqlOperationAuthority(f.db, operations, f.deps.now);
+    const service = new OperationService({
+      repository: operations,
+      now: f.deps.now,
+      id: randomUUID,
+      digest: (value) => createHash('sha256').update(value).digest('hex'),
+      authorise: (ctx, command) => authority.authorise(ctx, command),
+    });
+    const command = {
+      commandId: randomUUID(),
+      incidentId: f.incident.id,
+      kind: 'initialise',
+      expected: 0,
+    };
+    const initialised = await service.execute(f.ctx, command);
+    expect(await service.execute(f.ctx, command)).toEqual(initialised);
+    const before = f.counts();
+    const read = await f.context.lookup(f.session, '90001');
+    expect(read).toMatchObject({
+      kind: 'available',
+      incident: {
+        id: f.incident.id,
+        tenantId: f.tenantId,
+        impact: f.incident.impact,
+        sla: f.incident.sla,
+      },
+      operations: {
+        readiness: 'ready',
+        summary: {
+          incidentId: f.incident.id,
+          state: 'new',
+          ownerTeamId: noc,
+          version: initialised.version,
+          pendingMaterialisation: false,
+        },
+      },
+    });
+    expect(await operations.list(f.ctx)).toHaveLength(1);
+    expect(
+      await operations.nativeConfirmation(f.ctx, f.incident.id, 'close'),
+    ).toBeNull();
+    const rendered = JSON.stringify(read);
+    for (const privateValue of [
+      f.session.installationId,
+      f.session.accountId,
+      f.token,
+    ])
+      expect(rendered).not.toContain(privateValue);
+    for (const privateKey of [
+      'requestFieldValues',
+      'configuration_json',
+      'lease_token',
+      'audit_json',
+    ])
+      expect(rendered).not.toContain(privateKey);
+    expect(f.counts()).toEqual(before);
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+  });
+  it.each(['revoked', 'expired', 'foreign-tenant-member'] as const)(
+    'denies linked context after %s even after a prior successful read',
+    async (mode) => {
+      const f = await linkedFixture();
+      expect(await f.context.lookup(f.session, '90001')).toMatchObject({
+        kind: 'available',
+      });
+      if (mode === 'foreign-tenant-member') {
+        await f.h.service.bootstrap({
+          name: 'Other synthetic ISP',
+          slug: 'other-poc-isp',
+        });
+        f.h.sqlite
+          .prepare(
+            'DELETE FROM tenant_memberships WHERE tenant_id = ? AND account_id = ?',
+          )
+          .run(f.tenantId, f.session.accountId);
+      } else if (mode === 'revoked') {
+        f.h.sqlite
+          .prepare(
+            "UPDATE tenant_memberships SET status = 'inactive' WHERE tenant_id = ? AND account_id = ?",
+          )
+          .run(f.tenantId, f.session.accountId);
+      } else {
+        f.h.sqlite
+          .prepare(
+            'UPDATE tenant_memberships SET expires_at = ? WHERE tenant_id = ? AND account_id = ?',
+          )
+          .run(f.deps.now(), f.tenantId, f.session.accountId);
+      }
+      const before = f.counts();
+      expect(await f.context.lookup(f.session, '90001')).toEqual({
+        kind: 'unavailable',
+        reason: 'NOT_AVAILABLE',
+      });
+      expect(f.counts()).toEqual(before);
+      expect(f.gateway.create).toHaveBeenCalledTimes(1);
+    },
+  );
+  it('denies a foreign installation/project and lost Jira visibility without leaking the linked incident', async () => {
+    const f = await linkedFixture();
+    expect(
+      await f.context.lookup(
+        { ...f.session, installationId: 'other-synthetic-installation' },
+        '90001',
+      ),
+    ).toMatchObject({ kind: 'unavailable' });
+    expect(
+      await f.context.lookup({ ...f.session, projectId: '20000' }, '90001'),
+    ).toEqual({ kind: 'unavailable', reason: 'NOT_AVAILABLE' });
+    const lookup = vi.spyOn(f.contextRepository, 'lookup');
+    f.visibility.verify.mockRejectedValueOnce(
+      new Error('synthetic Jira access revoked'),
+    );
+    expect(await f.context.lookup(f.session, '90001')).toEqual({
+      kind: 'unavailable',
+      reason: 'NOT_VISIBLE',
+    });
+    expect(lookup).not.toHaveBeenCalled();
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+  });
+  it('persists retry timing and replays the same authenticated receipt without another incident or early POST', async () => {
+    const f = await orchestration();
+    f.gateway.create.mockResolvedValueOnce({
+      kind: 'RATE_LIMITED',
+      retryAfterSeconds: 30,
+    });
+    expect(await f.service.receive(f.request(), randomUUID())).toBe('accepted');
+    await f.process();
+    const receipt = (await f.service.overview({ tenantId: f.tenantId }))
+      .receipts[0]!;
+    await f.processIncident(receipt.id);
+    const saved = (await f.incidentRepository.list(f.ctx))[0]!;
+    expect(await f.jsm.create(f.ctx, saved.id)).toMatchObject({
+      state: 'retry_wait',
+    });
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+    expect(
+      f.h.sqlite
+        .prepare('SELECT state, attempts, due_at FROM jsm_intents')
+        .get(),
+    ).toMatchObject({
+      state: 'retry_wait',
+      attempts: 1,
+      due_at: '2026-11-26T00:00:30.000Z',
+    });
+    f.setNow('2026-11-26T00:00:30.000Z');
+    expect(await f.service.receive(f.request(), randomUUID())).toBe('accepted');
+    await f.process();
+    await f.processIncident(receipt.id);
+    expect(await f.jsm.create(f.ctx, saved.id)).toMatchObject({
+      state: 'linked',
+    });
+    expect(f.gateway.create).toHaveBeenCalledTimes(2);
+    expect(f.gateway.create.mock.calls[1]).toEqual(
+      f.gateway.create.mock.calls[0],
+    );
+    expect(
+      (await f.service.overview({ tenantId: f.tenantId })).receipts,
+    ).toMatchObject([{ id: receipt.id, duplicates: 1, status: 'ready' }]);
+    expect(f.counts()).toEqual({
+      monitoring_inbox: 1,
+      incident_evidence: 1,
+      incidents: 1,
+      jsm_intents: 1,
+    });
+    expect((await f.incidentRepository.list(f.ctx))[0]).toEqual(saved);
+  });
+  it('exhausts uncertain zero-result reconciliation into manual review without recreating a Jira request', async () => {
+    const f = await orchestration();
+    f.gateway.create.mockRejectedValueOnce(
+      new Error('synthetic lost response'),
+    );
+    f.gateway.find.mockResolvedValue({ complete: true, issues: [] });
+    expect(await f.service.receive(f.request(), randomUUID())).toBe('accepted');
+    await f.process();
+    const receipt = (await f.service.overview({ tenantId: f.tenantId }))
+      .receipts[0]!;
+    await f.processIncident(receipt.id);
+    const incident = (await f.incidentRepository.list(f.ctx))[0]!;
+    for (let attempt = 0; attempt < 3; attempt++)
+      await f.jsm.create(f.ctx, incident.id);
+    expect(await f.jsm.create(f.ctx, incident.id)).toMatchObject({
+      state: 'manual_review',
+      issue: null,
+    });
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+    expect(f.gateway.find).toHaveBeenCalledTimes(3);
+    expect(
+      f.h.sqlite
+        .prepare('SELECT state, attempts, reconciliations FROM jsm_intents')
+        .get(),
+    ).toMatchObject({
+      state: 'manual_review',
+      attempts: 1,
+      reconciliations: 3,
+    });
+    const session = {
+      installationId: f.ctx.installationId,
+      accountId: f.h.session.accountId,
+      projectId: f.config.projectId,
+    };
+    expect(
+      await new SqlJsmContextRepository(f.db, f.deps.now).lookup(
+        session,
+        '90001',
+      ),
+    ).toEqual({ kind: 'unavailable', reason: 'NOT_AVAILABLE' });
+  });
+});

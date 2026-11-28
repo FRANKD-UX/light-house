@@ -1,6 +1,10 @@
 # Event processing and operational lifecycle
 
-Design only. Delivery is at-least-once within documented retention, not exactly-once. The durable ledger is the source of processing truth, while Jira and Light House operational status need reconciliation.
+## Current implementation status — 2026-11-28
+
+Authenticated intake/durable deduplication/mapping/Border Control, original-problem evidence, enrichment/impact/immutable SLA and idempotent JSM creation are implemented locally with synthetic SQL/gateway tests. Ready-receipt scans explicitly revisit incomplete downstream work; evidence existence is not completion. Mutable operations persist command/receipt/audit/checklist/handoff/accepted-return state, independently of immutable incident snapshots. Same-team reassignment preserves accountability and SLA. Native transition components remain unregistered and do not confirm or enable closure. Native end-to-end processing, provider behaviour, operational restoration and bypass enforcement remain acceptance gates. No exactly-once external side effect or guaranteed automatic scheduler is claimed.
+
+Lifecycle target; implemented and unimplemented stages are distinguished below. Delivery is at-least-once within documented retention, not exactly-once. The durable ledger is the source of processing truth, while Jira and Light House operational status need reconciliation.
 
 ```mermaid
 stateDiagram-v2
@@ -135,3 +139,7 @@ A single conditional incident write carries state, owner, active handoff pointer
 **Native Jira enforcement gate:** backend guards protect Bridge commands only. Target JSM workflow must restrict native resolve/close paths to the verified guarded path (including REST/automation/bulk transitions), with appropriate native permissions/conditions or another supported mechanism proven on that site. Mechanism is proposed and unverified; preview validator modules are not assumed production-ready. If bypass cannot be prevented, guarded closure acceptance stays blocked and requires an explicit owner architecture decision. Reconciliation detects drift but does not make bypass prevention pass. No generic Jira workflow is reimplemented.
 
 Validation revision semantics: record the evaluated incident revision and accepted command/target revision. The gate's own transition into ClosurePending does not invalidate that result; subsequent changes to ownership, impact, evidence, outstanding actions or recovery evidence require revalidation. Closure checks the exact accepted gate command and current relevant-input snapshot, not an arbitrary historic pass. This is a proposed concurrency detail to verify in Sprint 3/7.
+
+## Local durable operational extension — 2026-11-28
+
+The accepted conceptual workflow now has a local application/SQL implementation for accountable engineer, handoff acceptance/rejection and explicit pending return/NOC acceptance/rejection. Original SLA and owner/engineer remain during pending/rejected work. Stored checklists are revision/evidence/expiry bound; actual native Jira transition confirmation is intentionally unavailable, so no runtime closure acceptance follows. All-ready explicit catch-up includes partial downstream states and returns individual outcomes. Native two-installation, bypass and fault acceptance remains mandatory. See ADR-0020 and local-operational-acceptance.md.
