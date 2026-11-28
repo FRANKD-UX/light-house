@@ -1,6 +1,10 @@
 # Event processing and operational lifecycle
 
-Design only. Delivery is at-least-once within documented retention, not exactly-once. The durable ledger is the source of processing truth, while Jira and Light House operational status need reconciliation.
+## Current implementation status — 2026-11-28
+
+Authenticated intake/durable deduplication/mapping/Border Control, original-problem evidence, enrichment/impact/immutable SLA and idempotent JSM creation are implemented locally with synthetic SQL/gateway tests. Ready-receipt scans explicitly revisit incomplete downstream work; evidence existence is not completion. Mutable operations persist command/receipt/audit/checklist/handoff/accepted-return state, independently of immutable incident snapshots. Same-team reassignment preserves accountability and SLA. Native transition components remain unregistered and do not confirm or enable closure. Native end-to-end processing, provider behaviour, operational restoration and bypass enforcement remain acceptance gates. No exactly-once external side effect or guaranteed automatic scheduler is claimed.
+
+Lifecycle target; implemented and unimplemented stages are distinguished below. Delivery is at-least-once within documented retention, not exactly-once. The durable ledger is the source of processing truth, while Jira and Light House operational status need reconciliation.
 
 ```mermaid
 stateDiagram-v2

@@ -1,5 +1,9 @@
 # Persistence and partial writes
 
+## Current implementation status — 2026-11-28
+
+Local v003 incidents/evidence/policies, v004 JSM configuration/creation intents and v005 operational command/checklist/receipt/history persistence are implemented and tested with adapted SQLite. The serial incident migration consumer currently includes v003–v005; all are undeployed/unapplied here. Additive v006 native-transition registry/intents and migration helper are unregistered local work; no read migration or destructive earlier-DDL change. Current-state summary reads are bounded, installation/tenant-scoped and omit raw envelopes/actors. Independent transition intents persist one-send/bounded-reconcile uncertainty; they are not causal native confirmation. Existing DEVELOPMENT v1/v2 evidence must be verified separately and cannot be inferred from local tests.
+
 Proposed: Forge SQL relational records with `@forge/sql`, KVS secret store for credential material. No ORM or persistence implementation in Sprint 0. Official capability references and date: [assessment](../project/forge-capability-assessment.md), verified 2026-11-24.
 
 The SDK documentation establishes individual parameterised statements, not an application-managed multi-statement transaction/session API. Do not issue BEGIN/COMMIT across API calls or rely on shared connections, lock persistence, SQL foreign keys or cascade deletes. Use supported PK/unique indexes and single-statement conditional updates. Verify affectedRows and query-policy compatibility on a registered development installation in Sprint 1.

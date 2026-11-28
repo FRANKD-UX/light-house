@@ -175,29 +175,27 @@ export class NativeTransitionService {
       throw new TransitionError('DENIED');
     try {
       const checked = await this.deps.preflight(ctx, requested);
-      const now = utc(this.deps.now()),
+      const checkedAt = utc(this.deps.now()),
         mapped = plan(ctx, requested, checked.plan);
-      const review = enforcement(ctx, mapped, checked.enforcement, now);
-      const existing = intent(
-        ctx,
-        requested,
-        await this.deps.repository.ensure(ctx, {
-          id: uuid(this.deps.id()),
-          plan: mapped,
-          enforcementReviewId: review,
-          state: 'prepared',
-          version: 1,
-          attempts: 0,
-          reconciliations: 0,
-          leaseUntil: null,
-          reason: null,
-          postResponse: 'not-sent',
-          observation: null,
-        }),
-        mapped,
-        review,
-        now,
-      );
+      const review = enforcement(ctx, mapped, checked.enforcement, checkedAt);
+      const saved = await this.deps.repository.ensure(ctx, {
+        id: uuid(this.deps.id()),
+        plan: mapped,
+        enforcementReviewId: review,
+        state: 'prepared',
+        version: 1,
+        attempts: 0,
+        reconciliations: 0,
+        leaseUntil: null,
+        reason: null,
+        postResponse: 'not-sent',
+        observation: null,
+      });
+      // Persistence may advance server time; a claim must not predate its insert.
+      const now = utc(this.deps.now());
+      if (now < checkedAt) throw new TransitionError('CONFLICT');
+      enforcement(ctx, mapped, checked.enforcement, now);
+      const existing = intent(ctx, requested, saved, mapped, review, now);
       const result = (
         state: TransitionResult['state'],
         observed: TransitionObservation | null = null,

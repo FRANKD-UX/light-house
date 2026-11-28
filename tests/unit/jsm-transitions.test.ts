@@ -405,3 +405,36 @@ it('rejects forged claim identity/version before HTTP and sanitizes unexpected p
     unavailable.service.execute(unavailable.ctx, unavailable.command),
   ).rejects.toEqual(new TransitionError('UNAVAILABLE'));
 });
+
+it('recaptures claim time after durable insertion and rejects review expiry or clock rollback before a claim', async () => {
+  const f = fixture(),
+    ensure = f.repository.ensure.getMockImplementation()!;
+  f.repository.ensure.mockImplementation(async (ctx, value) => {
+    const saved = await ensure(ctx, value);
+    f.setTime('2026-11-28T00:00:01.000Z');
+    return saved;
+  });
+  await expect(f.service.execute(f.ctx, f.command)).resolves.toMatchObject({
+    state: 'observed',
+  });
+  expect(f.repository.claim.mock.calls[0]?.[4]).toBe(
+    '2026-11-28T00:00:01.000Z',
+  );
+  for (const clock of [
+    '2026-11-29T00:00:00.000Z',
+    '2026-11-27T23:59:59.000Z',
+  ]) {
+    const g = fixture(),
+      original = g.repository.ensure.getMockImplementation()!;
+    g.repository.ensure.mockImplementation(async (ctx, value) => {
+      const saved = await original(ctx, value);
+      g.setTime(clock);
+      return saved;
+    });
+    await expect(g.service.execute(g.ctx, g.command)).rejects.toBeInstanceOf(
+      TransitionError,
+    );
+    expect(g.repository.claim).not.toHaveBeenCalled();
+    expect(g.gateway.post).not.toHaveBeenCalled();
+  }
+});

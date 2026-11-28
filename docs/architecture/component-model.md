@@ -1,5 +1,9 @@
 # Component model
 
+## Current implementation status — 2026-11-28
+
+Local checkpoint d35a6c8 now includes SQL inventory/monitoring, authenticated static webtrigger/consumer, incident enrichment/SLA, JSM creation ports/adapters, bounded catch-up, durable operational commands and current-page NOC UI. Independent native transition service/SQL adapter/v006 and read-only terminal discovery are subsequent local work, not registered native closure. Deployed major4 remains Sprint2; no later runtime or migration is natively accepted. Directory adapters, embedded Jira context and remaining roadmap functionality remain open. Earlier scaffold-only paragraphs describe historical checkpoints.
+
 ```mermaid
 flowchart TB
   UI[static/app: React + Bridge] --> Boundary[src/forge: resolver, webtrigger, consumer, scheduler]
@@ -12,9 +16,9 @@ flowchart TB
 
 Domain code has no Forge SDK dependencies. Application ports accept trusted context and normalised data; raw external values remain unknown until adapter validation. Infrastructure implements REST/persistence/security concerns. Forge handlers derive trusted context and wire services. UI may import safe public types/metadata, never infrastructure code or credentials.
 
-Implemented: `index.handler` → status resolver → `getStatus`, structured logger and generated correlation ID. `TenantContext`, `MonitoringAdapter`, normalised event and error contracts establish boundaries only. No persistence, scheduling, queue, webhook or external API classes are scaffolded as pretend functionality. Add directories only when they contain implementation or useful design material.
+Historical Sprint0 implementation: `index.handler` → status resolver → `getStatus`, structured logger and generated correlation ID. `TenantContext`, `MonitoringAdapter`, normalised event and error contracts establish boundaries only. No persistence, scheduling, queue, webhook or external API classes are scaffolded as pretend functionality. Add directories only when they contain implementation or useful design material.
 
-Sprint 0.5 design: operational state machine/gate evaluation, impact and SLA remain in domain/application services; authentication, actor derivation, tenant authorisation and wiring remain in Forge boundaries. Adapters handle Jira/Zabbix/SQL delivery and normalisation without choosing operational transitions. Only the read-only scaffold is implemented. See ADR-0015 and event-lifecycle.md.
+Sprint 0.5 design: operational state machine/gate evaluation, impact and SLA remain in domain/application services; authentication, actor derivation, tenant authorisation and wiring remain in Forge boundaries. Adapters handle Jira/Zabbix/SQL delivery and normalisation without choosing operational transitions. At that checkpoint only the read-only scaffold was implemented. See ADR-0015 and event-lifecycle.md.
 
 ## Sprint 1 runtime investigation — 2026-11-26
 

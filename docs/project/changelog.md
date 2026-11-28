@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-28 — Durable transition intents and read-only discovery
+
+- Added unregistered v006 transition-intent storage/migration with one-send, bounded reconciliation and scoped lease/token/version guards; no native closure confirmation.
+- Corrected first-call timing under advancing server clocks, retaining SQL monotonic guards and regressions.
+- Added bounded read-only JSM desk/type/required-field discovery using existing private credentials; no network executed.
+- All480 application tests/46files and20 harness checks pass; builds/local gates pass. Existing deployed artifact and mandatory native/release gates preserved.
+
 ## 2026-11-28 — Reassignment and current operational board
 
 - Added explicit same-team engineer reassignment with stored administrator/lead authority and final SQL membership/expiry guards.

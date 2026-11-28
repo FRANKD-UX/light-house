@@ -31,3 +31,34 @@ A prepared JSM discovery runner uses fixed GET-only service-desk/request-type en
 After discovery, return one curated bundle: public synthetic project key/desk/type IDs and required field names; page limits/truncation/permissions failures; current resource scope/lag; existing schema/pending/receipt evidence and explicit unknowns. Then prepare one concrete bounded hosted acceptance approval under sprint-2-hosted-acceptance.md. Private source provisioning, URL generation, migration and HTTP intake remain prepared actions until that approval. All Sprint1 data, outstanding identity/isolation/security/licence/native release gates remain mandatory.
 
 Official API documentation checked2026-11-28; Forge/ADS MCP unavailable. No custom diagnostic endpoint, arbitrary queue submission or unsupported global pending-list command is proposed.
+
+## Exact JSM discovery commands
+
+The runner is separate local tooling, not Forge app authentication. Use an existing authorised email/API token privately; do not provision a token/account or change permissions merely to run discovery. If this supported authentication mode is unavailable for the existing token, stop at ACCESS_DENIED rather than acquiring credentials or switching endpoints. Importing the runner performs no requests. Native requests have not been executed by this session.
+
+From the reviewed repository in an owner-controlled zsh terminal, keep credentials out of history, tracing, arguments and shared reports:
+
+```zsh
+(
+  set +x
+  read -rs 'LH_JSM_SITE?Existing approved Jira https origin: '; print
+  read -rs 'LH_JSM_EMAIL?Existing authorised account email: '; print
+  read -rs 'LH_JSM_API_TOKEN?Existing authorised API token: '; print
+  export LH_JSM_SITE LH_JSM_EMAIL LH_JSM_API_TOKEN
+  node scripts/jsm-discovery.mjs --max-pages 1
+  # After privately selecting the synthetic desk, substitute its numeric ID:
+  # node scripts/jsm-discovery.mjs --desk NUMERIC_DESK_ID --max-pages 1
+)
+```
+
+Commands permit only fixed service-desk/request-type GETs,20 rows/page, at most5pages/100rows per invocation,15second request timeout and1MiB response. Prefer one page first. Continue only when nextCursor is non-null and the remaining bounded read allowance permits, using `--start NUMERIC_CURSOR --max-pages 1`. Never follow response links. Redirects, permission failures, rate limits, malformed or oversized results stop without retries. Fields in the result are allowlisted; keep real non-synthetic project names private and return only the selected synthetic IDs/key/name. The result's current-credential-only visibility and truncated flag prevent claims that the whole site was enumerated.
+
+A matched request type is discovery, not approved JSM configuration: verify it belongs to the selected project/desk, obtain required field metadata, and check existing Forge app scopes/permissions/metadata on the reviewed artifact before any ticket creation. Do not invent default customer/request fields. Credentials are discarded when the subshell ends. No user/customer lookup or JSM POST is part of this script.
+
+After selecting the exact numeric desk/type, required-field discovery is one further read:
+
+```sh
+node scripts/jsm-discovery.mjs --desk NUMERIC_DESK_ID --type NUMERIC_REQUEST_TYPE_ID
+```
+
+Run it inside the same private credential subshell; never enter literal credentials in a command. Field mode accepts no pagination flags. It projects field ID/name/required/type and bounded numeric valid-value IDs/child IDs, with no descriptions, defaults, labels or user identities. Unsupported options or response shapes fail closed. At most100fields/100options per collection/1000option nodes are accepted; this is explicitly a bounded nonpaginated object, not invented site-wide completeness. Required unsupported field types are a configuration prerequisite, not permission to fabricate values. Eleven mocked transport checks pass; no native API result has yet been obtained.
