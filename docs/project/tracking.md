@@ -1,5 +1,11 @@
 # Engineering backlog
 
+## Remote preservation and readiness — current, 2026-11-28
+
+The exact approved recovery head 1d81253e31178f24eedd1e74fdd6a538452ad9f7 is now published on recovery/sprint-5-poc. [DraftPR3](https://github.com/FRANKD-UX/light-house/pull/3) is OPEN/DRAFT; [Validate46147061118](https://github.com/FRANKD-UX/light-house/actions/runs/46147061118) PASSED for that exact head:519 tests/51 files,20harnesschecks,both UI/backend/local manifest. No merge; maincc82f50 and older draft PR2 unchanged. New local readiness documentation is a separate unpushed artifact; remoteCI evidence does not automatically cover later commits.
+
+Authenticated lint is now diagnosed:0 errors/0 warnings/1 approval for three added scopes versus hostedDEVELOPMENT major4. No rule approval/deploy/install performed. Current full/default/fresh/prod audits12(5 high/7 moderate),threeadvisory roots; historical8→12reflects four addedSDK parents, not new recovery dependencies. LH-014 OPEN. Connected projectdiscovery again finds0visibleprojects; existence/permissions/IDs remain UNKNOWN. Configuration approved in principle only; provisioning/migrations/source/events/nativeJira are HOLD. [Readiness report](sprint-5-remote-readiness-report.md) and [current 20-operation plan](../operations/sprint-5-hosted-poc-plan.md#current-20-operation-admission-envelope--2026-11-28) supersede older pending-publication/unknown-rule cause next actions. No Sprint 6.
+
 ## Current recovery status — 2026-11-28
 
 This section supersedes earlier dated status statements below; historical evidence is retained. Active local work is Sprint 5 POC recovery only, on `recovery/sprint-5-poc` in `$HOME/RiderProjects/light-house-recovery`. Recovered source is `f85aeb810d74b4300a67463c999eeb7e2e0846ed`; reconstructed regression checkpoint is `a06a6dc`. Remote main remains `cc82f50` (merged PR #1 / successful post-merge run 45780524271); published Sprint 1 remains `ddf0d9d`, not the latest implementation.

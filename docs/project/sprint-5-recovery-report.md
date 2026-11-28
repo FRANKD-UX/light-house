@@ -1,5 +1,7 @@
 # Sprint 5 recovery, preservation and POC proposal
 
+**Publication continuation — 2026-11-28:** Owner authorised exact1d81253 preservation/draft PR. Push succeeded; draft PR3 and exact-head Validate46147061118 passed. This supersedes pending-publication statements below, which remain historical. Later local readiness documentation is not pushed. See [current report](sprint-5-remote-readiness-report.md) for exact remote/CI, scope-change diagnosis, dependency reconciliation and remaining hosted gates.
+
 Date: 2026-11-28. Current scope is recovery and continuation of the existing Sprint 5 POC. No Sprint 6. The original main worktree is untouched. All proposed remote/hosted mutations remain unauthorised.
 
 ## Recovery and durable checkpoints

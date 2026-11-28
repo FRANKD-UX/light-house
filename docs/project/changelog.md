@@ -263,3 +263,10 @@ Added seven reconstructed integration cases to the existing adapted SQLite/mock 
 ## 2026-11-28 — Sprint 5 recovery handover and hosted proposals
 
 Reconciled authoritative local-versus-remote/hosted status, preserved historical evidence and recorded temporary-worktree loss/persistent recovery mitigation. Reconstructed the synthetic LHNOC project configuration proposal and prepared the bounded hosted acceptance/publication plan. Final canonical validation passes519tests/51files with unchanged runtime/locks and open LH-014/Forge lint/native/theme/licence gates. No project provisioning, deployment, publication, merge or new sprint.
+
+## 2026-11-28 — Exact remote preservation and hosted readiness
+
+- Published only approved1d81253 on recovery/sprint-5-poc; draft PR #3 and exact-head Validate46147061118 passed519 tests/51 files and20 harness checks. No merge.
+- Diagnosed MAJOR_VERSION_RULE as three added scopes versus deployed Development major4;0 errors/0 warnings/1 approval. No rule approval, permission edit or deployment.
+- Reconciled historical8→12 affected-package count with four SDK parent additions and retained earlier18-package cache-sensitive evidence. Four current audits agree12(5high/7moderate), three advisories; LH-014 OPEN, no dependency edit.
+- Recorded partial scanner/graph coverage, zero-visible-project discovery and minimum synthetic access/provisioning proposal. Prepared20 hosted operations with counts/reservations/stops/evidence; all writes HOLD. Later documentation is locally validated and awaits separate publication approval. No Sprint6.
