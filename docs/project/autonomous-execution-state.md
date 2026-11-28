@@ -10,7 +10,7 @@ Deliver authenticated Zabbix → durable intake → Border Control → enrichmen
 - Sprint2 implementation: `2b97545fe87e5d3d371ab2982da7e41b7614d834`, tree `0e5623879a3a05cb09e3d9ef7703148c3b606c25`.
 - Preserved Sprint2 hosted documentation: `3236eb7`, twelve documentation files committed locally; no runtime change. DEVELOPMENT major4/install/health evidence is in operations/sprint-2-hosted-acceptance.md. Do not repeat deployment/health merely to resume.
 - Integrated local implementation: `a16a5ba1238aa7ffae7bad505b8847bc980bd8b3`,295 tests validated; full POC integration test/native acceptance still pending.
-- Current branch: `sprint-3/incident-orchestration`, same existing `/tmp/light-house-sprint1` worktree. Other existing main worktree is untouched. No additional worktree was created.
+- Current branch: `sprint-4/jsm-operational-delivery`, same existing `/tmp/light-house-sprint1` worktree. Other existing main worktree is untouched. No additional worktree was created.
 
 ## Active assignments and integration
 
@@ -65,3 +65,7 @@ Verified clean557aecf before edits. Existing specialists demonstrably resumed wi
 Owner invoked codex resume. Existing integration specialist resumed once successfully and completed14 UI tests; no replacement account/model/agent used. Backend/security latest turns had earlier reported Nov28 02:21 retry time (timezone/category unspecified); their written work was inspected and validated directly. All393 tests/40 files now pass, coverage95.07statements/93.50branches/97.29functions/96.29lines, unchanged thresholds; lint/format/types/UI+backend build/localmanifest pass. Pinned e2e ci6added/7audited0findings;20 harness checks/dryrun pass. Fresh full/prod audit each18(11high/7moderate),same3roots; rootdependencies/locks unchanged.
 
 Completed: four POC integration simulations; canonical recovery/update identity; bounded all-ready recovery service/SQL/runtime/UI; v005 operational persistence with receipts/audit/handoff history/gates/facts/clock/ref/actor guards; fresh manual engineer authority; explicit NOC accepted return; checklist producer and public operational UI mounted in incident workspace. Administrator projection-only repair can finish the original committed envelope after actor revocation without another transition. NativeClosureAvailable remainsfalse; reassignment and real native transition writer are next, not passed. Exact source checkpoint will be recorded after staging review/commit; no hosted mutation, deployment, installation, URL/secret provisioning or remote publication.
+
+## Operational checkpoint and next branch
+
+Validated implementation checkpoint: `87ebd25f3f6c9552b648f49bbf072d14acbef053` on sprint-3/incident-orchestration,50 files,393 tests/40 files; clean tree confirmed after commit. Source/dependency/native evidence remains as above. Continuing on a new local sprint-4/jsm-operational-delivery branch from that checkpoint, preserving prior branch. Next disjoint tasks: explicit authorised same-team reassignment; durable verified Jira transition adapter/intent design; release/native prerequisites stay open. No new deployment/installation/native write authority inferred.
