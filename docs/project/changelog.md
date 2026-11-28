@@ -254,8 +254,12 @@ Finalised ADR-0017; classified Sprint1 IMPLEMENTATION-COMPLETE LOCALLY — RELEA
 
 ## 2026-11-28 — Persistent Sprint 5 recovery baseline
 
-Recovered f85aeb8 into a persistent recovery/sprint-5-poc worktree while preserving existing refs and missing worktree metadata. Fresh locked installation and canonical validation reproduce512tests/51files with unchanged coverage;20harness checks/dryrun pass. Fresh audits12(5high/7moderate),LH-014OPEN. Later unstaged POC/proposal work is unlocated and will be reconstructed explicitly. Authenticated Atlassian discovery returns zero visible projects; no hosted mutation or publication.
+Recovered f85aeb8 into a persistent recovery/sprint-5-poc worktree while preserving existing refs and missing worktree metadata. Fresh locked installation and canonical validation reproduce512 tests/51 files with unchanged coverage;20harness checks/dryrun pass. Fresh audits12(5 high/7 moderate),LH-014OPEN. Later unstaged POC/proposal work is unlocated and will be reconstructed explicitly. Authenticated Atlassian discovery returns zero visible projects; no hosted mutation or publication.
 
 ## 2026-11-28 — Reconstructed POC integration coverage
 
-Added seven reconstructed integration cases to the existing adaptedSQLite/mockJira POC file: current operational/context projection, replay, fresh membership/expiry/tenant/Jira access denial, persisted rate-limit retry and bounded ambiguous reconciliation. All519tests/51files pass; branchcoverage93.51%,othercoverageunchanged. No runtime/dependency/schema changes; nativeclosuredisabled. Official local manifestvalidator passes; authenticatedForgeCLI lint blocksMAJOR_VERSION_RULE.
+Added seven reconstructed integration cases to the existing adapted SQLite/mock Jira POC file: current operational/context projection, replay, fresh membership/expiry/tenant/Jira access denial, persisted rate-limit retry and bounded ambiguous reconciliation. All519 tests/51 files pass; branchcoverage93.51%,othercoverage unchanged. No runtime/dependency/schema changes; native closure disabled. Official local manifestvalidator passes; authenticatedForge CLI lint blocks MAJOR_VERSION_RULE.
+
+## 2026-11-28 — Sprint 5 recovery handover and hosted proposals
+
+Reconciled authoritative local-versus-remote/hosted status, preserved historical evidence and recorded temporary-worktree loss/persistent recovery mitigation. Reconstructed the synthetic LHNOC project configuration proposal and prepared the bounded hosted acceptance/publication plan. Final canonical validation passes519tests/51files with unchanged runtime/locks and open LH-014/Forge lint/native/theme/licence gates. No project provisioning, deployment, publication, merge or new sprint.

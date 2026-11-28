@@ -1,5 +1,7 @@
 # Jira embedded Light House context
 
+**Current recovery clarification — 2026-11-28:** The proposed-only introduction below is historical; its final implemented integration entry and recovered f85aeb8 define the local implementation. Persistent recovery adds reconstructed full-POC reads through actual SQL context lookup, operational initialisation/replay and current tenant/Jira denial cases. These use injected Jira visibility and adapted SQLite, not genuine asUser/native permission evidence. Exact runtime moduleKey/extension shape and installed host themes remain unverified. Fresh local manifest validator passes; authenticated CLI lint blocks MAJOR_VERSION_RULE. No module/runtime changes or deployment in recovery.
+
 Proposed read-only Sprint 5 integration, researched 2026-11-28. This document does not register a module, implement a resolver, change scopes or establish hosted acceptance. Forge MCP was unavailable; exact official documentation was consulted directly.
 
 ## Supported surface and context boundary

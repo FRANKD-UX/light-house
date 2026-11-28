@@ -1,5 +1,21 @@
 # Engineering backlog
 
+## Current recovery status — 2026-11-28
+
+This section supersedes earlier dated status statements below; historical evidence is retained. Active local work is Sprint 5 POC recovery only, on `recovery/sprint-5-poc` in `$HOME/RiderProjects/light-house-recovery`. Recovered source is `f85aeb810d74b4300a67463c999eeb7e2e0846ed`; reconstructed regression checkpoint is `a06a6dc`. Remote main remains `cc82f50` (merged PR #1 / successful post-merge run 45780524271); published Sprint 1 remains `ddf0d9d`, not the latest implementation.
+
+| Boundary             | Current evidence                                                                                                                                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Local implementation | Tenancy/inventory, authenticated monitoring/mapping, impact/SLA, durable JSM create/reconcile, operational ownership/recovery/NOC board and tenant-authorised embedded context implemented; wider programme unfinished |
+| Local validation     | Fresh canonical suite 519 tests/51 files; coverage 94.81% statements/93.51% branches/96.84% functions/95.96% lines; two UI builds/backend/local manifest pass; harness 20/dry-run pass                                 |
+| Forge lint           | Authenticated CLI exits 1/MAJOR_VERSION_RULE; unapproved, not passed; installed local manifest validator passes                                                                                                        |
+| Hosted deployment    | Last recorded DEVELOPMENT major 4/source 2b97545; incident/operations/context code and v003–v005 undeployed; v006 unregistered                                                                                         |
+| Hosted acceptance    | Existing status/inventory evidence preserved; complete event→native Jira→NOC/context POC remains unaccepted; pending/readiness/receipts/current usage UNKNOWN                                                          |
+| Integration access   | Atlassian connected and read operations available; complete bounded project search returns 0 visible projects; existence versus permission unresolved                                                                  |
+| Production / release | Not ready; LH-014 OPEN; licence, native workflow/causality, genuine isolation, R-01–R-14 and installed themes remain open                                                                                              |
+
+See [recovery report and publication proposal](sprint-5-recovery-report.md), [synthetic project proposal](../operations/synthetic-jsm-project-proposal.md) and [hosted acceptance plan](../operations/sprint-5-hosted-poc-plan.md). No push/merge/deploy/migration/source/credential/queue/Jira-write authority is added. No Sprint 6.
+
 **Hosted update — 2026-11-27:** Owner reports exact `2b97545fe87e5d3d371ab2982da7e41b7614d834` DEVELOPMENT major4 deployment/install upgrade and separate authenticated lint pass (zero errors/warnings; one MAJOR_VERSION_RULE approval). Deployment used `--no-verify`; pre-deployment checks were bypassed. Exact health UUID independently matched backend.status/success at18:31:37.509Z. Migration/source/URL/native intake remain unexecuted by this review; fresh usage/pending/bounded authority and current dependency-risk disposition remain prerequisites. See [consolidated hosted checkpoint and next controls](../operations/sprint-2-hosted-acceptance.md). This dated update supersedes deployment/lint-pending wording below; Sprint1 release gates remain open.
 
 **Owner decision (2026-11-27):** ADR-0017 accepted; Sprint1 IMPLEMENTATION-COMPLETE LOCALLY — RELEASE ACCEPTANCE OUTSTANDING. Local checkpoint and isolated LH-103 implementation authorised. No release/production/deployment/native mutation/publication/merge authority. Prior proposal/hold entries are dated history.

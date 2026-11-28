@@ -1,5 +1,13 @@
 # Autonomous hosted discovery evidence
 
+## Recovery reconciliation — current, 2026-11-28
+
+The earlier missing/unconnected Atlassian tool statements and connection requests are superseded. The owner confirms the integration is authenticated; this environment exposes discover/executeRead operations. One bounded listJiraProjects call (startAt0,maxResults100) returned values[],total0,isLasttrue. Two earlier complete zero-result searches are owner-supplied evidence; this additional result was independently observed. It means no caller-visible projects, not proof no project exists or permission is sufficient. No target-specific desk/type/field query was made using the unverified proposed LHNOC key.
+
+Capability discovery exposes getJsmRequestCreationOptions(projectKey) and getJsmRequestTypeFields(serviceDeskId,requestTypeId). Once a project is verified accessible, these support the exact metadata chain. No new authentication request, credential/environment/session search or failed browser launch was repeated. Site/cloud details supplied by the owner are not copied into public documentation. Current Forge MCP documentation call failed HTTP transport; exact official references were used instead.
+
+Existing DEVELOPMENT major 4/source 2b97545 and usage 292/health evidence below are historical records, not fresh deployment/headroom observations. Current pending jobs/intents/receipts, v002 readiness, request configuration and metering/data-through remain UNKNOWN. Read-only connection access does not authorise project provisioning or native mutations. See the [reconstructed project proposal](synthetic-jsm-project-proposal.md) and [bounded hosted plan](sprint-5-hosted-poc-plan.md). Existing browser/session limitations remain recorded; no retry without material change.
+
 2026-11-28. Owner authorises bounded read-only discovery of the existing DEVELOPMENT app/site. No deployment, migration, repair, queue submission, credential provisioning, secret rotation or Jira creation is authorised by this read scope. Existing private target remains in owner-only records; identifiers/URLs/credentials are not reproduced here.
 
 ## Updated owner baseline

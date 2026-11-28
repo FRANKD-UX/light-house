@@ -33,3 +33,7 @@ Inventory list lifecycle diagnostics use an application-owned port with a no-op 
 ## Embedded context — local Sprint5
 
 A dedicated static issue-context resource and resolver expose only a linked-incident read. Server context supplies account/installation/issue/project candidates; interactive asUser GET confirms exact Jira visibility/project, SQL reverse lookup supplies tenant, and final active/readgrant/expiry/nonpending predicates authorise projection. No UI selectors grant access, no new scope/egress/SQLwrite is introduced. Public globalworkspace remains separate. Nativehostcontext/modulekeycompatibility, theme/layout and permissions await acceptance; no deployment performed.
+
+## Persistent recovery verification — 2026-11-28
+
+Recovery changes tests/documentation only; source, manifest, schemas and locks match f85aeb8. The reconstructed local vertical slice now connects MonitoringService and concrete monitoring/incident/JSM SQL ports to JsmContextService/SqlJsmContextRepository, plus OperationService/SqlOperationAuthority/SqlOperationsRepository. Real local initialisation, command replay and safe read projection are exercised; Jira create/visibility and Forge boundaries remain simulations. Membership revocation/expiry and other-tenant-only access fail closed. No infrastructure imports are added to application/domain and no runtime capability is introduced. Native context shape/permissions, query-policy/queue behaviour and release isolation remain separate acceptance.

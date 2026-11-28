@@ -10,17 +10,19 @@ The objective is to bring this workflow into Jira Service Management (JSM), with
 
 ## Current implementation
 
-Sprint 1 provides server-authorised ISP tenancy, Forge SQL inventory, manual teams/assignees, bounded mutation repair and synthetic fixtures. Local Sprint 2–4 work adds authenticated Zabbix-compatible intake, durable inbox/deduplication, infrastructure/customer impact, immutable SLA decisions, idempotent JSM request creation and operational ownership/handoff/checklist controls. The React workspace displays impact, SLA and durable Jira linkage. These paths have local SQLite, mocked SDK/HTTP and Bridge tests; they are not all verified natively.
+The latest implementation is preserved on local `recovery/sprint-5-poc`, recovered from `f85aeb8` into a persistent worktree. It includes tenancy and synthetic inventory; authenticated Zabbix-compatible ingestion and resource mapping; impact and immutable SLA decisions; durable JSM create/reconcile intents; operational ownership, handoffs, recovery and NOC board; and tenant-authorised embedded Jira incident context. These paths use real application/SQL adapters in local tests with adapted SQLite and mocked Jira/Forge/Bridge boundaries. They are not all verified natively.
 
-**Deployment is not complete runtime acceptance.** The existing DEVELOPMENT installation is on major4 from implementation `2b97545`; its exact health UUID is accepted. Deployment used `--no-verify` after separate owner-reported authenticated lint, recorded transparently. Newer local incident/operations code, scopes and v003/v004/v005 schemas are **not deployed**. Real Zabbix/Jira end-to-end acceptance, verified Jira transitions/closure, reassignment, scheduled warnings, full dashboard/context, directory integrations and mandatory release gates remain outstanding. Sprint1 is implementation-complete locally with release acceptance outstanding; its native migration/readiness and eleven-kind retrieval evidence are preserved.
+Fresh recovery validation passes **519 tests across 51 files**, both frontends, backend and local manifest checks. The reconstructed POC file has11 tests; this is reconstructed coverage, not byte-for-byte recovery of lost unstaged work. Root dependencies and runtime source are unchanged by recovery. Authenticated Forge CLI lint remains blocked by MAJOR_VERSION_RULE; LH-014 remains OPEN.
 
-See the [programme continuation state](docs/project/autonomous-execution-state.md), [local operational preparation](docs/operations/local-operational-acceptance.md), [deployed Sprint2 acceptance procedure](docs/operations/sprint-2-hosted-acceptance.md) and [current security assessment](docs/project/programme-security-assessment.md). Read-only browser harness details remain in [e2e/README.md](e2e/README.md); its pinned hosted target must not be widened to exercise mutations.
+Remote main remains the merged foundation at `cc82f50`; published Sprint 1 is `ddf0d9d`. Later implementation and recovery checkpoints are local only. The last recorded hosted installation is **DEVELOPMENT major 4**, from `2b97545`; later incident/operations/context resources, scopes and v003–v005 schemas are undeployed. V006 transition persistence remains unregistered; native closure stays disabled. Deployment is separate from hosted acceptance and production readiness.
+
+The former temporary worktree directories are missing; their Git registrations/indexes/reflogs and all refs are preserved. Active work now lives in `$HOME/RiderProjects/light-house-recovery`. See the [recovery report/publication proposal](docs/project/sprint-5-recovery-report.md), [continuation checkpoint](docs/project/autonomous-execution-state.md), [synthetic JSM project proposal](docs/operations/synthetic-jsm-project-proposal.md), [hosted POC plan](docs/operations/sprint-5-hosted-poc-plan.md) and [security assessment](docs/project/programme-security-assessment.md). Historical records below are superseded by dated current recovery entries. Sprint 6 is outside this recovery scope.
 
 ## Planned incident workflow
 
 Zabbix events → automated intake Border Control → network context enrichment → customer impact analysis → SLA calculation → JSM incident creation → accountable departmental handoffs → final restoration validation → guarded closure.
 
-Border Control will authenticate, bound, deduplicate and route monitoring intake; unknown inventory will remain visible for manual triage. Recovery events will provide evidence rather than automatically close incidents. JSM will send native notifications. Entra ID and Google Workspace will map identities with a manual fallback; they will not replace Atlassian login. Zoho Desk is optional stretch scope.
+The implemented Border Control authenticates, bounds, deduplicates and routes monitoring intake; unknown inventory remains visible for manual triage. Recovery is evidence and cannot automatically close incidents. JSM native notifications require hosted verification. Entra ID and Google Workspace will map identities with a manual fallback; they will not replace Atlassian login. Zoho Desk is optional stretch scope.
 
 ## Architecture and system context
 
@@ -39,7 +41,7 @@ The page → Bridge → status and inventory resolvers are implemented. Inventor
 
 ## Technology and repository structure
 
-TypeScript, React 18, Forge Custom UI, Forge Functions/Resolvers and Forge Bridge; Vite/esbuild; Vitest, ESLint and Prettier. Relational persistence uses Forge SQL; KVS secrets remain reserved for later credentials. There is no separately hosted backend or runtime generative AI.
+TypeScript, React 18, Forge Custom UI, Forge Functions/Resolvers and Forge Bridge; Vite/esbuild; Vitest, ESLint and Prettier. Relational persistence uses Forge SQL; KVS secret storage implements monitoring credential references; native lifecycle acceptance remains separate. There is no separately hosted backend or runtime generative AI.
 
 | Path                 | Purpose                                               |
 | -------------------- | ----------------------------------------------------- |
@@ -48,7 +50,7 @@ TypeScript, React 18, Forge Custom UI, Forge Functions/Resolvers and Forge Bridg
 | `src/infrastructure` | Port implementations                                  |
 | `src/forge`          | Trusted Forge handlers and wiring                     |
 | `static/app`         | React Custom UI                                       |
-| `tests`              | Unit tests; future contract/integration gates         |
+| `tests`              | Unit, contract and adapted SQLite integration tests   |
 | `scripts`            | Local manifest verification                           |
 | `e2e`                | Isolated read-only hosted Playwright acceptance       |
 | `docs`               | Architecture, ADRs, operations, tracking and evidence |
@@ -63,7 +65,7 @@ npm ci
 npm run validate
 ```
 
-Validation runs ESLint, formatting, strict TypeScript, unit coverage, UI/backend builds and local manifest wiring. Individual commands are `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run test`, `npm run test:coverage`, `npm run build` and `npm run check:manifest`. `npm audit` is a separate security gate and currently fails; see [LH-014](docs/project/dependency-security-assessment.md). Do not use a force fix or silently downgrade SDKs.
+Validation runs ESLint, formatting, strict TypeScript, unit/contract/integration coverage, both UI builds/backend build and local manifest wiring. Individual commands are `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run test`, `npm run test:coverage`, `npm run build` and `npm run check:manifest`. `npm audit` is a separate security gate and currently fails; see [LH-014](docs/project/dependency-security-assessment.md). Do not use a force fix or silently downgrade SDKs.
 
 For automated native acceptance, install the isolated tooling once and complete owner login/MFA in the opened browser:
 
@@ -82,7 +84,7 @@ The registered Forge application identity is preserved; do not register a duplic
 
 ## Roadmap
 
-Foundation acceptance is verified; Sprint 1 tenancy and synthetic inventory are implemented locally with live gates outstanding. Later sprints cover monitoring intake, enrichment/SLA, JSM lifecycle and handoffs, operational UI, identity mapping, recovery/security hardening, regression and demonstration. See the [backlog](docs/project/tracking.md) and [roadmap](docs/project/roadmap.md). No next sprint starts automatically.
+Foundation acceptance is verified. Local implementation has advanced through the Sprint 5 embedded-context checkpoint; native acceptance and the wider programme remain unfinished. Directory adapters and later roadmap work are outside the current recovery authorisation. See the [backlog](docs/project/tracking.md) and [roadmap](docs/project/roadmap.md). No next sprint starts automatically.
 
 ## Security, cost and contributions
 
