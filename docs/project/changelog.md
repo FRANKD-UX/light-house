@@ -255,3 +255,7 @@ Finalised ADR-0017; classified Sprint1 IMPLEMENTATION-COMPLETE LOCALLY — RELEA
 ## 2026-11-28 — Persistent Sprint 5 recovery baseline
 
 Recovered f85aeb8 into a persistent recovery/sprint-5-poc worktree while preserving existing refs and missing worktree metadata. Fresh locked installation and canonical validation reproduce512tests/51files with unchanged coverage;20harness checks/dryrun pass. Fresh audits12(5high/7moderate),LH-014OPEN. Later unstaged POC/proposal work is unlocated and will be reconstructed explicitly. Authenticated Atlassian discovery returns zero visible projects; no hosted mutation or publication.
+
+## 2026-11-28 — Reconstructed POC integration coverage
+
+Added seven reconstructed integration cases to the existing adaptedSQLite/mockJira POC file: current operational/context projection, replay, fresh membership/expiry/tenant/Jira access denial, persisted rate-limit retry and bounded ambiguous reconciliation. All519tests/51files pass; branchcoverage93.51%,othercoverageunchanged. No runtime/dependency/schema changes; nativeclosuredisabled. Official local manifestvalidator passes; authenticatedForgeCLI lint blocksMAJOR_VERSION_RULE.

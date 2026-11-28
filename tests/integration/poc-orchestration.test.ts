@@ -1,6 +1,6 @@
 // Full local vertical slice using adapted SQLite + injected mock Jira gateway.
 // This is NOT native Forge, real Zabbix transport, or Jira acceptance evidence.
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { describe, expect, it, vi } from 'vitest';
 import { monitoringFixture } from '../support/monitoring';
 import { IncidentService } from '../../src/application/incidents/service';
@@ -19,6 +19,13 @@ import { SqlJsmRepository } from '../../src/infrastructure/sql/jsm-repository';
 import { migrateIncidents } from '../../src/infrastructure/sql/incident-migrations';
 import { migrateJsm } from '../../src/infrastructure/sql/jsm-migrations';
 import type { SqlDriver } from '../../src/infrastructure/sql/driver';
+import { JsmContextService } from '../../src/application/jsm-context/service';
+import type { JsmContextSession } from '../../src/application/jsm-context/contracts';
+import { SqlJsmContextRepository } from '../../src/infrastructure/sql/jsm-context-repository';
+import { migrateOperations } from '../../src/infrastructure/sql/operations-migrations';
+import { SqlOperationsRepository } from '../../src/infrastructure/sql/operations-repository';
+import { SqlOperationAuthority } from '../../src/infrastructure/operations/authority';
+import { OperationService } from '../../src/application/operations/service';
 
 async function orchestration() {
   const f = await monitoringFixture();
@@ -26,10 +33,15 @@ async function orchestration() {
     rows: f.h.db.rows,
     write: (query, params) =>
       f.h.db.write(
-        query.replace(
-          'ON DUPLICATE KEY UPDATE ready = 0',
-          'ON CONFLICT (installation_id) DO UPDATE SET ready = 0',
-        ),
+        query
+          .replace(
+            'ON DUPLICATE KEY UPDATE ready = 0',
+            'ON CONFLICT (installation_id) DO UPDATE SET ready = 0',
+          )
+          .replace(
+            'ON DUPLICATE KEY UPDATE command_id = command_id',
+            'ON CONFLICT DO NOTHING',
+          ),
         params,
       ),
   };
@@ -180,6 +192,8 @@ async function orchestration() {
     );
   return {
     ...f,
+    db,
+    ddl,
     incidentRepository,
     jsmRepository,
     gateway,
@@ -192,6 +206,43 @@ async function orchestration() {
     policies,
     processIncident: process,
     counts,
+  };
+}
+
+// Reconstructed after temporary-worktree loss; not byte-for-byte recovery.
+async function linkedFixture() {
+  const f = await orchestration();
+  expect(await f.service.receive(f.request(), randomUUID())).toBe('accepted');
+  await f.process();
+  const receipt = (await f.service.overview({ tenantId: f.tenantId }))
+    .receipts[0]!;
+  await f.processIncident(receipt.id);
+  const incident = (await f.incidentRepository.list(f.ctx))[0]!;
+  const session: JsmContextSession = {
+    installationId: f.ctx.installationId,
+    accountId: f.h.session.accountId,
+    projectId: f.config.projectId,
+  };
+  const visibility = {
+    verify: vi.fn(async (current: JsmContextSession, issueId: string) => ({
+      mode: 'asUser',
+      accountId: current.accountId,
+      projectId: current.projectId,
+      issueId,
+      browseAllowed: true,
+      issueSecurityAllowed: true,
+    })),
+  };
+  const contextRepository = new SqlJsmContextRepository(f.db, f.deps.now);
+  const context = new JsmContextService(contextRepository, visibility);
+  return {
+    ...f,
+    receipt,
+    incident,
+    session,
+    visibility,
+    context,
+    contextRepository,
   };
 }
 
@@ -385,5 +436,243 @@ describe('synthetic Zabbix to JSM local vertical slice', () => {
       incidents: 1,
       jsm_intents: 1,
     });
+  });
+  it('reconstructs linked context and current operational visibility from the actual locally orchestrated incident', async () => {
+    const f = await linkedFixture();
+    await migrateOperations(f.db, f.ddl, f.ctx.installationId, f.deps.now);
+    const save = async (
+      entity: string,
+      fields: Record<string, string | null>,
+    ) =>
+      (
+        await f.h.service.save({
+          tenantId: f.tenantId,
+          entity,
+          fields,
+          status: 'active',
+        })
+      ).id;
+    const noc = await save('teams', { code: 'poc-noc', name: 'Synthetic NOC' });
+    const assignee = await save('assignees', {
+      atlassian_account_id: f.session.accountId,
+      display_alias: 'Synthetic POC engineer',
+      mapping_method: 'manual',
+    });
+    await save('team_memberships', {
+      team_id: noc,
+      assignee_id: assignee,
+      role: 'engineer',
+      effective_until: null,
+    });
+    const operations = new SqlOperationsRepository(f.db, f.deps.now);
+    expect(
+      await operations.configure(f.ctx, { nocTeamId: noc, version: 1 }, 0),
+    ).toBe(true);
+    const authority = new SqlOperationAuthority(f.db, operations, f.deps.now);
+    const service = new OperationService({
+      repository: operations,
+      now: f.deps.now,
+      id: randomUUID,
+      digest: (value) => createHash('sha256').update(value).digest('hex'),
+      authorise: (ctx, command) => authority.authorise(ctx, command),
+    });
+    const command = {
+      commandId: randomUUID(),
+      incidentId: f.incident.id,
+      kind: 'initialise',
+      expected: 0,
+    };
+    const initialised = await service.execute(f.ctx, command);
+    expect(await service.execute(f.ctx, command)).toEqual(initialised);
+    const before = f.counts();
+    const read = await f.context.lookup(f.session, '90001');
+    expect(read).toMatchObject({
+      kind: 'available',
+      incident: {
+        id: f.incident.id,
+        tenantId: f.tenantId,
+        impact: f.incident.impact,
+        sla: f.incident.sla,
+      },
+      operations: {
+        readiness: 'ready',
+        summary: {
+          incidentId: f.incident.id,
+          state: 'new',
+          ownerTeamId: noc,
+          version: initialised.version,
+          pendingMaterialisation: false,
+        },
+      },
+    });
+    expect(await operations.list(f.ctx)).toHaveLength(1);
+    expect(
+      await operations.nativeConfirmation(f.ctx, f.incident.id, 'close'),
+    ).toBeNull();
+    const rendered = JSON.stringify(read);
+    for (const privateValue of [
+      f.session.installationId,
+      f.session.accountId,
+      f.token,
+    ])
+      expect(rendered).not.toContain(privateValue);
+    for (const privateKey of [
+      'requestFieldValues',
+      'configuration_json',
+      'lease_token',
+      'audit_json',
+    ])
+      expect(rendered).not.toContain(privateKey);
+    expect(f.counts()).toEqual(before);
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+  });
+  it.each(['revoked', 'expired', 'foreign-tenant-member'] as const)(
+    'denies linked context after %s even after a prior successful read',
+    async (mode) => {
+      const f = await linkedFixture();
+      expect(await f.context.lookup(f.session, '90001')).toMatchObject({
+        kind: 'available',
+      });
+      if (mode === 'foreign-tenant-member') {
+        await f.h.service.bootstrap({
+          name: 'Other synthetic ISP',
+          slug: 'other-poc-isp',
+        });
+        f.h.sqlite
+          .prepare(
+            'DELETE FROM tenant_memberships WHERE tenant_id = ? AND account_id = ?',
+          )
+          .run(f.tenantId, f.session.accountId);
+      } else if (mode === 'revoked') {
+        f.h.sqlite
+          .prepare(
+            "UPDATE tenant_memberships SET status = 'inactive' WHERE tenant_id = ? AND account_id = ?",
+          )
+          .run(f.tenantId, f.session.accountId);
+      } else {
+        f.h.sqlite
+          .prepare(
+            'UPDATE tenant_memberships SET expires_at = ? WHERE tenant_id = ? AND account_id = ?',
+          )
+          .run(f.deps.now(), f.tenantId, f.session.accountId);
+      }
+      const before = f.counts();
+      expect(await f.context.lookup(f.session, '90001')).toEqual({
+        kind: 'unavailable',
+        reason: 'NOT_AVAILABLE',
+      });
+      expect(f.counts()).toEqual(before);
+      expect(f.gateway.create).toHaveBeenCalledTimes(1);
+    },
+  );
+  it('denies a foreign installation/project and lost Jira visibility without leaking the linked incident', async () => {
+    const f = await linkedFixture();
+    expect(
+      await f.context.lookup(
+        { ...f.session, installationId: 'other-synthetic-installation' },
+        '90001',
+      ),
+    ).toMatchObject({ kind: 'unavailable' });
+    expect(
+      await f.context.lookup({ ...f.session, projectId: '20000' }, '90001'),
+    ).toEqual({ kind: 'unavailable', reason: 'NOT_AVAILABLE' });
+    const lookup = vi.spyOn(f.contextRepository, 'lookup');
+    f.visibility.verify.mockRejectedValueOnce(
+      new Error('synthetic Jira access revoked'),
+    );
+    expect(await f.context.lookup(f.session, '90001')).toEqual({
+      kind: 'unavailable',
+      reason: 'NOT_VISIBLE',
+    });
+    expect(lookup).not.toHaveBeenCalled();
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+  });
+  it('persists retry timing and replays the same authenticated receipt without another incident or early POST', async () => {
+    const f = await orchestration();
+    f.gateway.create.mockResolvedValueOnce({
+      kind: 'RATE_LIMITED',
+      retryAfterSeconds: 30,
+    });
+    expect(await f.service.receive(f.request(), randomUUID())).toBe('accepted');
+    await f.process();
+    const receipt = (await f.service.overview({ tenantId: f.tenantId }))
+      .receipts[0]!;
+    await f.processIncident(receipt.id);
+    const saved = (await f.incidentRepository.list(f.ctx))[0]!;
+    expect(await f.jsm.create(f.ctx, saved.id)).toMatchObject({
+      state: 'retry_wait',
+    });
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+    expect(
+      f.h.sqlite
+        .prepare('SELECT state, attempts, due_at FROM jsm_intents')
+        .get(),
+    ).toMatchObject({
+      state: 'retry_wait',
+      attempts: 1,
+      due_at: '2026-11-26T00:00:30.000Z',
+    });
+    f.setNow('2026-11-26T00:00:30.000Z');
+    expect(await f.service.receive(f.request(), randomUUID())).toBe('accepted');
+    await f.process();
+    await f.processIncident(receipt.id);
+    expect(await f.jsm.create(f.ctx, saved.id)).toMatchObject({
+      state: 'linked',
+    });
+    expect(f.gateway.create).toHaveBeenCalledTimes(2);
+    expect(f.gateway.create.mock.calls[1]).toEqual(
+      f.gateway.create.mock.calls[0],
+    );
+    expect(
+      (await f.service.overview({ tenantId: f.tenantId })).receipts,
+    ).toMatchObject([{ id: receipt.id, duplicates: 1, status: 'ready' }]);
+    expect(f.counts()).toEqual({
+      monitoring_inbox: 1,
+      incident_evidence: 1,
+      incidents: 1,
+      jsm_intents: 1,
+    });
+    expect((await f.incidentRepository.list(f.ctx))[0]).toEqual(saved);
+  });
+  it('exhausts uncertain zero-result reconciliation into manual review without recreating a Jira request', async () => {
+    const f = await orchestration();
+    f.gateway.create.mockRejectedValueOnce(
+      new Error('synthetic lost response'),
+    );
+    f.gateway.find.mockResolvedValue({ complete: true, issues: [] });
+    expect(await f.service.receive(f.request(), randomUUID())).toBe('accepted');
+    await f.process();
+    const receipt = (await f.service.overview({ tenantId: f.tenantId }))
+      .receipts[0]!;
+    await f.processIncident(receipt.id);
+    const incident = (await f.incidentRepository.list(f.ctx))[0]!;
+    for (let attempt = 0; attempt < 3; attempt++)
+      await f.jsm.create(f.ctx, incident.id);
+    expect(await f.jsm.create(f.ctx, incident.id)).toMatchObject({
+      state: 'manual_review',
+      issue: null,
+    });
+    expect(f.gateway.create).toHaveBeenCalledTimes(1);
+    expect(f.gateway.find).toHaveBeenCalledTimes(3);
+    expect(
+      f.h.sqlite
+        .prepare('SELECT state, attempts, reconciliations FROM jsm_intents')
+        .get(),
+    ).toMatchObject({
+      state: 'manual_review',
+      attempts: 1,
+      reconciliations: 3,
+    });
+    const session = {
+      installationId: f.ctx.installationId,
+      accountId: f.h.session.accountId,
+      projectId: f.config.projectId,
+    };
+    expect(
+      await new SqlJsmContextRepository(f.db, f.deps.now).lookup(
+        session,
+        '90001',
+      ),
+    ).toEqual({ kind: 'unavailable', reason: 'NOT_AVAILABLE' });
   });
 });
