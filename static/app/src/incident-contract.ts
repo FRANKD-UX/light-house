@@ -272,3 +272,69 @@ export function incidentMutation(
   }
   throw new Error('INVALID_RESPONSE');
 }
+
+export interface IncidentRecovery {
+  examined: number;
+  next: string | null;
+  results: {
+    inboxId: string;
+    status: string;
+    incidentId: string | null;
+    code: string | null;
+  }[];
+}
+export function incidentRecovery(input: unknown): IncidentRecovery {
+  const value = object(input);
+  if (!Array.isArray(value.results) || value.results.length > 20)
+    throw new Error('INVALID_RESPONSE');
+  const results = value.results.map((raw: unknown) => {
+    const row = object(raw),
+      inboxId = uuid(row.inboxId);
+    const status = one(row.status, [
+      'incident_schema_not_ready',
+      'receipt_not_ready',
+      'awaiting_problem',
+      'manual_triage',
+      'jsm_schema_not_ready',
+      'configuration_required',
+      'pending',
+      'retry_wait',
+      'ambiguous',
+      'manual_review',
+      'linked',
+      'failed',
+    ]);
+    if (status === 'failed')
+      return {
+        inboxId,
+        status,
+        incidentId: null,
+        code: one(row.code, [
+          'INVALID',
+          'DENIED',
+          'NOT_READY',
+          'CONFLICT',
+          'UNAVAILABLE',
+        ]),
+      };
+    const incidentId = row.incidentId === null ? null : uuid(row.incidentId);
+    if (
+      ![
+        'incident_schema_not_ready',
+        'receipt_not_ready',
+        'awaiting_problem',
+      ].includes(status) &&
+      incidentId === null
+    )
+      throw new Error('INVALID_RESPONSE');
+    return { inboxId, status, incidentId, code: null };
+  });
+  if (new Set(results.map((row) => row.inboxId)).size !== results.length)
+    throw new Error('INVALID_RESPONSE');
+  const examined = integer(value.examined, 20, 0);
+  if (examined !== results.length) throw new Error('INVALID_RESPONSE');
+  const next = value.next === null ? null : uuid(value.next);
+  if (next !== null && (results.length !== 20 || next !== results[19]!.inboxId))
+    throw new Error('INVALID_RESPONSE');
+  return { examined, next, results };
+}

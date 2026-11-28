@@ -11,6 +11,8 @@ export default defineConfig({
         'static/app/src/Monitoring.tsx',
         'static/app/src/Incidents.tsx',
         'static/app/src/incident-contract.ts',
+        'static/app/src/Operations.tsx',
+        'static/app/src/operations-contract.ts',
         'static/app/src/monitoring-contract.ts',
         'static/app/src/inventory-contract.ts',
         'static/app/src/status-contract.ts',

@@ -316,3 +316,15 @@ Local runtime/UI/SQL/secret/runner implementation complete;203 synthetic applica
 - [ ] Current resource/pending/risk/native session authority; all prior mandatory R-01–R-14/licence/CI/review/release gates retained.
 
 Local final aggregate outcomes/checkpoint are recorded in audit/continuation state, not inferred from mocked tests. Programme usageLimited is an interruption, not completion; no automated reset scheduler is claimed.
+
+## Resumed local operational milestone — 2026-11-28
+
+- [x] Four actual intake→mapping→impact/SLA→SQL incident/intent→mocked JSM integration simulations, including concurrent duplicates, original recovery and ambiguous POST reconciliation.
+- [x] Original problem resource/site/uplink authority enforced for later recovery/update; conflicting evidence retained without affecting valid evidence counts.
+- [x] Bounded all-ready catch-up with sentinel/cursor, per-row fixed outcomes, missing prerequisites and safe explicit recovery UI.
+- [x] Separate mutable operational aggregate, atomic pending command/receipt/audit, idempotent materialisation and admin projection-only repair; final actor/reference/facts/time guards simulated.
+- [x] Mapped accountable engineer, owner-retaining pending/rejected handoffs/returns, receiving/NOC acceptance and immutable SLA; stored expiring checklists and safe operational UI.
+- [x]393 application tests/40 files, unchanged coverage thresholds, lint/format/types/build/local manifest;20 harness checks and dry-run pass.
+- [ ] Explicit engineer reassignment, verified native Jira transition writer/confirmation, native bypass prevention and full closure acceptance.
+- [ ] Scheduled warnings/native SLA reconciliation, full board/drawer/embedded context, directory adapters and remaining canonical roadmap.
+- [ ] New exact-artifact authenticated Forge lint/deployment/upgrade approval and native schema/queue/permissions/JSM/RBAC/two-installation/resource acceptance; all prior release gates remain mandatory.

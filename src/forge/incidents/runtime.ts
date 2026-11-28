@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { InventoryService } from '../../application/inventory/service';
 import { IncidentService } from '../../application/incidents/service';
 import { JsmCreationService } from '../../application/jsm/service';
+import { OrchestrationService } from '../../application/orchestration/service';
 import { JsmError, type JsmGateway } from '../../application/jsm/contracts';
 import type { TenantContext } from '../../application/ports/tenant-context';
 import { IncidentError, type Incident } from '../../domain/incidents/model';
@@ -25,6 +26,7 @@ import {
 import { SqlJsmRepository } from '../../infrastructure/sql/jsm-repository';
 import { migrateIncidents } from '../../infrastructure/sql/incident-migrations';
 import { migrateJsm } from '../../infrastructure/sql/jsm-migrations';
+import { migrateOperations } from '../../infrastructure/sql/operations-migrations';
 import { forgeSql } from '../../infrastructure/sql/driver';
 import { ForgeJsmGateway } from '../../infrastructure/jsm/forge-gateway';
 import { createStructuredLogger } from '../../infrastructure/observability/structured-logger';
@@ -75,21 +77,34 @@ function services(
 ) {
   const repository = new SqlIncidentRepository(forgeSql);
   const jsmRepository = new SqlJsmRepository(forgeSql, now);
+  const incident = new IncidentService({
+    repository,
+    inventory: new SqlIncidentInventory(repository),
+    now,
+    id: randomUUID,
+  });
+  const jsm = new JsmCreationService({
+    repository: jsmRepository,
+    gateway,
+    now,
+    id: randomUUID,
+    authoriseConfiguration,
+  });
   return {
     repository,
     jsmRepository,
-    incident: new IncidentService({
-      repository,
-      inventory: new SqlIncidentInventory(repository),
-      now,
-      id: randomUUID,
-    }),
-    jsm: new JsmCreationService({
-      repository: jsmRepository,
-      gateway,
-      now,
-      id: randomUUID,
-      authoriseConfiguration,
+    incident,
+    jsm,
+    pipeline: new OrchestrationService({
+      ready: (ctx) => repository.ready(ctx.installationId),
+      inbox: (ctx, id) => repository.inbox(ctx, id),
+      candidates: (ctx, after) => repository.readyInbox(ctx, after),
+      enrich: (ctx, inboxId) => incident.process(ctx, { inboxId }),
+      jsmReady: (ctx) => jsmReady(ctx.installationId),
+      configured: async (ctx) =>
+        Boolean(await jsmRepository.configuration(ctx)),
+      createJsm: (ctx, id) => jsm.create(ctx, id),
+      authoriseRecovery: authoriseConfiguration,
     }),
   };
 }
@@ -199,6 +214,11 @@ export function createIncidentHandlers(
                   : result;
               break;
             }
+            case 'recover':
+              value = await current.pipeline.recover(ctx, {
+                after: data.after,
+              });
+              break;
             case 'publishPolicy': {
               // Publication identity is generated at the trusted boundary, preventing
               // a caller from reusing a UUID across independent tier timelines.
@@ -271,17 +291,12 @@ export function createIncidentHandlers(
       const current = services(gateway, async () => {
         throw new InventoryError('DENIED');
       });
-      if (!(await current.repository.ready(ctx.installationId))) return;
-      if (!(await current.repository.inbox(ctx, inboxId))) return;
-      const result = await current.incident.process(ctx, { inboxId });
+      const result = await current.pipeline.process(ctx, inboxId);
       if (
-        result.kind === 'incident' &&
-        result.incident.sla.kind === 'selected' &&
-        (await jsmReady(ctx.installationId)) &&
-        (await current.jsmRepository.configuration(ctx))
-      ) {
-        await current.jsm.create(ctx, result.incident.id);
-      }
+        result.status === 'incident_schema_not_ready' ||
+        result.status === 'receipt_not_ready'
+      )
+        return;
       createStructuredLogger(console).info({
         event: 'incident.worker',
         correlationId: randomUUID(),
@@ -311,6 +326,12 @@ export function createIncidentHandlers(
           now,
         );
         await migrateJsm(
+          forgeSql,
+          (statement) => sql.executeDDL(statement),
+          installationId,
+          now,
+        );
+        await migrateOperations(
           forgeSql,
           (statement) => sql.executeDDL(statement),
           installationId,

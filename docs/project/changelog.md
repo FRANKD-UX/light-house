@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-28 — Durable operational workflow and catch-up
+
+- Added four integrated synthetic POC tests, original-resource recovery binding and explicit paginated ready-receipt catch-up without hidden polling.
+- Added unapplied v005 operational persistence, command/audit/receipt recovery, facts/time guards, active mapped engineer ownership, accepted handoffs/returns and stored checklist gates.
+- Mounted guarded operational UI with stable command retry, stale readback rejection and admin projection repair; native closure/reassignment remain visibly unavailable.
+- Enriched JSM descriptions with safe infrastructure references, confidence and confirmed/potential impact counts; no customer identities/raw payloads exported.
+- Integrated393 tests pass with unchanged thresholds; no new dependency, deployment, hosted write or release acceptance claim.
+
 ## 2026-11-27 — Autonomous local incident orchestration
 
 - Preserved hosted evidence in local3236eb7, established native programme goal, ignored project specialist definitions and durable continuation record. Remaining local roadmap authorised; hosted/release gates unchanged.

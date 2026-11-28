@@ -134,12 +134,35 @@ export class SqlJsmRepository implements JsmRepository {
       const warningAt = utc(sla.warningAt),
         deadlineAt = utc(sla.deadlineAt);
       if (warningAt >= deadlineAt) throw new JsmError('INVALID');
+      const impact = object(v.impact);
+      const ids = (input: unknown): string[] => {
+        if (!Array.isArray(input) || input.length > 1000)
+          throw new JsmError('INVALID');
+        const values = input.map(uuid);
+        if (new Set(values).size !== values.length)
+          throw new JsmError('INVALID');
+        return values;
+      };
+      const customers = ids(impact.affectedCustomerIds),
+        potentialCustomers = ids(impact.potentiallyAffectedCustomerIds),
+        services = ids(impact.affectedServiceIds),
+        potentialServices = ids(impact.potentiallyAffectedServiceIds);
+      if (
+        !['known', 'unknown'].includes(impact.confidence as string) ||
+        !['COMPLETE', 'INCOMPLETE_INVENTORY', 'UNKNOWN_FAILOVER'].includes(
+          impact.reason as string,
+        ) ||
+        customers.some((value) => !potentialCustomers.includes(value)) ||
+        services.some((value) => !potentialServices.includes(value))
+      )
+        throw new JsmError('INVALID');
+      const context = `Site ${uuid(impact.siteId)}; uplink ${uuid(impact.uplinkId)}; carrier ${uuid(impact.carrierId)}. Impact ${impact.confidence} (${impact.reason}); confirmed customers ${customers.length}, potential customers ${potentialCustomers.length}; confirmed services ${services.length}, potential services ${potentialServices.length}.`;
       return {
         installationId: ctx.installationId,
         tenantId: ctx.tenantId,
         id,
         summary: `Light House synthetic incident ${id}`,
-        description: `Synthetic monitoring incident. Original occurrence: ${utc(v.occurredAt)}. Policy revision: ${integer(sla.policyVersion)}. Operational restoration requires explicit validation.`,
+        description: `Synthetic monitoring incident. ${context} Original occurrence: ${utc(v.occurredAt)}. Policy revision: ${integer(sla.policyVersion)}. Operational restoration requires explicit validation.`,
         priority,
         warningAt,
         deadlineAt,

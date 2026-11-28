@@ -10,9 +10,11 @@ The objective is to bring this workflow into Jira Service Management (JSM), with
 
 ## Current implementation
 
-Sprint 1 implements server-authorised ISP tenancy, Forge SQL repositories and immutable migrations, network inventory, manual teams/assignees, demonstration-only SLA policy versions, bounded mutation repair and explicit synthetic seeding. The Custom UI provides tenant selection, schema readiness, paginated lists and basic configuration. Foundation health diagnostics remain available.
+Sprint 1 provides server-authorised ISP tenancy, Forge SQL inventory, manual teams/assignees, bounded mutation repair and synthetic fixtures. Local Sprint 2–4 work adds authenticated Zabbix-compatible intake, durable inbox/deduplication, infrastructure/customer impact, immutable SLA decisions, idempotent JSM request creation and operational ownership/handoff/checklist controls. The React workspace displays impact, SLA and durable Jira linkage. These paths have local SQLite, mocked SDK/HTTP and Bridge tests; they are not all verified natively.
 
-**Deployment is not complete runtime acceptance.** DEVELOPMENT 3.3.0 is deployed and the existing Jira installation is up to date. The native migration/readiness sub-gate is accepted; the bounded inventory LIMIT correction still needs hosted execution evidence. Reusable read-only Playwright acceptance is in [e2e/README.md](e2e/README.md). The incident engine, monitoring adapters, SLA execution, directory integration and JSM incident creation remain planned. See the [Sprint 1 execution report](docs/project/sprint-1-execution-report.md), [live acceptance procedure](docs/operations/sprint-1-live-acceptance.md) and [security review](docs/project/sprint-1-security-review.md).
+**Deployment is not complete runtime acceptance.** The existing DEVELOPMENT installation is on major4 from implementation `2b97545`; its exact health UUID is accepted. Deployment used `--no-verify` after separate owner-reported authenticated lint, recorded transparently. Newer local incident/operations code, scopes and v003/v004/v005 schemas are **not deployed**. Real Zabbix/Jira end-to-end acceptance, verified Jira transitions/closure, reassignment, scheduled warnings, full dashboard/context, directory integrations and mandatory release gates remain outstanding. Sprint1 is implementation-complete locally with release acceptance outstanding; its native migration/readiness and eleven-kind retrieval evidence are preserved.
+
+See the [programme continuation state](docs/project/autonomous-execution-state.md), [local operational preparation](docs/operations/local-operational-acceptance.md), [deployed Sprint2 acceptance procedure](docs/operations/sprint-2-hosted-acceptance.md) and [current security assessment](docs/project/programme-security-assessment.md). Read-only browser harness details remain in [e2e/README.md](e2e/README.md); its pinned hosted target must not be widened to exercise mutations.
 
 ## Planned incident workflow
 
@@ -27,9 +29,9 @@ flowchart LR
     NOC[ISP NOC teams] --> Jira[Jira global page: React Custom UI]
     Jira --> Bridge[Forge Bridge]
     Bridge --> Functions[Forge resolvers and application use cases]
-    Zabbix[Zabbix: planned] -.-> Functions
+    Zabbix[Zabbix-compatible intake: local] -.-> Functions
     Functions --> Storage[Forge SQL: implemented; live acceptance pending]
-    Functions -.-> JSM[JSM incidents and native notifications: planned]
+    Functions -.-> JSM[JSM adapter: local; native acceptance pending]
     Directory[Entra ID / Google Workspace / manual mapping: planned] -.-> Functions
 ```
 

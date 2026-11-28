@@ -215,7 +215,7 @@ Updated 2026-11-27 (eleven-kind native baseline; Phase B approved conditionally,
 - Priority: P0
 - Dependencies: LH-104,LH-005
 - Acceptance criteria: Actual issue key, duplicate/timeout reconciliation; full handoff/rejection/return audit with continuous SLA, direct NOC route, ownership matrix sync and target native-transition restriction evidence. Final recovery/closure hardening in Sprint 7.
-- Status: In progress locally — idempotent JSM creation, durable v004 intents and gateway; operational synchronisation/handoffs still pending.
+- Status: In progress locally — idempotent JSM creation, durable v004 intents and gateway; durable handoff/return/checklist commands implemented locally; native transitions, explicit reassignment and synchronisation still pending.
 - Verification evidence: Application/gateway and SQLite intent tests; new JSM programme contract; native permissions/configuration remain external gates.
 - Known blockers: Site project/request-type/field/workflow/recipient configuration.
 
@@ -227,7 +227,7 @@ Updated 2026-11-27 (eleven-kind native baseline; Phase B approved conditionally,
 - Dependencies: LH-105
 - Acceptance criteria: Honest live states, tenant-isolated views, keyboard/theme checks, forged admin invokes denied.
 - Status: In progress locally — functional incident workspace, policy/configuration controls and safe SLA/impact projection.
-- Verification evidence: New UI/contract tests; full operational board/drawer/embedded context/theme acceptance pending.
+- Verification evidence: New UI/contract tests; operational ownership/checklist/repair controls added; full board/drawer/embedded context/theme acceptance pending.
 - Known blockers: Lifecycle data and permissions.
 
 ## LH-107 — Directory adapters and manual mapping

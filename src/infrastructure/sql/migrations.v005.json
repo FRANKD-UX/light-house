@@ -1,0 +1,30 @@
+[
+  {
+    "name": "v005_operations_schema_state",
+    "ddl": "CREATE TABLE IF NOT EXISTS operations_schema_state (installation_id VARCHAR(255) PRIMARY KEY, schema_version INT NOT NULL, ready INT NOT NULL, checkpoints VARCHAR(2048) NOT NULL, updated_at VARCHAR(24) NOT NULL) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v005_operations_state",
+    "ddl": "CREATE TABLE IF NOT EXISTS operations_state (installation_id VARCHAR(255) NOT NULL, tenant_id VARCHAR(36) NOT NULL, incident_id VARCHAR(36) NOT NULL, version INT NOT NULL, facts_version INT NOT NULL, aggregate_json MEDIUMTEXT NOT NULL, pending_command VARCHAR(36) NULL, pending_json VARCHAR(8192) NULL, updated_at VARCHAR(24) NOT NULL, PRIMARY KEY (installation_id, tenant_id, incident_id), INDEX ix_operations_page (installation_id, tenant_id, incident_id)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v005_operations_receipts",
+    "ddl": "CREATE TABLE IF NOT EXISTS operations_receipts (installation_id VARCHAR(255) NOT NULL, tenant_id VARCHAR(36) NOT NULL, incident_id VARCHAR(36) NOT NULL, command_id VARCHAR(36) NOT NULL, fingerprint VARCHAR(64) NOT NULL, result_json VARCHAR(2048) NOT NULL, PRIMARY KEY (installation_id, tenant_id, incident_id, command_id)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v005_operations_audit",
+    "ddl": "CREATE TABLE IF NOT EXISTS operations_audit (installation_id VARCHAR(255) NOT NULL, tenant_id VARCHAR(36) NOT NULL, incident_id VARCHAR(36) NOT NULL, command_id VARCHAR(36) NOT NULL, operation_version INT NOT NULL, audit_json VARCHAR(4096) NOT NULL, PRIMARY KEY (installation_id, tenant_id, incident_id, command_id), UNIQUE KEY uq_operations_audit_version (installation_id, tenant_id, incident_id, operation_version)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v005_operations_handoff_history",
+    "ddl": "CREATE TABLE IF NOT EXISTS operations_handoff_history (installation_id VARCHAR(255) NOT NULL, tenant_id VARCHAR(36) NOT NULL, incident_id VARCHAR(36) NOT NULL, command_id VARCHAR(36) NOT NULL, operation_version INT NOT NULL, history_json VARCHAR(8192) NOT NULL, PRIMARY KEY (installation_id, tenant_id, incident_id, command_id), UNIQUE KEY uq_operations_handoff_version (installation_id, tenant_id, incident_id, operation_version)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v005_operations_gates",
+    "ddl": "CREATE TABLE IF NOT EXISTS operations_gates (installation_id VARCHAR(255) NOT NULL, tenant_id VARCHAR(36) NOT NULL, incident_id VARCHAR(36) NOT NULL, id VARCHAR(36) NOT NULL, template VARCHAR(24) NOT NULL, template_version INT NOT NULL, incident_version INT NOT NULL, facts_version INT NOT NULL, actor_id VARCHAR(255) NOT NULL, valid_until VARCHAR(24) NOT NULL, gate_json VARCHAR(8192) NOT NULL, PRIMARY KEY (installation_id, tenant_id, incident_id, id), INDEX ix_operations_gate (installation_id, tenant_id, incident_id, template, incident_version, facts_version)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  },
+  {
+    "name": "v005_operations_configuration",
+    "ddl": "CREATE TABLE IF NOT EXISTS operations_configuration (installation_id VARCHAR(255) NOT NULL, tenant_id VARCHAR(36) NOT NULL, noc_team_id VARCHAR(36) NOT NULL, version INT NOT NULL, PRIMARY KEY (installation_id, tenant_id)) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
+  }
+]

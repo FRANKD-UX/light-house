@@ -111,3 +111,7 @@ Runtime modules, source credentials, strict ingestion, durable inbox/idempotency
 ## Autonomous programme mandate — 2026-11-27
 
 Owner explicitly authorises autonomous local implementation across the remaining canonical roadmap with coordinated native specialists and durable continuation state. Prioritise the complete authenticated alert→impact/SLA→actual JSM→visibility vertical slice; no routine sprint continuation approvals. ADR-0017 separates local progress from native/release acceptance, which remains mandatory. External mutation/deploy/permission-risk/resource/publication/licence gates persist. ADR-0019 records proposed local incident/SLA/JSM mechanisms and limitations; all original identity/handoff/closure/native-notification requirements remain.
+
+## Durable operational slice — 2026-11-28
+
+Local catch-up, canonical recovery-evidence binding and durable accepted-return/accountable-engineer workflow now extend the POC. These implement owner requirements under ADR-0020 proposed mechanisms, not native acceptance. Actual Jira transition confirmation, reassignment, scheduling/native SLA reconciliation, identity providers/full UI and release requirements remain mandatory.

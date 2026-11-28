@@ -9,6 +9,7 @@ import {
   type Role,
 } from '../../../src/domain/inventory/model';
 import { slaStatus } from '../../../src/domain/incidents/sla';
+import { Operations } from './Operations';
 import type { Priority } from '../../../src/domain/incidents/model';
 import {
   BackendFailure,
@@ -19,7 +20,9 @@ import {
   incidentMutation,
   incidentOverview,
   incidentPolicy,
+  incidentRecovery,
   type IncidentOverview,
+  type IncidentRecovery,
 } from './incident-contract';
 const priorities: readonly Priority[] = ['P1', 'P2', 'P3'];
 function decoded<T>(read: () => T): T {
@@ -41,6 +44,7 @@ export function Incidents() {
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState('Incidents not loaded.');
   const lock = useRef(false);
+  const [recovery, setRecovery] = useState<IncidentRecovery>();
   const [inboxId, setInbox] = useState(''),
     [tierId, setTier] = useState(''),
     [from, setFrom] = useState(''),
@@ -98,6 +102,13 @@ export function Incidents() {
     const r = await request(action, extra);
     return `${decoded(() => incidentMutation(action, r.value, tenant))} Correlation ID: ${r.correlationId}.`;
   }
+  async function recover(after = '') {
+    setRecovery(undefined);
+    const response = await request('recover', { after });
+    const result = decoded(() => incidentRecovery(response.value));
+    setRecovery(result);
+    return `Recovery examined ${result.examined} ready receipts. Inspect each outcome. Correlation ID: ${response.correlationId}.`;
+  }
   const jsmLink = overview?.jsmLinks.find(
     (link) => link.incidentId === selectedId,
   );
@@ -118,6 +129,7 @@ export function Incidents() {
             setRole('viewer');
             setTenants([]);
             setSelected('');
+            setRecovery(undefined);
             const response: unknown = await invoke('inventory', {
               action: 'overview',
             });
@@ -158,6 +170,7 @@ export function Incidents() {
             setOverview(undefined);
             setSelected('');
             setInbox('');
+            setRecovery(undefined);
             setTier('');
             setFrom('');
             setUntil('');
@@ -195,6 +208,31 @@ export function Incidents() {
           <button onClick={() => void run(() => mutate('migrate'))}>
             Queue incident schema setup
           </button>
+          <p>
+            Scan stored ready receipts to resume enrichment and Jira creation.
+            Existing incidents and SLA decisions are retained. Configuration
+            gaps and individual failures remain visible; this does not poll.
+          </p>
+          <button onClick={() => void run(() => recover())}>
+            Scan up to 20 ready receipts
+          </button>
+          <button
+            disabled={!recovery?.next}
+            onClick={() => void run(() => recover(recovery!.next!))}
+          >
+            Next recovery page
+          </button>
+          {recovery && (
+            <ul aria-label="Receipt recovery outcomes">
+              {recovery.results.map((row) => (
+                <li key={row.inboxId}>
+                  Receipt {row.inboxId}: {row.status}
+                  {row.code ? ` (${row.code})` : ''}
+                  {row.incidentId ? `; incident ${row.incidentId}` : ''}.
+                </li>
+              ))}
+            </ul>
+          )}
           <label>
             Ready monitoring receipt ID
             <input value={inboxId} onChange={(e) => setInbox(e.target.value)} />
@@ -562,6 +600,12 @@ export function Incidents() {
                 Changing ownership must preserve this SLA snapshot. Native JSM
                 metrics and delivery are separate acceptance requirements.
               </p>
+              <Operations
+                key={`${tenant}:${selected.id}`}
+                tenantId={tenant}
+                incidentId={selected.id}
+                role={memberRole}
+              />
             </article>
           )}
         </>

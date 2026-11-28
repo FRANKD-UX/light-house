@@ -719,8 +719,10 @@ function operation(): OperationalIncident {
     state: 'new',
     version: 1,
     ownerTeamId: id(61),
+    ownerAssigneeId: null,
     sla: snapshot(),
     pendingHandoff: null,
+    pendingReturn: null,
     recoveryObservedAt: null,
     restorationValidatedAt: null,
     resolvedAt: null,
@@ -730,6 +732,7 @@ const actor: WorkflowActor = {
   tenantId: tenant,
   role: 'operator',
   teamId: id(61),
+  assigneeId: id(64),
   nocTeamId: id(61),
 };
 function step(
@@ -776,7 +779,7 @@ describe('server-authoritative operational policy', () => {
       'start_work',
     );
     const sla = i.sla;
-    const target = { ...actor, teamId: id(62) };
+    const target = { ...actor, teamId: id(62), assigneeId: id(65) };
     i = transitionIncident(
       i,
       actor,
@@ -820,9 +823,48 @@ describe('server-authoritative operational policy', () => {
       start,
       true,
     );
+    expect(i.ownerTeamId).toBe(target.teamId);
+    expect(i.pendingReturn?.fromTeamId).toBe(target.teamId);
+    expect(() =>
+      transitionIncident(
+        i,
+        target,
+        i.version,
+        { kind: 'request_handoff', targetTeamId: id(63) },
+        start,
+        true,
+      ),
+    ).toThrow('CONFLICT');
+    i = transitionIncident(
+      i,
+      actor,
+      i.version,
+      { kind: 'reject_return' },
+      start,
+      true,
+    );
+    expect(i.ownerTeamId).toBe(target.teamId);
+    expect(i.pendingReturn).toBeNull();
+    i = transitionIncident(
+      i,
+      target,
+      i.version,
+      { kind: 'request_return' },
+      start,
+      true,
+    );
+    i = transitionIncident(
+      i,
+      actor,
+      i.version,
+      { kind: 'accept_return' },
+      start,
+      true,
+    );
     expect(i).toMatchObject({
       state: 'restoration_validation',
       ownerTeamId: actor.teamId,
+      pendingReturn: null,
     });
     expect(i.sla).toBe(sla);
   });

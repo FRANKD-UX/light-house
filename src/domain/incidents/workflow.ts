@@ -14,9 +14,14 @@ export interface OperationalIncident {
   readonly state: OperationalState;
   readonly version: number;
   readonly ownerTeamId: string;
+  readonly ownerAssigneeId: string | null;
   readonly sla: SlaSnapshot;
   readonly pendingHandoff: {
     readonly targetTeamId: string;
+    readonly requestedAt: string;
+  } | null;
+  readonly pendingReturn: {
+    readonly fromTeamId: string;
     readonly requestedAt: string;
   } | null;
   readonly recoveryObservedAt: string | null;
@@ -35,11 +40,20 @@ export type WorkflowAction =
         | 'close';
     }
   | { kind: 'request_handoff'; targetTeamId: string }
-  | { kind: 'accept_handoff' | 'reject_handoff' | 'return_to_noc' };
+  | {
+      kind:
+        | 'accept_handoff'
+        | 'reject_handoff'
+        | 'return_to_noc'
+        | 'request_return'
+        | 'accept_return'
+        | 'reject_return';
+    };
 export interface WorkflowActor {
   readonly tenantId: string;
   readonly role: Role;
   readonly teamId: string;
+  readonly assigneeId: string;
   readonly nocTeamId: string;
 }
 /** Pure server-authoritative transition policy; the adapter must CAS the returned version. */
@@ -55,6 +69,7 @@ export function transitionIncident(
   uuid(actor.tenantId);
   uuid(actor.teamId);
   uuid(actor.nocTeamId);
+  uuid(actor.assigneeId);
   if (
     actor.tenantId !== incident.tenantId ||
     (actor.role !== 'operator' && actor.role !== 'admin')
@@ -63,6 +78,36 @@ export function transitionIncident(
   if (expected !== incident.version) throw new IncidentError('CONFLICT');
   if (now < incident.sla.startedAt || incident.state === 'closed')
     throw new IncidentError('INVALID');
+  if (action.kind === 'accept_return' || action.kind === 'reject_return') {
+    if (!incident.pendingReturn || actor.teamId !== actor.nocTeamId)
+      throw new IncidentError('DENIED');
+    if (
+      incident.state !== 'in_progress' ||
+      incident.pendingHandoff ||
+      incident.pendingReturn.fromTeamId !== incident.ownerTeamId ||
+      !gatePassed
+    )
+      throw new IncidentError('CONFLICT');
+    return Object.freeze({
+      ...incident,
+      ownerTeamId:
+        action.kind === 'accept_return'
+          ? actor.nocTeamId
+          : incident.ownerTeamId,
+      ownerAssigneeId:
+        action.kind === 'accept_return'
+          ? actor.assigneeId
+          : incident.ownerAssigneeId,
+      state:
+        action.kind === 'accept_return'
+          ? 'restoration_validation'
+          : incident.state,
+      pendingReturn: null,
+      restorationValidatedAt: null,
+      version: incident.version + 1,
+    });
+  }
+  if (incident.pendingReturn) throw new IncidentError('CONFLICT');
   const targetActor = incident.pendingHandoff?.targetTeamId === actor.teamId;
   if (action.kind === 'accept_handoff' || action.kind === 'reject_handoff') {
     if (!incident.pendingHandoff || !targetActor)
@@ -73,10 +118,19 @@ export function transitionIncident(
       ownerTeamId:
         action.kind === 'accept_handoff' ? actor.teamId : incident.ownerTeamId,
       pendingHandoff: null,
+      ownerAssigneeId:
+        action.kind === 'accept_handoff'
+          ? actor.assigneeId
+          : incident.ownerAssigneeId,
       version: incident.version + 1,
     });
   }
-  if (actor.teamId !== incident.ownerTeamId) throw new IncidentError('DENIED');
+  if (
+    actor.teamId !== incident.ownerTeamId ||
+    (incident.ownerAssigneeId !== null &&
+      actor.assigneeId !== incident.ownerAssigneeId)
+  )
+    throw new IncidentError('DENIED');
   let next: OperationalIncident = {
     ...incident,
     version: incident.version + 1,
@@ -84,7 +138,11 @@ export function transitionIncident(
   switch (action.kind) {
     case 'acknowledge':
       if (incident.state !== 'new') throw new IncidentError('CONFLICT');
-      next = { ...next, state: 'acknowledged' };
+      next = {
+        ...next,
+        state: 'acknowledged',
+        ownerAssigneeId: actor.assigneeId,
+      };
       break;
     case 'triage':
       if (incident.state !== 'acknowledged')
@@ -113,17 +171,21 @@ export function transitionIncident(
         }),
       };
       break;
+    case 'request_return':
     case 'return_to_noc':
       if (
         incident.state !== 'in_progress' ||
         incident.pendingHandoff ||
+        actor.teamId === actor.nocTeamId ||
         !gatePassed
       )
         throw new IncidentError('CONFLICT');
       next = {
         ...next,
-        ownerTeamId: actor.nocTeamId,
-        state: 'restoration_validation',
+        pendingReturn: Object.freeze({
+          fromTeamId: incident.ownerTeamId,
+          requestedAt: now,
+        }),
         restorationValidatedAt: null,
       };
       break;

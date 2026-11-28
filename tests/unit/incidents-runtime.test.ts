@@ -39,6 +39,7 @@ import { SqlIncidentRepository } from '../../src/infrastructure/sql/incident-rep
 import { SqlJsmRepository } from '../../src/infrastructure/sql/jsm-repository';
 import * as incidentMigration from '../../src/infrastructure/sql/incident-migrations';
 import * as jsmMigration from '../../src/infrastructure/sql/jsm-migrations';
+import * as operationsMigration from '../../src/infrastructure/sql/operations-migrations';
 import { InventoryError } from '../../src/domain/inventory/model';
 import {
   IncidentError,
@@ -488,7 +489,11 @@ describe('incident schema and monitoring downstream workers', () => {
       });
     const handlers = createIncidentHandlers(gateway),
       body = { installationId: ctx.installationId };
+    const third = vi
+      .spyOn(operationsMigration, 'migrateOperations')
+      .mockResolvedValue(undefined);
     await handlers.migrate({ body });
+    expect(third).toHaveBeenCalledTimes(1);
     expect(first).toHaveBeenCalledTimes(1);
     expect(second).toHaveBeenCalledTimes(1);
     expect(runtime.ddl.mock.calls).toEqual([

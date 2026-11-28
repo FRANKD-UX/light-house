@@ -16,6 +16,7 @@ export type EnrichmentResult =
       readonly incident: Incident;
       readonly recoveryObservedAt: string | null;
       readonly updateCount: number;
+      readonly conflictingEvidenceCount?: number;
     };
 function evidence(input: unknown): IncidentEvidence {
   const value = object(input),
@@ -137,15 +138,40 @@ export class IncidentService {
     );
     if (!Array.isArray(entries) || entries.length > 1000)
       throw new IncidentError('NOT_READY');
-    let recoveryObservedAt: string | null = null;
-    const updates = new Set<string>();
-    for (const item of entries) {
-      const saved = evidence(item);
+    const savedEntries = entries.map(evidence);
+    for (const saved of savedEntries) {
       if (
         saved.sourceId !== current.sourceId ||
         saved.event.problemEventId !== current.event.problemEventId
       )
         throw new IncidentError('DENIED');
+    }
+    // Snapshot mapping and original problem evidence jointly establish authority.
+    // A later source mapping or another alias must not recover a different resource.
+    const originals = savedEntries.filter(
+      (saved) =>
+        saved.event.kind === 'problem' &&
+        saved.event.externalEventId === incident.problemEventId &&
+        saved.event.occurredAt === incident.occurredAt &&
+        saved.siteId === incident.impact.siteId &&
+        saved.uplinkId === incident.impact.uplinkId,
+    );
+    if (originals.length !== 1)
+      throw new IncidentError(originals.length ? 'CONFLICT' : 'NOT_READY');
+    const original = originals[0]!;
+    const sameResource = (item: IncidentEvidence): boolean =>
+      item.siteId === incident.impact.siteId &&
+      item.uplinkId === incident.impact.uplinkId &&
+      item.event.resourceId === original.event.resourceId;
+    if (!sameResource(current)) throw new IncidentError('CONFLICT');
+    let recoveryObservedAt: string | null = null;
+    let conflictingEvidenceCount = 0;
+    const updates = new Set<string>();
+    for (const saved of savedEntries) {
+      if (!sameResource(saved)) {
+        conflictingEvidenceCount++;
+        continue;
+      }
       if (
         saved.event.kind === 'recovery' &&
         saved.event.occurredAt >= incident.occurredAt &&
@@ -162,6 +188,7 @@ export class IncidentService {
       incident,
       recoveryObservedAt,
       updateCount: updates.size,
+      ...(conflictingEvidenceCount ? { conflictingEvidenceCount } : {}),
     };
   }
 }

@@ -20,6 +20,34 @@ import { request } from '../../src/application/jsm/validation';
 
 const at = '2026-11-27T00:00:00.000Z';
 const later = '2026-11-27T00:01:00.000Z';
+it('rejects malformed or inconsistent impact rather than exporting misleading counts', async () => {
+  const f = await fixture();
+  const id = f.addIncident();
+  const raw = f.sqlite
+    .prepare('SELECT snapshot_json FROM incidents WHERE id = ?')
+    .get(id) as { snapshot_json: string };
+  const original = JSON.parse(raw.snapshot_json);
+  const customer = randomUUID();
+  for (const changed of [
+    { ...original.impact, confidence: ['known'] },
+    { ...original.impact, reason: 'private-reason' },
+    {
+      ...original.impact,
+      affectedCustomerIds: [customer],
+      potentiallyAffectedCustomerIds: [],
+    },
+    { ...original.impact, potentiallyAffectedServiceIds: [customer, customer] },
+    { ...original.impact, affectedServiceIds: 'not-an-array' },
+  ]) {
+    f.sqlite
+      .prepare('UPDATE incidents SET snapshot_json = ? WHERE id = ?')
+      .run(JSON.stringify({ ...original, impact: changed }), id);
+    await expect(f.repo.incident(f.ctx, id)).rejects.toThrow('INVALID');
+  }
+  expect(
+    f.sqlite.prepare('SELECT COUNT(*) AS n FROM jsm_intents').get(),
+  ).toMatchObject({ n: 0 });
+});
 async function fixture(migrate = true) {
   const h = database();
   const tenantId = await h.setup();
@@ -83,6 +111,17 @@ async function fixture(migrate = true) {
       installationId: context.installationId,
       tenantId: context.tenantId,
       occurredAt: at,
+      impact: {
+        siteId: randomUUID(),
+        uplinkId: randomUUID(),
+        carrierId: randomUUID(),
+        confidence: 'known',
+        reason: 'COMPLETE',
+        affectedCustomerIds: [],
+        potentiallyAffectedCustomerIds: [],
+        affectedServiceIds: [],
+        potentiallyAffectedServiceIds: [],
+      },
       sla: {
         kind: 'selected',
         snapshot: {

@@ -125,3 +125,7 @@ Proposed v002: installation-scoped monitoring_schema_state; tenant/installation-
 ## LH-103 current local schema — 2026-11-27
 
 Add monitoring_observations (tenant/install/source, generated correlation, received UTC and fixed outcome only); inbox includes first correlation_id and duplicate_count. monitoring_credentials created_at enables safe delayed orphan cleanup; secrets remain exclusively KVS encrypted values. Six additive tables are locally defined/tested and runtime migration-wired, not a claim of applied physical schema.
+
+## Local v005 operational representation — 2026-11-28
+
+Unapplied operations_schema_state, operations_state, operations_receipts, operations_audit, operations_handoff_history, operations_gates and operations_configuration extend the isolated registries. State identity is installation+tenant+incident; command/audit/history add command UUID and operation revision uniqueness. Gate records bind template/version/operation/evidence/actor/expiry. The mutable aggregate freezes original NOC and immutable SLA, holds nullable accountable engineer until acknowledgement, one pending handoff or return, validation/evidence revision and bounded pending receipt/audit. Projection equality and matching-envelope CAS prevent partial materialisation from appearing complete. No foreign key/native atomic multi-table semantics assumed. Detailed invariants, clock/facts guards and remaining reassignment/native closure are in ADR-0020.

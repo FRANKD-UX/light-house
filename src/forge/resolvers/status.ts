@@ -5,7 +5,11 @@ import { createStructuredLogger } from '../../infrastructure/observability/struc
 import { inventoryRequest } from '../inventory/boundary';
 import { monitoringRequest } from '../monitoring/runtime';
 import { incidentRequest } from '../incidents/runtime';
+import { operationsRequest } from '../operations/runtime';
 const resolver = new Resolver();
+resolver.define('operations', ({ context, payload }) =>
+  operationsRequest(context, payload),
+);
 resolver.define('incidents', ({ context, payload }) =>
   incidentRequest(context, payload),
 );

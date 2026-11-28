@@ -55,3 +55,7 @@ Six-table registry now includes safe authenticated monitoring_observations and i
 ## Local programme incident/JSM registries — 2026-11-27
 
 Additive unapplied v003/v004 preserve immutable v001/v002. Incident evidence is durable before unique problem snapshot; policy timeline publication is single-row CAS. JSM immutable create snapshots, attempt/lease claims and unique issue mapping/state/audit settle share one row. No multi-statement transaction guarantee or native query-policy acceptance claimed. Registry checks and role-bound serial queue are explicit; no migration-on-read. Complete bounds/limitations in ADR-0019 and programme JSM contract.
+
+## Unapplied v005 operational registry — 2026-11-28
+
+Seven additive tables hold readiness, mutable state, command receipts, append-only audit/handoff history, expiring gate records and NOC configuration. Logical state plus pending projection envelope commits in one CAS; deterministic projection equality and matching-envelope clear preserve recovery. Final writes check current facts and active scoped references; command/gate times cannot move backwards. See ADR-0020 and local-operational-acceptance.md; native TiDB/query-policy/concurrency acceptance remains unverified.

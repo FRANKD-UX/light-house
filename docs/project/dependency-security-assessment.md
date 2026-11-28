@@ -199,3 +199,7 @@ Fresh full and omit-dev audit each exit1:12 affected packages(5high/7moderate), 
 ## Hosted checkpoint audit reconciliation — 2026-11-27
 
 Current unchanged-lock full and omit-dev `npm audit --json` both exit1 with18 affected package names(11high/7moderate/0critical). Same three advisory URLs/roots as the completion review; no new root found in returned `via` entries. High names: @forge/bridge, @atlaskit/adf-schema, @atlaskit/adf-schema-generator, @atlaskit/editor-prosemirror, prosemirror-commands/dropcursor/history/keymap/state/utils/view. Moderate: @forge/api/events/kvs/manifest/sql, glob, minimatch. This preserves earlier12(5high/7moderate) and17/11 observations as time/cache-sensitive historical evidence, not a claimed fix or precise cause. Source/manifest/package/lock unchanged from deployed2b97545; no audit fix/downgrade/override. Review current inherited attribution and residual public-ingress/KVS exposure for the next bounded DEVELOPMENT exercise; scope consent/deployment completion is not a recorded blanket vulnerability waiver. No new complete security scan or runtime exposure test performed.
+
+## 2026-11-28 unchanged-dependency verification
+
+Fresh full and omit-dev npm audit JSON each exit1:18 affected packages(11high/7moderate/0critical), unchanged three GHSA roots. Root package/lock remain unchanged; no force fix/override/downgrade. Current local operational source needs exact-artifact review before deployment; no prior development exception transfers automatically. Pinned isolated e2e ci audits7 packages with0 findings.

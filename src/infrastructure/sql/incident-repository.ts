@@ -229,6 +229,14 @@ export class SqlIncidentRepository implements IncidentRepository {
     );
     return rows.map((r) => snapshot(ctx, r.snapshot_json));
   }
+  async readyInbox(ctx: TenantContext, after = ''): Promise<{ id: string }[]> {
+    await this.bound(ctx);
+    if (after) uuid(after);
+    return this.db.rows<{ id: string }>(
+      'SELECT b.id FROM monitoring_inbox b JOIN monitoring_sources s ON s.id = b.source_id AND s.tenant_id = b.tenant_id AND s.installation_id = b.installation_id JOIN isp_tenants t ON t.id = b.tenant_id AND t.installation_id = b.installation_id WHERE b.installation_id = ? AND b.tenant_id = ? AND b.status = ? AND b.id > ? AND s.status = ? AND t.status = ? AND t.pending_mutation IS NULL ORDER BY b.id LIMIT 21',
+      [ctx.installationId, ctx.tenantId, 'ready', after, 'active', 'active'],
+    );
+  }
   async policies(ctx: TenantContext): Promise<IncidentPolicy[]> {
     await this.bound(ctx);
     const rows = await this.db.rows<{ policies_json: string }>(

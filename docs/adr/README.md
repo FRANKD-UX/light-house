@@ -25,3 +25,5 @@ Sprint 1: [ADR-0016 — physical persistence and bounded repair](ADR-0016-sprint
 - [ADR-0018: Local monitoring intake](ADR-0018-local-monitoring-intake.md) — Implemented local defaults; deployment/risk/native integration acceptance outstanding.
 
 - [ADR-0019 — Local incident orchestration and programme execution](ADR-0019-local-incident-orchestration.md): local proposed mechanisms, accepted programme authority, unchanged hosted/release gates.
+
+- [ADR-0020 — Durable operational commands and explicit catch-up](ADR-0020-operational-commands-and-catch-up.md): accountability, accepted returns, checklist/facts guards and native closure limits.
