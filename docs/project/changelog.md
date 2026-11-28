@@ -251,3 +251,7 @@ Finalised ADR-0017; classified Sprint1 IMPLEMENTATION-COMPLETE LOCALLY — RELEA
 - Resolved sandbox npm timeout using permitted external registry access; pinned @forge/kvs2.1.3 and reviewed storage:app, license, dependency and advisory disposition.
 - Wired static v2 authenticated webtrigger, monitoring and serialized schema consumers/resolver; additive six-table v002 preserves v001. Added correlation/outcome observability, durable concurrent duplicates, bounded recovery and inactive credential cleanup.
 - Added minimal operational UI and strict response contracts, synthetic terminal HTTP acceptance runner and self-contained runbook/deployment proposal. All188 baseline tests/20 harness checks preserved;203 app tests now pass. Full Forge lint/scanners and native/runtime acceptance remain explicit gaps. No push/merge/deployment/URL/provisioning/hosted SQL or Sprint3.
+
+## 2026-11-28 — Persistent Sprint 5 recovery baseline
+
+Recovered f85aeb8 into a persistent recovery/sprint-5-poc worktree while preserving existing refs and missing worktree metadata. Fresh locked installation and canonical validation reproduce512tests/51files with unchanged coverage;20harness checks/dryrun pass. Fresh audits12(5high/7moderate),LH-014OPEN. Later unstaged POC/proposal work is unlocated and will be reconstructed explicitly. Authenticated Atlassian discovery returns zero visible projects; no hosted mutation or publication.
