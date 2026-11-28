@@ -19,6 +19,7 @@ import {
 } from './contracts';
 const kinds = [
   'initialise',
+  'assign',
   'acknowledge',
   'triage',
   'start_work',
@@ -46,6 +47,7 @@ export function operationCommand(input: unknown): OperationCommand {
             'expected',
             'kind',
             'targetTeamId',
+            'targetAssigneeId',
             'reason',
           ].includes(key),
       ) ||
@@ -57,13 +59,22 @@ export function operationCommand(input: unknown): OperationCommand {
       incidentId: uuid(v.incidentId),
       expected: integer(v.expected, 2147483646, 0),
       kind: v.kind as (typeof kinds)[number],
+      ...(v.kind === 'assign'
+        ? { targetAssigneeId: uuid(v.targetAssigneeId) }
+        : {}),
       ...(v.kind === 'request_handoff'
         ? { targetTeamId: uuid(v.targetTeamId) }
         : {}),
     };
     if (v.kind !== 'request_handoff' && v.targetTeamId !== undefined)
       throw new OperationError('INVALID');
-    if (v.kind === 'reject_handoff' || v.kind === 'reject_return')
+    if (v.kind !== 'assign' && v.targetAssigneeId !== undefined)
+      throw new OperationError('INVALID');
+    if (
+      v.kind === 'assign' ||
+      v.kind === 'reject_handoff' ||
+      v.kind === 'reject_return'
+    )
       return { ...command, reason: text(v.reason, 300) };
     if (v.reason !== undefined) throw new OperationError('INVALID');
     return command;
@@ -333,7 +344,13 @@ export class OperationService {
     const action: WorkflowAction =
       command.kind === 'request_handoff'
         ? { kind: 'request_handoff', targetTeamId: command.targetTeamId! }
-        : { kind: command.kind };
+        : command.kind === 'assign'
+          ? {
+              kind: 'assign',
+              targetAssigneeId: command.targetAssigneeId!,
+              reason: command.reason!,
+            }
+          : { kind: command.kind };
     const next = transitionIncident(
       {
         ...current.incident,
@@ -569,6 +586,7 @@ export class OperationService {
         ].includes(command.kind)
           ? actor.nocTeamId
           : null),
+      targetAssigneeId: command.targetAssigneeId ?? null,
       nativeIntentId,
       factsVersion,
       slaPolicyId: after.sla.policyId,

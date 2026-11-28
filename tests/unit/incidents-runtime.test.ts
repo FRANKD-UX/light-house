@@ -37,6 +37,7 @@ import { MonitoringService } from '../../src/application/monitoring/service';
 import { JsmCreationService } from '../../src/application/jsm/service';
 import { SqlIncidentRepository } from '../../src/infrastructure/sql/incident-repository';
 import { SqlJsmRepository } from '../../src/infrastructure/sql/jsm-repository';
+import { SqlOperationsRepository } from '../../src/infrastructure/sql/operations-repository';
 import * as incidentMigration from '../../src/infrastructure/sql/incident-migrations';
 import * as jsmMigration from '../../src/infrastructure/sql/jsm-migrations';
 import * as operationsMigration from '../../src/infrastructure/sql/operations-migrations';
@@ -53,6 +54,7 @@ import {
   type JsmGateway,
 } from '../../src/application/jsm/contracts';
 import type { TenantContext } from '../../src/application/ports/tenant-context';
+import type { OperationAggregate } from '../../src/application/operations/contracts';
 const tenant = randomUUID(),
   source = randomUUID(),
   inboxId = randomUUID(),
@@ -155,6 +157,34 @@ function configuration(): JsmConfiguration {
     priorityIds: { P1: '1', P2: '2', P3: '3' },
   };
 }
+function operational(saved: Incident): OperationAggregate {
+  if (saved.sla.kind !== 'selected') throw new Error('fixture');
+  const ownerTeamId = randomUUID();
+  const ownerAssigneeId = randomUUID();
+  return {
+    installationId: ctx.installationId,
+    tenantId: tenant,
+    nocTeamId: randomUUID(),
+    factsVersion: 1,
+    validation: null,
+    pending: null,
+    lease: { token: 'private-lease-token', until: timestamp },
+    incident: {
+      id: saved.id,
+      tenantId: tenant,
+      state: 'in_progress',
+      version: 9,
+      ownerTeamId,
+      ownerAssigneeId,
+      sla: saved.sla.snapshot,
+      pendingHandoff: { targetTeamId: randomUUID(), requestedAt: timestamp },
+      pendingReturn: null,
+      recoveryObservedAt: null,
+      restorationValidatedAt: null,
+      resolvedAt: null,
+    },
+  };
+}
 function evidence(): IncidentEvidence {
   return {
     inboxId,
@@ -187,6 +217,8 @@ beforeEach(() => {
   vi.spyOn(SqlIncidentRepository.prototype, 'ready').mockResolvedValue(true);
   vi.spyOn(SqlIncidentRepository.prototype, 'list').mockResolvedValue([]);
   vi.spyOn(SqlIncidentRepository.prototype, 'policies').mockResolvedValue([]);
+  vi.spyOn(SqlOperationsRepository.prototype, 'ready').mockResolvedValue(false);
+  vi.spyOn(SqlOperationsRepository.prototype, 'list').mockResolvedValue([]);
 });
 afterEach(() => {
   vi.restoreAllMocks();
@@ -330,6 +362,140 @@ describe('incident trusted runtime resolver wiring', () => {
         { action: 'overview', tenantId: tenant },
       ),
     ).toMatchObject({ ok: false, code: 'NOT_READY' });
+  });
+  it('joins current operational summaries only to the displayed page using the shared cursor', async () => {
+    const rows = Array.from({ length: 21 }, () => incident());
+    const initial = operational(rows[0]!);
+    const commandId = randomUUID();
+    const correlationId = randomUUID();
+    const current: OperationAggregate = {
+      ...initial,
+      pending: {
+        receipt: {
+          commandId,
+          fingerprint: 'private-command-fingerprint',
+          result: {
+            incidentId: initial.incident.id,
+            version: 9,
+            state: 'in_progress',
+            ownerTeamId: initial.incident.ownerTeamId,
+            ownerAssigneeId: initial.incident.ownerAssigneeId,
+            correlationId,
+            pendingMaterialisation: true,
+          },
+        },
+        audit: {
+          commandId,
+          correlationId,
+          at: timestamp,
+          accountId: 'private-original-actor',
+          assigneeId: initial.incident.ownerAssigneeId!,
+          teamId: initial.incident.ownerTeamId,
+          action: 'start_work',
+          fromState: 'triage',
+          toState: 'in_progress',
+          fromOwner: initial.incident.ownerTeamId,
+          toOwner: initial.incident.ownerTeamId,
+          fromAssigneeId: null,
+          toAssigneeId: initial.incident.ownerAssigneeId,
+          reason: null,
+          gateId: null,
+          targetTeamId: null,
+          targetAssigneeId: null,
+          nativeIntentId: null,
+          factsVersion: 1,
+          slaPolicyId: initial.incident.sla.policyId,
+          slaStartedAt: initial.incident.sla.startedAt,
+          slaDeadlineAt: initial.incident.sla.deadlineAt,
+        },
+      },
+    };
+    const last = operational(rows[19]!);
+    const cursor = randomUUID();
+    vi.mocked(SqlIncidentRepository.prototype.list).mockResolvedValue(rows);
+    vi.mocked(SqlOperationsRepository.prototype.ready).mockResolvedValue(true);
+    vi.mocked(SqlOperationsRepository.prototype.list).mockResolvedValue([
+      current,
+      last,
+      operational(rows[20]!),
+      operational(incident()),
+    ]);
+    const result = await createIncidentHandlers(gateway).request(
+      { accountId: 'synthetic-user' },
+      { action: 'overview', tenantId: tenant, after: cursor },
+    );
+    expect(result).toMatchObject({
+      ok: true,
+      value: {
+        operationsReady: true,
+        next: rows[19]!.id,
+        operations: [current, last].map((row) => ({
+          incidentId: row.incident.id,
+          state: 'in_progress',
+          version: 9,
+          ownerTeamId: row.incident.ownerTeamId,
+          ownerAssigneeId: row.incident.ownerAssigneeId,
+          nocTeamId: row.nocTeamId,
+          pendingMaterialisation: row.pending !== null,
+          pendingHandoff: true,
+          pendingReturn: false,
+          resolvedAt: null,
+        })),
+      },
+    });
+    expect(SqlIncidentRepository.prototype.list).toHaveBeenCalledWith(
+      ctx,
+      cursor,
+    );
+    expect(SqlOperationsRepository.prototype.list).toHaveBeenCalledWith(
+      ctx,
+      cursor,
+    );
+    if (!result.ok) throw new Error('fixture');
+    const value = result.value as {
+      incidents: Incident[];
+      operations: unknown[];
+    };
+    expect(value.incidents[0]!.state).toBe('new');
+    expect(value.operations).toHaveLength(2);
+    const projection = JSON.stringify(value.operations);
+    for (const privateValue of [
+      ctx.installationId,
+      'synthetic-user',
+      'private-lease-token',
+      'private-original-actor',
+      'private-command-fingerprint',
+      'installationId',
+      'accountId',
+      'requestedAt',
+      'sla',
+      'lease',
+    ])
+      expect(projection).not.toContain(privateValue);
+  });
+  it('reports unavailable operations schema explicitly and fails a broken list without empty success', async () => {
+    const handlers = createIncidentHandlers(gateway);
+    const input = { action: 'overview', tenantId: tenant };
+    expect(
+      await handlers.request({ accountId: 'synthetic-user' }, input),
+    ).toMatchObject({
+      ok: true,
+      value: { operationsReady: false, operations: [] },
+    });
+    expect(SqlOperationsRepository.prototype.list).not.toHaveBeenCalled();
+    vi.mocked(SqlOperationsRepository.prototype.ready).mockResolvedValue(true);
+    vi.mocked(SqlOperationsRepository.prototype.list).mockRejectedValueOnce(
+      new Error('private operational SQL failure'),
+    );
+    const failed = await handlers.request(
+      { accountId: 'synthetic-user' },
+      input,
+    );
+    expect(failed).toMatchObject({ ok: false, code: 'UNAVAILABLE' });
+    expect(failed).not.toHaveProperty('value');
+    expect(JSON.stringify(vi.mocked(console.error).mock.calls)).not.toContain(
+      'private operational SQL failure',
+    );
   });
   it('processes persisted inbox identity and projects incident while retaining awaiting-problem result', async () => {
     const saved = incident();

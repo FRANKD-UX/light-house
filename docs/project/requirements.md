@@ -115,3 +115,5 @@ Owner explicitly authorises autonomous local implementation across the remaining
 ## Durable operational slice — 2026-11-28
 
 Local catch-up, canonical recovery-evidence binding and durable accepted-return/accountable-engineer workflow now extend the POC. These implement owner requirements under ADR-0020 proposed mechanisms, not native acceptance. Actual Jira transition confirmation, reassignment, scheduling/native SLA reconciliation, identity providers/full UI and release requirements remain mandatory.
+
+2026-11-28 resumed implementation: same-team engineer reassignment and current-page NOC operational board are implemented locally pending integrated validation. Mutable operational summaries are explicitly separate from creation snapshots; missing readiness is unverified. Native transition intent/gateway components are unregistered, provide no SQL adapter or confirmed transition provenance, and leave closure disabled. Native enforcement, full UI/embedded context, scheduling, identity integrations and all release acceptance remain mandatory.

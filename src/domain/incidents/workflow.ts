@@ -1,4 +1,4 @@
-import { utc, uuid, type Role } from '../inventory/model';
+import { text, utc, uuid, type Role } from '../inventory/model';
 import { IncidentError, type SlaSnapshot } from './model';
 export type OperationalState =
   | 'new'
@@ -40,6 +40,7 @@ export type WorkflowAction =
         | 'close';
     }
   | { kind: 'request_handoff'; targetTeamId: string }
+  | { kind: 'assign'; targetAssigneeId: string; reason: string }
   | {
       kind:
         | 'accept_handoff'
@@ -55,6 +56,7 @@ export interface WorkflowActor {
   readonly teamId: string;
   readonly assigneeId: string;
   readonly nocTeamId: string;
+  readonly teamRole?: 'engineer' | 'lead';
 }
 /** Pure server-authoritative transition policy; the adapter must CAS the returned version. */
 export function transitionIncident(
@@ -78,6 +80,29 @@ export function transitionIncident(
   if (expected !== incident.version) throw new IncidentError('CONFLICT');
   if (now < incident.sla.startedAt || incident.state === 'closed')
     throw new IncidentError('INVALID');
+  if (action.kind === 'assign') {
+    uuid(action.targetAssigneeId);
+    text(action.reason, 300);
+    if (
+      actor.teamId !== incident.ownerTeamId ||
+      (actor.role !== 'admin' && actor.teamRole !== 'lead')
+    )
+      throw new IncidentError('DENIED');
+    if (
+      incident.state === 'new' ||
+      incident.state === 'resolved' ||
+      incident.pendingHandoff ||
+      incident.pendingReturn ||
+      action.targetAssigneeId === incident.ownerAssigneeId
+    )
+      throw new IncidentError('CONFLICT');
+    return Object.freeze({
+      ...incident,
+      ownerAssigneeId: action.targetAssigneeId,
+      restorationValidatedAt: null,
+      version: incident.version + 1,
+    });
+  }
   if (action.kind === 'accept_return' || action.kind === 'reject_return') {
     if (!incident.pendingReturn || actor.teamId !== actor.nocTeamId)
       throw new IncidentError('DENIED');

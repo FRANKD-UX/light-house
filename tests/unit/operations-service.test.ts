@@ -705,3 +705,190 @@ it('assigns accountable mapped engineer on acknowledgement and preserves assignm
     }),
   );
 });
+
+it('allows a fresh team lead or administrator to reassign with immutable SLA and explicit audit', async () => {
+  for (const privilege of [
+    { teamRole: 'lead' as const },
+    { role: 'admin' as const },
+  ]) {
+    const f = fixture();
+    await working(f);
+    await f.execute('request_validation');
+    await f.execute('validate_restoration');
+    const before = f.row!;
+    f.setActor({ ...privilege, assigneeId: id(16) });
+    const input = f.command('assign', {
+      targetAssigneeId: id(17),
+      reason: 'Reviewed synthetic on-call responsibility transfer',
+    });
+    const result = await f.service.execute(ctx, input);
+    expect(result).toMatchObject({
+      version: before.incident.version + 1,
+      state: before.incident.state,
+      ownerTeamId: noc,
+      ownerAssigneeId: id(17),
+    });
+    expect(f.row!.incident.sla).toBe(snapshot);
+    expect(f.row!.incident.restorationValidatedAt).toBeNull();
+    expect(f.row!.validation).toBeNull();
+    expect(f.audits).toContainEqual(
+      expect.objectContaining({
+        action: 'assign',
+        assigneeId: id(16),
+        targetAssigneeId: id(17),
+        fromAssigneeId: id(14),
+        toAssigneeId: id(17),
+        fromOwner: noc,
+        toOwner: noc,
+        reason: 'Reviewed synthetic on-call responsibility transfer',
+        slaStartedAt: snapshot.startedAt,
+        slaDeadlineAt: snapshot.deadlineAt,
+      }),
+    );
+    expect(f.deps.authorise).toHaveBeenLastCalledWith(
+      ctx,
+      expect.objectContaining({
+        kind: 'assign',
+        targetAssigneeId: id(17),
+        reason: 'Reviewed synthetic on-call responsibility transfer',
+      }),
+    );
+    const count = f.audits.length;
+    expect(await f.service.execute(ctx, input)).toEqual(result);
+    expect(f.audits).toHaveLength(count);
+    await expect(
+      f.service.execute(ctx, { ...input, targetAssigneeId: id(18) }),
+    ).rejects.toThrow('CONFLICT');
+    f.setActor({ assigneeId: id(14) });
+    await expect(f.execute('validate_restoration')).rejects.toThrow('DENIED');
+  }
+});
+it('does not grant assignment to a normal engineer or a missing team role, even the current engineer', async () => {
+  const f = fixture();
+  await working(f);
+  for (const actor of [
+    { teamRole: undefined },
+    { teamRole: 'engineer' as const },
+  ]) {
+    if (actor.teamRole === undefined) f.setActor({ role: 'operator' });
+    else f.setActor({ teamRole: actor.teamRole });
+    await expect(
+      f.execute('assign', {
+        targetAssigneeId: id(17),
+        reason: 'Synthetic transfer',
+      }),
+    ).rejects.toThrow('DENIED');
+  }
+  f.setActor({ role: 'admin', teamId: department });
+  await expect(
+    f.execute('assign', {
+      targetAssigneeId: id(17),
+      reason: 'Synthetic transfer',
+    }),
+  ).rejects.toThrow('DENIED');
+  expect(f.row!.incident.ownerAssigneeId).toBe(id(14));
+});
+it('denies inactive/foreign target authority, stale versions and unsettled transfer boundaries', async () => {
+  const f = fixture();
+  await working(f);
+  f.setActor({ teamRole: 'lead' });
+  vi.mocked(f.deps.authorise).mockRejectedValueOnce(new Error('DENIED'));
+  const writes = vi.mocked(f.deps.repository.save).mock.calls.length;
+  await expect(
+    f.execute('assign', {
+      targetAssigneeId: id(99),
+      reason: 'Synthetic foreign target',
+    }),
+  ).rejects.toThrow('DENIED');
+  expect(vi.mocked(f.deps.repository.save).mock.calls.length).toBe(writes);
+  await expect(
+    f.execute('assign', {
+      targetAssigneeId: id(17),
+      reason: 'Synthetic transfer',
+      expected: 1,
+    }),
+  ).rejects.toThrow('CONFLICT');
+  await f.execute('request_handoff', { targetTeamId: department });
+  await expect(
+    f.execute('assign', {
+      targetAssigneeId: id(17),
+      reason: 'Synthetic transfer',
+    }),
+  ).rejects.toThrow('CONFLICT');
+  f.setActor({ teamId: department, assigneeId: id(15) });
+  await f.execute('accept_handoff');
+  await f.execute('request_return');
+  await expect(
+    f.execute('assign', {
+      targetAssigneeId: id(17),
+      reason: 'Synthetic transfer',
+    }),
+  ).rejects.toThrow('CONFLICT');
+});
+it('strictly parses assignment target and reason and rejects caller authority or mixed target types', () => {
+  const valid = fixture().command('assign', {
+    targetAssigneeId: id(17),
+    reason: 'Synthetic transfer',
+  });
+  expect(operationCommand(valid)).toMatchObject({
+    kind: 'assign',
+    targetAssigneeId: id(17),
+    reason: 'Synthetic transfer',
+  });
+  for (const bad of [
+    { ...valid, targetAssigneeId: undefined },
+    { ...valid, targetAssigneeId: [id(17)] },
+    { ...valid, reason: undefined },
+    { ...valid, reason: '' },
+    { ...valid, reason: 'x'.repeat(301) },
+    { ...valid, targetTeamId: department },
+    { ...valid, actor: { role: 'admin' } },
+    { ...valid, teamRole: 'lead' },
+    { ...valid, kind: 'triage' },
+    { ...valid, kind: 'initialise' },
+  ])
+    expect(() => operationCommand(bad)).toThrow('INVALID');
+});
+it('blocks reassigning an unacknowledged queue, terminal record, no-op target or unresolved command envelope', async () => {
+  const f = fixture();
+  await f.execute('initialise');
+  f.setActor({ teamRole: 'lead' });
+  await expect(
+    f.execute('assign', {
+      targetAssigneeId: id(17),
+      reason: 'Synthetic transfer',
+    }),
+  ).rejects.toThrow('CONFLICT');
+  await f.execute('acknowledge');
+  await expect(
+    f.execute('assign', {
+      targetAssigneeId: id(14),
+      reason: 'Synthetic no-op',
+    }),
+  ).rejects.toThrow('CONFLICT');
+  f.setRow({
+    ...f.row!,
+    incident: { ...f.row!.incident, state: 'resolved', resolvedAt: startedAt },
+  });
+  await expect(
+    f.execute('assign', {
+      targetAssigneeId: id(17),
+      reason: 'Synthetic terminal transfer',
+    }),
+  ).rejects.toThrow('CONFLICT');
+  f.setRow({
+    ...f.row!,
+    incident: { ...f.row!.incident, state: 'acknowledged', resolvedAt: null },
+  });
+  vi.mocked(f.deps.repository.materialise).mockResolvedValueOnce(false);
+  await f.execute('assign', {
+    targetAssigneeId: id(17),
+    reason: 'Synthetic transfer',
+  });
+  await expect(
+    f.execute('assign', {
+      targetAssigneeId: id(18),
+      reason: 'Another transfer',
+    }),
+  ).rejects.toThrow('REPAIR_REQUIRED');
+});

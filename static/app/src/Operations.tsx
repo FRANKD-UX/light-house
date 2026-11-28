@@ -25,6 +25,7 @@ import {
 type Kind = OperationCommand['kind'];
 const labels: Record<Kind, string> = {
   initialise: 'Initialise NOC ownership',
+  assign: 'Reassign accountable engineer',
   acknowledge: 'Acknowledge incident',
   triage: 'Start NOC triage',
   start_work: 'Start direct work',
@@ -94,15 +95,15 @@ function actions(operation: PublicOperation | null): Kind[] {
     case 'new':
       return ['acknowledge'];
     case 'acknowledged':
-      return ['triage'];
+      return ['triage', 'assign'];
     case 'triage':
-      return ['start_work'];
+      return ['start_work', 'assign'];
     case 'in_progress':
       return operation.ownerTeamId === operation.nocTeamId
-        ? ['request_validation', 'request_handoff']
-        : ['request_return', 'request_handoff'];
+        ? ['request_validation', 'request_handoff', 'assign']
+        : ['request_return', 'request_handoff', 'assign'];
     case 'restoration_validation':
-      return ['validate_restoration'];
+      return ['validate_restoration', 'assign'];
     default:
       return [];
   }
@@ -129,6 +130,7 @@ export function Operations({
     [message, setMessage] = useState('Operational state not loaded.'),
     [kind, setKind] = useState<Kind>('initialise');
   const [target, setTarget] = useState(''),
+    [targetEngineer, setTargetEngineer] = useState(''),
     [reason, setReason] = useState(''),
     [fields, setFields] = useState<Record<string, string | boolean>>({}),
     [gate, setGate] = useState<{
@@ -344,6 +346,7 @@ export function Operations({
                             setGate(undefined);
                             setReason('');
                             setTarget('');
+                            setTargetEngineer('');
                           }}
                         >
                           {available.map((action) => (
@@ -362,10 +365,32 @@ export function Operations({
                           />
                         </label>
                       )}
-                      {(kind === 'reject_handoff' ||
+                      {kind === 'assign' && (
+                        <>
+                          <label>
+                            New accountable engineer ID
+                            <input
+                              value={targetEngineer}
+                              onChange={(e) =>
+                                setTargetEngineer(e.target.value)
+                              }
+                            />
+                          </label>
+                          <p>
+                            Requires the accountable team's lead or an
+                            administrator. The engineer must be an active member
+                            of the same team. Reassignment preserves state and
+                            SLA, and invalidates prior restoration validation.
+                          </p>
+                        </>
+                      )}
+                      {(kind === 'assign' ||
+                        kind === 'reject_handoff' ||
                         kind === 'reject_return') && (
                         <label>
-                          Rejection reason
+                          {kind === 'assign'
+                            ? 'Reassignment reason'
+                            : 'Rejection reason'}
                           <input
                             maxLength={300}
                             value={reason}
@@ -473,10 +498,14 @@ export function Operations({
                               incidentId,
                               expected: current?.version ?? 0,
                               kind,
+                              ...(kind === 'assign'
+                                ? { targetAssigneeId: uuid(targetEngineer) }
+                                : {}),
                               ...(kind === 'request_handoff'
                                 ? { targetTeamId: uuid(target) }
                                 : {}),
-                              ...(kind === 'reject_handoff' ||
+                              ...(kind === 'assign' ||
+                              kind === 'reject_handoff' ||
                               kind === 'reject_return'
                                 ? { reason: text(reason, 300) }
                                 : {}),
@@ -560,11 +589,6 @@ export function Operations({
         Native Jira transition confirmation is not available in this artifact.
         Monitoring recovery and checklist submission cannot resolve or close an
         incident.
-      </p>
-      <button disabled>Reassign accountable engineer</button>
-      <p>
-        Explicit reassignment is not implemented. Accepted handoffs and returns
-        assign the accepting mapped engineer.
       </p>
     </section>
   );

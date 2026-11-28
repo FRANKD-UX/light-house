@@ -24,6 +24,7 @@ import {
   SqlIncidentRepository,
 } from '../../infrastructure/sql/incident-repository';
 import { SqlJsmRepository } from '../../infrastructure/sql/jsm-repository';
+import { SqlOperationsRepository } from '../../infrastructure/sql/operations-repository';
 import { migrateIncidents } from '../../infrastructure/sql/incident-migrations';
 import { migrateJsm } from '../../infrastructure/sql/jsm-migrations';
 import { migrateOperations } from '../../infrastructure/sql/operations-migrations';
@@ -180,6 +181,35 @@ export function createIncidentHandlers(
                   : uuid(data.after),
               );
               const page = rows.slice(0, 20);
+              const operationRepository = new SqlOperationsRepository(
+                forgeSql,
+                now,
+              );
+              const operationsReady =
+                await operationRepository.ready(installationId);
+              const operationRows = operationsReady
+                ? await operationRepository.list(
+                    ctx,
+                    data.after === undefined || data.after === ''
+                      ? ''
+                      : uuid(data.after),
+                  )
+                : [];
+              const pageIds = new Set(page.map((row) => row.id));
+              const operations = operationRows
+                .filter((row) => pageIds.has(row.incident.id))
+                .map((row) => ({
+                  incidentId: row.incident.id,
+                  state: row.incident.state,
+                  version: row.incident.version,
+                  ownerTeamId: row.incident.ownerTeamId,
+                  ownerAssigneeId: row.incident.ownerAssigneeId,
+                  nocTeamId: row.nocTeamId,
+                  pendingMaterialisation: row.pending !== null,
+                  pendingHandoff: row.incident.pendingHandoff !== null,
+                  pendingReturn: row.incident.pendingReturn !== null,
+                  resolvedAt: row.incident.resolvedAt,
+                }));
               const links =
                 page.length && (await jsmReady(installationId))
                   ? await forgeSql.rows<{
@@ -201,6 +231,8 @@ export function createIncidentHandlers(
                 next: rows.length > 20 ? rows[19]!.id : null,
                 policies: await current.repository.policies(ctx),
                 jsmLinks: links,
+                operations,
+                operationsReady,
               };
               break;
             }

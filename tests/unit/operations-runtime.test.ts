@@ -110,6 +110,7 @@ function aggregate(pending = false): OperationAggregate {
             reason: null,
             gateId: null,
             targetTeamId: null,
+            targetAssigneeId: null,
             nativeIntentId: null,
             factsVersion: 1,
             slaPolicyId: id(6),

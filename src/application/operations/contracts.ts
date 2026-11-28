@@ -12,6 +12,7 @@ export interface OperationCommand {
   readonly expected: number;
   readonly kind: OperationKind | 'initialise';
   readonly targetTeamId?: string;
+  readonly targetAssigneeId?: string;
   readonly reason?: string;
 }
 export interface OperationFacts {
@@ -54,6 +55,7 @@ export interface OperationAudit {
   readonly reason: string | null;
   readonly gateId: string | null;
   readonly targetTeamId: string | null;
+  readonly targetAssigneeId: string | null;
   readonly nativeIntentId: string | null;
   readonly factsVersion: number;
   readonly slaPolicyId: string;
@@ -142,7 +144,7 @@ export interface OperationRepository {
 }
 export interface OperationDependencies {
   readonly repository: OperationRepository;
-  /** Fresh membership/active team/NOC configuration; must also verify same-tenant targetTeamId. */
+  /** Fresh membership/active team/NOC configuration; must also verify same-tenant targetTeamId and active targetAssigneeId in the current owner team. */
   authorise(
     ctx: TenantContext,
     command: OperationCommand,

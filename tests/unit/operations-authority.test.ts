@@ -24,7 +24,13 @@ function fixture() {
     incidentId = id(6);
   let selectedTeam = owner;
   let members:
-    { role: unknown; assignee_id: string; team_id: string }[] | null = null;
+    | {
+        role: unknown;
+        assignee_id: string;
+        team_id: string;
+        team_role: unknown;
+      }[]
+    | null = null;
   let targets: { id: string }[] | null = null;
   const row: OperationAggregate = {
     installationId: ctx.installationId,
@@ -92,7 +98,12 @@ function fixture() {
       if (query.startsWith('SELECT m.role')) {
         selectedTeam = params[7] as string;
         return (members ?? [
-          { role: 'operator', assignee_id: assignee, team_id: selectedTeam },
+          {
+            role: 'operator',
+            assignee_id: assignee,
+            team_id: selectedTeam,
+            team_role: 'engineer',
+          },
         ]) as T[];
       }
       return (targets ?? [{ id: params[3] as string }]) as T[];
@@ -276,7 +287,12 @@ it('requires active unexpired mapped membership, nonpending teams and installati
 
 it('denies ambiguous mappings, viewer membership, wrong returned team and nonuser actors', async () => {
   const f = fixture();
-  const valid = { role: 'operator', assignee_id: f.assignee, team_id: f.owner };
+  const valid = {
+    role: 'operator',
+    assignee_id: f.assignee,
+    team_id: f.owner,
+    team_role: 'engineer',
+  };
   for (const members of [
     [valid, valid],
     [{ ...valid, role: 'viewer' }],
@@ -340,4 +356,139 @@ it('a configured foreign NOC cannot authorise through a membership result exclud
   ).rejects.toThrow('DENIED');
   expect(f.rows.mock.calls[0]?.[1][7]).toBe(id(99));
   expect(f.rows.mock.calls[0]?.[1][11]).toBe(id(99));
+});
+
+it('authorises engineer reassignment only for fresh stored team lead or administrator even when not the assigned engineer', async () => {
+  const f = fixture();
+  const command = f.command('assign', {
+    targetAssigneeId: id(20),
+    reason: 'Synthetic reassignment',
+  });
+  const member = {
+    role: 'operator',
+    assignee_id: id(21),
+    team_id: f.owner,
+    team_role: 'lead',
+  };
+  f.setMembers([member]);
+  expect(await f.authority.authorise(f.ctx, command)).toMatchObject({
+    role: 'operator',
+    teamRole: 'lead',
+    assigneeId: id(21),
+    teamId: f.owner,
+  });
+  f.setMembers([{ ...member, role: 'admin', team_role: 'engineer' }]);
+  expect(await f.authority.authorise(f.ctx, command)).toMatchObject({
+    role: 'admin',
+    teamRole: 'engineer',
+  });
+  f.setMembers([{ ...member, team_role: 'engineer' }]);
+  await expect(
+    f.authority.authorise(f.ctx, {
+      ...command,
+      teamRole: 'lead',
+      role: 'admin',
+    } as OperationCommand),
+  ).rejects.toThrow('DENIED');
+  for (const invalid of [undefined, null, 'Lead', ['lead'], true]) {
+    f.setMembers([{ ...member, team_role: invalid }]);
+    await expect(f.authority.authorise(f.ctx, command)).rejects.toThrow(
+      'DENIED',
+    );
+  }
+});
+
+it('binds reassignment target to active mapped same-owner-team membership and an unexpired operational tenant grant', async () => {
+  const f = fixture();
+  const target = id(20);
+  f.setMembers([
+    {
+      role: 'admin',
+      assignee_id: f.assignee,
+      team_id: f.owner,
+      team_role: 'engineer',
+    },
+  ]);
+  const command = f.command('assign', {
+    targetAssigneeId: target,
+    reason: 'Synthetic reassignment',
+  });
+  await f.authority.authorise(f.ctx, command);
+  const [query, params] = f.rows.mock.calls[1]!;
+  expect(query).toContain('t.installation_id = ?');
+  expect(query).toContain('a.tenant_id = t.id');
+  expect(query).toContain('a.atlassian_account_id IS NOT NULL');
+  expect(query).toContain('tm.team_id = ?');
+  expect(query).toContain('m.role IN (?, ?)');
+  expect(query).toContain(
+    '(tm.effective_until IS NULL OR tm.effective_until > ?)',
+  );
+  expect(query).toContain('(m.expires_at IS NULL OR m.expires_at > ?)');
+  expect(params).toEqual([
+    f.ctx.installationId,
+    f.ctx.tenantId,
+    'active',
+    target,
+    'active',
+    f.owner,
+    'active',
+    'engineer',
+    'lead',
+    now,
+    'active',
+    'active',
+    'operator',
+    'admin',
+    now,
+  ]);
+  for (const targets of [
+    [],
+    [{ id: f.assignee }],
+    [{ id: target }, { id: target }],
+  ]) {
+    f.setTargets(targets);
+    await expect(f.authority.authorise(f.ctx, command)).rejects.toThrow(
+      'DENIED',
+    );
+  }
+  await expect(
+    f.authority.authorise(f.ctx, { ...command, targetTeamId: f.receiving }),
+  ).rejects.toThrow('INVALID');
+  await expect(
+    f.authority.authorise(
+      f.ctx,
+      f.command('acknowledge', { targetAssigneeId: target }),
+    ),
+  ).rejects.toThrow('INVALID');
+});
+
+it('historical assignment replay keeps the original acting team and refreshes privilege without reauthorising a historical target', async () => {
+  const f = fixture();
+  f.repository.commandTeam.mockResolvedValue(f.owner);
+  f.setMembers([
+    {
+      role: 'operator',
+      assignee_id: f.assignee,
+      team_id: f.owner,
+      team_role: 'lead',
+    },
+  ]);
+  const command = f.command('assign', {
+    targetAssigneeId: id(20),
+    reason: 'Synthetic historical reason',
+  });
+  expect(await f.authority.authorise(f.ctx, command)).toMatchObject({
+    teamId: f.owner,
+    teamRole: 'lead',
+  });
+  expect(f.rows).toHaveBeenCalledTimes(1);
+  f.setMembers([
+    {
+      role: 'operator',
+      assignee_id: f.assignee,
+      team_id: f.owner,
+      team_role: 'engineer',
+    },
+  ]);
+  await expect(f.authority.authorise(f.ctx, command)).rejects.toThrow('DENIED');
 });

@@ -924,3 +924,76 @@ describe('server-authoritative operational policy', () => {
     ).toThrow('CONFLICT');
   });
 });
+
+it('guards same-team reassignment by fresh admin or stored lead without resetting operational state or SLA', () => {
+  const current = step(step(operation(), 'acknowledge'), 'triage');
+  const action = {
+    kind: 'assign' as const,
+    targetAssigneeId: id(70),
+    reason: 'Synthetic on-call reassignment',
+  };
+  for (const privilege of [
+    { role: 'admin' as const },
+    { teamRole: 'lead' as const },
+  ]) {
+    const next = transitionIncident(
+      { ...current, restorationValidatedAt: start },
+      { ...actor, assigneeId: id(71), ...privilege },
+      current.version,
+      action,
+      start,
+      true,
+    );
+    expect(next).toMatchObject({
+      state: current.state,
+      ownerTeamId: current.ownerTeamId,
+      ownerAssigneeId: id(70),
+      version: current.version + 1,
+      restorationValidatedAt: null,
+    });
+    expect(next.sla).toBe(current.sla);
+  }
+  for (const invalid of [
+    actor,
+    { ...actor, teamRole: 'engineer' as const },
+    { ...actor, teamRole: 'lead' as const, teamId: id(99) },
+    { ...actor, role: 'viewer' as const, teamRole: 'lead' as const },
+  ])
+    expect(() =>
+      transitionIncident(
+        current,
+        invalid,
+        current.version,
+        action,
+        start,
+        true,
+      ),
+    ).toThrow('DENIED');
+  expect(() =>
+    transitionIncident(
+      current,
+      { ...actor, teamRole: 'lead' },
+      0,
+      action,
+      start,
+      true,
+    ),
+  ).toThrow('CONFLICT');
+  for (const patch of [
+    { state: 'new' as const, ownerAssigneeId: null },
+    { state: 'resolved' as const, resolvedAt: start },
+    { state: 'closed' as const, resolvedAt: start },
+    { pendingHandoff: { targetTeamId: id(62), requestedAt: start } },
+    { pendingReturn: { fromTeamId: current.ownerTeamId, requestedAt: start } },
+  ])
+    expect(() =>
+      transitionIncident(
+        { ...current, ...patch },
+        { ...actor, teamRole: 'lead' },
+        current.version,
+        action,
+        start,
+        true,
+      ),
+    ).toThrow();
+});

@@ -161,7 +161,7 @@ const executes = () =>
   call.mock.calls.filter(
     ([, input]) => (input as { action: string }).action === 'execute',
   );
-it('shows current accountable team/engineer and immutable deadlines with closure/reassignment disabled', async () => {
+it('shows current accountable team/engineer and immutable deadlines with native closure disabled and explicit reassignment available', async () => {
   mount();
   await load();
   expect(screen.getAllByText(engineer)).toHaveLength(1);
@@ -169,12 +169,14 @@ it('shows current accountable team/engineer and immutable deadlines with closure
   for (const label of [
     'Resolve through confirmed Jira transition',
     'Close through confirmed Jira transition',
-    'Reassign accountable engineer',
   ])
     expect(
       (screen.getByRole('button', { name: label }) as HTMLButtonElement)
         .disabled,
     ).toBe(true);
+  expect(
+    screen.getByRole('option', { name: 'Reassign accountable engineer' }),
+  ).toBeTruthy();
   expect(
     screen.getByText(/Native Jira transition confirmation is not available/),
   ).toBeTruthy();
@@ -613,4 +615,108 @@ it('rejects a readback older than the last confirmed command instead of showing 
   current.operation = operation({ state: 'acknowledged', version: 2 });
   await load();
   expect(screen.getByText(engineer)).toBeTruthy();
+});
+
+it('submits explicit same-team engineer reassignment with a reason and preserves the SLA readback', async () => {
+  mount('operator');
+  await load();
+  choose('assign');
+  expect(
+    screen.getByText(
+      /Requires the accountable team's lead or an administrator/,
+    ),
+  ).toBeTruthy();
+  fireEvent.change(screen.getByLabelText('New accountable engineer ID'), {
+    target: { value: id(12) },
+  });
+  fireEvent.change(screen.getByLabelText('Reassignment reason'), {
+    target: { value: 'Reviewed synthetic on-call rotation' },
+  });
+  call.mockResolvedValueOnce(
+    envelope({
+      incidentId,
+      state: 'in_progress',
+      version: 5,
+      ownerTeamId: noc,
+      ownerAssigneeId: id(12),
+      correlationId: correlation,
+      pendingMaterialisation: false,
+    }),
+  );
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Execute operational action' }),
+  );
+  await screen.findByText(/Saved command completed/);
+  const command = (executes()[0]![1] as { command: Record<string, unknown> })
+    .command;
+  expect(command).toMatchObject({
+    kind: 'assign',
+    targetAssigneeId: id(12),
+    reason: 'Reviewed synthetic on-call rotation',
+    incidentId,
+    expected: 4,
+  });
+  expect(command).not.toHaveProperty('targetTeamId');
+  expect(command).not.toHaveProperty('actor');
+  expect(command).not.toHaveProperty('teamRole');
+  current.operation = operation({ version: 5, ownerAssigneeId: id(12) });
+  await load();
+  expect(screen.getByText(id(12))).toBeTruthy();
+  expect(screen.getByText(start + ' / ' + snapshot.deadlineAt)).toBeTruthy();
+});
+it('requires valid target/reason locally, preserves server denial, and never offers assignment while pending or terminal', async () => {
+  mount('operator');
+  await load();
+  choose('assign');
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Execute operational action' }),
+  );
+  await screen.findByText(/Operational input invalid/);
+  expect(executes()).toHaveLength(0);
+  await load();
+  expect(
+    (screen.getByLabelText('Operational action') as HTMLSelectElement).value,
+  ).toBe('assign');
+  fireEvent.change(screen.getByLabelText('New accountable engineer ID'), {
+    target: { value: id(12) },
+  });
+  fireEvent.change(screen.getByLabelText('Reassignment reason'), {
+    target: { value: 'Synthetic transfer' },
+  });
+  call.mockResolvedValueOnce({
+    ok: false,
+    code: 'DENIED',
+    correlationId: correlation,
+  });
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Execute operational action' }),
+  );
+  await screen.findByText(/Operations DENIED/);
+  cleanup();
+  current.operation = operation({
+    pendingHandoff: { targetTeamId: department, requestedAt: start },
+  });
+  mount();
+  await load();
+  expect(
+    screen.queryByRole('option', { name: 'Reassign accountable engineer' }),
+  ).toBeNull();
+  cleanup();
+  current.operation = operation({
+    state: 'new',
+    version: 1,
+    ownerAssigneeId: null,
+  });
+  mount();
+  await load();
+  expect(
+    screen.queryByRole('option', { name: 'Reassign accountable engineer' }),
+  ).toBeNull();
+  cleanup();
+  current.operation = operation({ state: 'resolved', resolvedAt: start });
+  mount();
+  await load();
+  expect(
+    screen.queryByRole('option', { name: 'Reassign accountable engineer' }),
+  ).toBeNull();
 });

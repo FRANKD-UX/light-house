@@ -10,6 +10,7 @@ export default defineConfig({
         'static/app/src/Inventory.tsx',
         'static/app/src/Monitoring.tsx',
         'static/app/src/Incidents.tsx',
+        'static/app/src/NocBoard.tsx',
         'static/app/src/incident-contract.ts',
         'static/app/src/Operations.tsx',
         'static/app/src/operations-contract.ts',

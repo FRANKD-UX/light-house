@@ -195,6 +195,16 @@ function aggregate(
     uuid(audit.fromOwner);
     uuid(audit.toOwner);
     if (audit.targetTeamId !== null) uuid(audit.targetTeamId);
+    if (audit.targetAssigneeId !== undefined && audit.targetAssigneeId !== null)
+      uuid(audit.targetAssigneeId);
+    if (
+      audit.action === 'assign'
+        ? audit.targetAssigneeId !== op.ownerAssigneeId ||
+          audit.targetAssigneeId === null
+        : audit.targetAssigneeId !== undefined &&
+          audit.targetAssigneeId !== null
+    )
+      throw new OperationError('INVALID');
     if (audit.nativeIntentId !== null) uuid(audit.nativeIntentId);
     integer(audit.factsVersion);
     if (audit.factsVersion !== v.factsVersion)
@@ -371,29 +381,55 @@ export class SqlOperationsRepository implements OperationRepository {
     ];
     if (value.incident.ownerAssigneeId !== null) {
       const ownerGuard =
-        'EXISTS (SELECT 1 FROM assignees a JOIN team_memberships tm ON tm.tenant_id = a.tenant_id AND tm.assignee_id = a.id WHERE a.tenant_id = ? AND a.id = ? AND a.status = ? AND a.pending IS NULL AND tm.team_id = ? AND tm.status = ? AND tm.pending IS NULL AND (tm.effective_until IS NULL OR tm.effective_until > ?))';
+        'EXISTS (SELECT 1 FROM assignees a JOIN team_memberships tm ON tm.tenant_id = a.tenant_id AND tm.assignee_id = a.id WHERE a.tenant_id = ? AND a.id = ? AND a.status = ? AND a.pending IS NULL AND tm.team_id = ? AND tm.status = ? AND tm.role IN (?, ?) AND tm.pending IS NULL AND (tm.effective_until IS NULL OR tm.effective_until > ?))';
       const ownerParams: Scalar[] = [
         ctx.tenantId,
         uuid(value.incident.ownerAssigneeId),
         'active',
         value.incident.ownerTeamId,
         'active',
+        'engineer',
+        'lead',
         utc(this.now()),
       ];
+      const targetGrant =
+        audit?.action === 'assign'
+          ? ' AND EXISTS (SELECT 1 FROM assignees target JOIN tenant_memberships grant_row ON grant_row.tenant_id = target.tenant_id AND grant_row.account_id = target.atlassian_account_id WHERE target.tenant_id = ? AND target.id = ? AND target.atlassian_account_id IS NOT NULL AND grant_row.status = ? AND grant_row.role IN (?, ?) AND (grant_row.expires_at IS NULL OR grant_row.expires_at > ?))'
+          : '';
+      if (audit?.action === 'assign')
+        ownerParams.push(
+          ctx.tenantId,
+          uuid(value.incident.ownerAssigneeId),
+          'active',
+          'operator',
+          'admin',
+          utc(this.now()),
+        );
       if (audit) {
-        const actor = this.actorGuard(ctx, [audit.teamId], audit.assigneeId);
+        const actor = this.actorGuard(
+          ctx,
+          [audit.teamId],
+          audit.assigneeId,
+          audit.action === 'assign',
+        );
         return {
-          query: query + ' AND ' + ownerGuard + ' AND ' + actor.query,
+          query:
+            query + ' AND ' + ownerGuard + targetGrant + ' AND ' + actor.query,
           params: [...params, ...ownerParams, ...actor.params],
         };
       }
       return {
-        query: query + ' AND ' + ownerGuard,
+        query: query + ' AND ' + ownerGuard + targetGrant,
         params: [...params, ...ownerParams],
       };
     }
     if (audit) {
-      const actor = this.actorGuard(ctx, [audit.teamId], audit.assigneeId);
+      const actor = this.actorGuard(
+        ctx,
+        [audit.teamId],
+        audit.assigneeId,
+        audit.action === 'assign',
+      );
       return {
         query: query + ' AND ' + actor.query,
         params: [...params, ...actor.params],
@@ -405,12 +441,13 @@ export class SqlOperationsRepository implements OperationRepository {
     ctx: TenantContext,
     teams: readonly string[],
     assigneeId?: string,
+    assignment = false,
   ): { query: string; params: Scalar[] } {
     if (ctx.actor.kind !== 'atlassian-user' || !teams.length)
       throw new OperationError('DENIED');
     const at = utc(this.now());
     return {
-      query: `EXISTS (SELECT 1 FROM tenant_memberships m JOIN assignees a ON a.tenant_id = m.tenant_id AND a.atlassian_account_id = m.account_id JOIN team_memberships tm ON tm.tenant_id = a.tenant_id AND tm.assignee_id = a.id JOIN teams team ON team.tenant_id = tm.tenant_id AND team.id = tm.team_id WHERE m.tenant_id = ? AND m.account_id = ? AND m.role IN (?, ?) AND m.status = ? AND (m.expires_at IS NULL OR m.expires_at > ?) AND a.status = ? AND a.pending IS NULL ${assigneeId ? 'AND a.id = ?' : ''} AND tm.team_id IN (${teams.map(() => '?').join(', ')}) AND tm.status = ? AND tm.pending IS NULL AND (tm.effective_until IS NULL OR tm.effective_until > ?) AND team.status = ? AND team.pending IS NULL)`,
+      query: `EXISTS (SELECT 1 FROM tenant_memberships m JOIN assignees a ON a.tenant_id = m.tenant_id AND a.atlassian_account_id = m.account_id JOIN team_memberships tm ON tm.tenant_id = a.tenant_id AND tm.assignee_id = a.id JOIN teams team ON team.tenant_id = tm.tenant_id AND team.id = tm.team_id WHERE m.tenant_id = ? AND m.account_id = ? AND m.role IN (?, ?) AND m.status = ? AND (m.expires_at IS NULL OR m.expires_at > ?) AND a.status = ? AND a.pending IS NULL ${assigneeId ? 'AND a.id = ?' : ''} AND tm.team_id IN (${teams.map(() => '?').join(', ')}) ${assignment ? 'AND (m.role = ? OR tm.role = ?)' : ''} AND tm.status = ? AND tm.role IN (?, ?) AND tm.pending IS NULL AND (tm.effective_until IS NULL OR tm.effective_until > ?) AND team.status = ? AND team.pending IS NULL)`,
       params: [
         ctx.tenantId,
         text(ctx.actor.accountId, 128),
@@ -421,7 +458,10 @@ export class SqlOperationsRepository implements OperationRepository {
         'active',
         ...(assigneeId ? [uuid(assigneeId)] : []),
         ...teams.map(uuid),
+        ...(assignment ? ['admin', 'lead'] : []),
         'active',
+        'engineer',
+        'lead',
         at,
         'active',
       ],
@@ -514,6 +554,23 @@ export class SqlOperationsRepository implements OperationRepository {
       value.pending!.audit.fromAssigneeId !== prior.incident.ownerAssigneeId
     )
       throw new OperationError('CONFLICT');
+    if (value.pending!.audit.action === 'assign') {
+      if (
+        value.incident.ownerTeamId !== prior.incident.ownerTeamId ||
+        value.incident.state !== prior.incident.state ||
+        value.incident.ownerAssigneeId === null ||
+        value.incident.ownerAssigneeId === prior.incident.ownerAssigneeId ||
+        value.pending!.audit.targetAssigneeId !==
+          value.incident.ownerAssigneeId ||
+        value.pending!.audit.teamId !== prior.incident.ownerTeamId ||
+        value.incident.pendingHandoff ||
+        value.incident.pendingReturn ||
+        value.incident.restorationValidatedAt !== null ||
+        value.validation !== null
+      )
+        throw new OperationError('CONFLICT');
+      text(value.pending!.audit.reason, 300);
+    }
     const guard = this.guards(ctx, value);
     return (
       (await this.db.write(
@@ -886,7 +943,7 @@ export class SqlOperationsRepository implements OperationRepository {
         row.audit_json,
       ) as OperationAudit;
       void privateActor;
-      return safe;
+      return { ...safe, targetAssigneeId: safe.targetAssigneeId ?? null };
     });
   }
 }

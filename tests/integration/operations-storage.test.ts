@@ -11,6 +11,7 @@ import {
 import { SqlOperationsRepository } from '../../src/infrastructure/sql/operations-repository';
 import { SqlIncidentRepository } from '../../src/infrastructure/sql/incident-repository';
 import { OperationService } from '../../src/application/operations/service';
+import { SqlOperationAuthority } from '../../src/infrastructure/operations/authority';
 import type { GateRecord } from '../../src/application/operations/contracts';
 import type {
   Incident,
@@ -228,6 +229,7 @@ async function fixture(migrate = true) {
   return {
     ...f,
     repo,
+    db,
     ddl,
     migrateV5,
     service,
@@ -586,4 +588,261 @@ describe('operations durable SQL state and recovery simulation', () => {
       f.service.execute(f.ctx, f.command('acknowledge', 1)),
     ).rejects.toThrow('CONFLICT');
   });
+});
+
+async function assignmentFixture() {
+  const f = await fixture();
+  await f.initialise();
+  await f.service.execute(f.ctx, f.command('acknowledge', 1));
+  const mapped = async (
+    accountId: string,
+    code: string,
+    teamRole: 'engineer' | 'lead',
+  ) => {
+    await f.h.service.grant({
+      tenantId: f.tenantId,
+      accountId,
+      role: 'operator',
+      expiresAt: null,
+      expected: null,
+      status: 'active',
+    });
+    const assigneeId = (
+      await f.h.service.save({
+        tenantId: f.tenantId,
+        entity: 'assignees',
+        fields: {
+          atlassian_account_id: accountId,
+          display_alias: code,
+          mapping_method: 'manual',
+        },
+        status: 'active',
+      })
+    ).id;
+    const teamMembershipId = (
+      await f.h.service.save({
+        tenantId: f.tenantId,
+        entity: 'team_memberships',
+        fields: {
+          team_id: f.noc,
+          assignee_id: assigneeId,
+          role: teamRole,
+          effective_until: null,
+        },
+        status: 'active',
+      })
+    ).id;
+    return { assigneeId, teamMembershipId, accountId };
+  };
+  const target = await mapped(
+    'synthetic-target-engineer',
+    'Synthetic target',
+    'engineer',
+  );
+  const lead = await mapped('synthetic-team-lead', 'Synthetic lead', 'lead');
+  const authority = new SqlOperationAuthority(f.db, f.repo, f.deps.now);
+  const operations = new OperationService({
+    repository: f.repo,
+    now: f.deps.now,
+    id: randomUUID,
+    digest: (canonical) => createHash('sha256').update(canonical).digest('hex'),
+    authorise: (ctx, command) => authority.authorise(ctx, command),
+  });
+  const leadCtx = {
+    ...f.ctx,
+    actor: { kind: 'atlassian-user' as const, accountId: lead.accountId },
+  };
+  return {
+    ...f,
+    target,
+    lead,
+    leadCtx,
+    operations,
+    assign: (extra = {}) =>
+      f.command('assign', 2, {
+        targetAssigneeId: target.assigneeId,
+        reason: 'Synthetic operational reassignment',
+        ...extra,
+      }),
+  };
+}
+
+describe('durable engineer reassignment with fresh stored authority', () => {
+  it.each(['admin', 'lead'] as const)(
+    'allows a mapped %s to reassign without changing team, state or SLA, and preserves idempotent replay',
+    async (actor) => {
+      const f = await assignmentFixture();
+      const ctx = actor === 'admin' ? f.ctx : f.leadCtx;
+      const before = (await f.repo.load(f.ctx, f.incident.id))!;
+      const command = f.assign();
+      const result = await f.operations.execute(ctx, command);
+      expect(result).toMatchObject({
+        ownerAssigneeId: f.target.assigneeId,
+        ownerTeamId: f.noc,
+        state: 'acknowledged',
+        version: 3,
+        pendingMaterialisation: false,
+      });
+      const after = (await f.repo.load(f.ctx, f.incident.id))!;
+      expect(after.incident.sla).toEqual(before.incident.sla);
+      expect(after.incident.state).toBe(before.incident.state);
+      expect(after.incident.ownerTeamId).toBe(before.incident.ownerTeamId);
+      expect(
+        (await f.repo.history(f.ctx, f.incident.id)).find(
+          (a) => a.action === 'assign',
+        ),
+      ).toMatchObject({
+        targetAssigneeId: f.target.assigneeId,
+        fromAssigneeId: f.assignee,
+        toAssigneeId: f.target.assigneeId,
+        reason: 'Synthetic operational reassignment',
+      });
+      f.h.sqlite
+        .prepare('UPDATE assignees SET status = ? WHERE id = ?')
+        .run('disabled', f.target.assigneeId);
+      expect(await f.operations.execute(ctx, command)).toEqual(result);
+      expect(
+        f.h.sqlite
+          .prepare(
+            'SELECT COUNT(*) AS total FROM operations_audit WHERE command_id = ?',
+          )
+          .get(command.commandId),
+      ).toMatchObject({ total: 1 });
+    },
+  );
+  it('denies engineer self-elevation and stale/same-engineer commands', async () => {
+    const f = await assignmentFixture();
+    f.h.sqlite
+      .prepare('UPDATE team_memberships SET role = ? WHERE id = ?')
+      .run('engineer', f.lead.teamMembershipId);
+    await expect(f.operations.execute(f.leadCtx, f.assign())).rejects.toThrow(
+      'DENIED',
+    );
+    await expect(
+      f.operations.execute(f.leadCtx, { ...f.assign(), teamRole: 'lead' }),
+    ).rejects.toThrow('INVALID');
+    await expect(
+      f.operations.execute(f.ctx, f.assign({ expected: 1 })),
+    ).rejects.toThrow('CONFLICT');
+    await expect(
+      f.operations.execute(f.ctx, f.assign({ targetAssigneeId: f.assignee })),
+    ).rejects.toThrow('CONFLICT');
+    expect((await f.repo.load(f.ctx, f.incident.id))!.incident.version).toBe(2);
+  });
+  it.each([
+    'target-grant-expired',
+    'target-grant-viewer',
+    'target-disabled',
+    'target-team-expired',
+    'target-wrong-team',
+  ] as const)('rejects %s before a new operation', async (condition) => {
+    const f = await assignmentFixture();
+    if (condition === 'target-grant-expired')
+      f.h.sqlite
+        .prepare(
+          'UPDATE tenant_memberships SET expires_at = ? WHERE tenant_id = ? AND account_id = ?',
+        )
+        .run(f.deps.now(), f.tenantId, f.target.accountId);
+    if (condition === 'target-grant-viewer')
+      f.h.sqlite
+        .prepare(
+          'UPDATE tenant_memberships SET role = ? WHERE tenant_id = ? AND account_id = ?',
+        )
+        .run('viewer', f.tenantId, f.target.accountId);
+    if (condition === 'target-disabled')
+      f.h.sqlite
+        .prepare('UPDATE assignees SET status = ? WHERE id = ?')
+        .run('disabled', f.target.assigneeId);
+    if (condition === 'target-team-expired')
+      f.h.sqlite
+        .prepare('UPDATE team_memberships SET effective_until = ? WHERE id = ?')
+        .run(f.deps.now(), f.target.teamMembershipId);
+    if (condition === 'target-wrong-team')
+      f.h.sqlite
+        .prepare('UPDATE team_memberships SET team_id = ? WHERE id = ?')
+        .run(f.department, f.target.teamMembershipId);
+    await expect(f.operations.execute(f.ctx, f.assign())).rejects.toThrow(
+      'DENIED',
+    );
+    expect(
+      (await f.repo.load(f.ctx, f.incident.id))!.incident.ownerAssigneeId,
+    ).toBe(f.assignee);
+  });
+  it('denies a real foreign-tenant target even when its UUID and account mapping exist', async () => {
+    const f = await assignmentFixture();
+    const foreign = (
+      await f.h.service.bootstrap({
+        name: 'Synthetic foreign ISP',
+        slug: 'foreign-assignment',
+      })
+    ).tenantId;
+    const foreignAssignee = (
+      await f.h.service.save({
+        tenantId: foreign,
+        entity: 'assignees',
+        fields: {
+          atlassian_account_id: 'synthetic-foreign',
+          display_alias: 'Synthetic foreign engineer',
+          mapping_method: 'manual',
+        },
+        status: 'active',
+      })
+    ).id;
+    await expect(
+      f.operations.execute(
+        f.ctx,
+        f.assign({ targetAssigneeId: foreignAssignee }),
+      ),
+    ).rejects.toThrow('DENIED');
+    expect((await f.repo.load(f.ctx, f.incident.id))!.incident.version).toBe(2);
+  });
+  it.each([
+    'lead-demoted',
+    'lead-revoked',
+    'target-grant-expired',
+    'target-team-expired',
+  ] as const)(
+    'rejects %s racing immediately before the final SQL CAS',
+    async (condition) => {
+      const f = await assignmentFixture();
+      let injected = false;
+      f.setBeforeWrite((query) => {
+        if (
+          injected ||
+          !query.startsWith('UPDATE operations_state SET version')
+        )
+          return;
+        injected = true;
+        if (condition === 'lead-demoted')
+          f.h.sqlite
+            .prepare('UPDATE team_memberships SET role = ? WHERE id = ?')
+            .run('engineer', f.lead.teamMembershipId);
+        if (condition === 'lead-revoked')
+          f.h.sqlite
+            .prepare(
+              'UPDATE tenant_memberships SET status = ? WHERE tenant_id = ? AND account_id = ?',
+            )
+            .run('revoked', f.tenantId, f.lead.accountId);
+        if (condition === 'target-grant-expired')
+          f.h.sqlite
+            .prepare(
+              'UPDATE tenant_memberships SET expires_at = ? WHERE tenant_id = ? AND account_id = ?',
+            )
+            .run(f.deps.now(), f.tenantId, f.target.accountId);
+        if (condition === 'target-team-expired')
+          f.h.sqlite
+            .prepare(
+              'UPDATE team_memberships SET effective_until = ? WHERE id = ?',
+            )
+            .run(f.deps.now(), f.target.teamMembershipId);
+      });
+      await expect(f.operations.execute(f.leadCtx, f.assign())).rejects.toThrow(
+        'CONFLICT',
+      );
+      expect(injected).toBe(true);
+      const unchanged = (await f.repo.load(f.ctx, f.incident.id))!;
+      expect(unchanged.incident.version).toBe(2);
+      expect(unchanged.incident.ownerAssigneeId).toBe(f.assignee);
+    },
+  );
 });

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { invoke } from '@forge/bridge';
 import {
   object,
@@ -8,7 +8,7 @@ import {
   uuid,
   type Role,
 } from '../../../src/domain/inventory/model';
-import { slaStatus } from '../../../src/domain/incidents/sla';
+import { NocBoard, incidentSlaStatus, useNocClock } from './NocBoard';
 import { Operations } from './Operations';
 import type { Priority } from '../../../src/domain/incidents/model';
 import {
@@ -55,6 +55,14 @@ export function Incidents() {
     [targets, setTargets] = useState<Record<string, string>>({});
   const [jsm, setJsm] = useState<Record<string, string>>({});
   const selected = overview?.incidents.find((i) => i.id === selectedId);
+  const workspace = useRef<HTMLHeadingElement>(null);
+  const now = useNocClock();
+  const selectedOperation = overview?.operations.find(
+    (op) => op.incidentId === selectedId,
+  );
+  useEffect(() => {
+    if (selectedId && selected) workspace.current?.focus();
+  }, [selectedId, selected]);
   async function run(work: () => Promise<string | void>) {
     if (lock.current) return;
     lock.current = true;
@@ -112,7 +120,6 @@ export function Incidents() {
   const jsmLink = overview?.jsmLinks.find(
     (link) => link.incidentId === selectedId,
   );
-  const now = new Date().toISOString();
   return (
     <section aria-labelledby="incidents-heading">
       <h2 id="incidents-heading">Incident workspace</h2>
@@ -492,24 +499,15 @@ export function Incidents() {
               </ul>
             )}
           </details>
-          {overview.incidents.length === 0 ? (
-            <p>No incidents returned for this page.</p>
-          ) : (
-            <ul aria-label="Incident list">
-              {overview.incidents.map((i) => (
-                <li key={i.id}>
-                  <button disabled={busy} onClick={() => setSelected(i.id)}>
-                    Open incident {i.id}
-                  </button>{' '}
-                  — {i.state}; impact {i.impact.confidence};{' '}
-                  {i.impact.affectedCustomerIds.length} confirmed customers;{' '}
-                  {i.sla.kind === 'selected'
-                    ? i.sla.snapshot.priority
-                    : `SLA blocked: ${i.sla.reason}`}
-                </li>
-              ))}
-            </ul>
-          )}
+          <NocBoard
+            incidents={overview.incidents}
+            operations={overview.operations}
+            operationsReady={overview.operationsReady}
+            selectedId={selectedId}
+            onSelect={setSelected}
+            now={now}
+            busy={busy}
+          />
           <button
             disabled={busy || !overview.next}
             onClick={() => void run(() => load(overview.next!))}
@@ -517,11 +515,37 @@ export function Incidents() {
             Next incident page
           </button>
           {selected && (
-            <article aria-labelledby="incident-detail">
-              <h3 id="incident-detail">Incident {selected.id}</h3>
+            <article id="incident-workspace" aria-labelledby="incident-detail">
+              <h3 id="incident-detail" tabIndex={-1} ref={workspace}>
+                Incident {selected.id}
+              </h3>
+              <button
+                onClick={() => {
+                  setSelected('');
+                  (
+                    document.getElementById('incident-select-' + selected.id) ??
+                    document.getElementById('noc-board-heading')
+                  )?.focus();
+                }}
+              >
+                Collapse incident workspace
+              </button>
               <dl>
-                <dt>Processing state</dt>
+                <dt>Creation snapshot</dt>
                 <dd>{selected.state}</dd>
+                <dt>Current operational stage</dt>
+                <dd>
+                  {selectedOperation?.state ??
+                    (overview.operationsReady
+                      ? 'Not initialised'
+                      : 'Operational state not verified')}
+                </dd>
+                <dt>Current accountable team / engineer</dt>
+                <dd>
+                  {selectedOperation
+                    ? `${selectedOperation.ownerTeamId} / ${selectedOperation.ownerAssigneeId ?? 'Awaiting acknowledgement'}`
+                    : 'Not returned'}
+                </dd>
                 <dt>Source problem</dt>
                 <dd>{selected.problemEventId}</dd>
                 <dt>Original occurrence UTC</dt>
@@ -573,9 +597,10 @@ export function Incidents() {
                   <dd>{selected.sla.snapshot.deadlineAt}</dd>
                   <dt>SLA status at {now}</dt>
                   <dd>
-                    {now < selected.sla.snapshot.startedAt
-                      ? 'Source start is in the future'
-                      : slaStatus(selected.sla.snapshot, now)}
+                    {incidentSlaStatus(selected, selectedOperation, now)}
+                    {selectedOperation?.resolvedAt
+                      ? ` (confirmed resolution UTC ${selectedOperation.resolvedAt})`
+                      : ' (resolution not confirmed in this overview)'}
                   </dd>
                 </dl>
               ) : (

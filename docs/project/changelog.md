@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-28 — Reassignment and current operational board
+
+- Added explicit same-team engineer reassignment with stored administrator/lead authority and final SQL membership/expiry guards.
+- Added current-page NOC board, distinct customer counts, local filters/SLA clock and accessible incident workspace focus; current operational state is separate from creation snapshots.
+- Added unregistered native Jira transition intent/gateway components; uncertain responses never cause blind repost or fabricated closure confirmation.
+- Reproduced frozen87ebd25 locally from clean install; Forge lint remains unapproved at MAJOR_VERSION_RULE. No hosted mutation or deployment. Integrated validation is recorded in audit.
+
 ## 2026-11-28 — Durable operational workflow and catch-up
 
 - Added four integrated synthetic POC tests, original-resource recovery binding and explicit paginated ready-receipt catch-up without hidden polling.

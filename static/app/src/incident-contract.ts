@@ -13,8 +13,29 @@ import type {
 } from '../../../src/domain/incidents/model';
 import { validatePolicies } from '../../../src/domain/incidents/sla';
 export type PublicIncident = Omit<Incident, 'installationId'>;
+export interface PublicOperationSummary {
+  incidentId: string;
+  state:
+    | 'new'
+    | 'acknowledged'
+    | 'triage'
+    | 'in_progress'
+    | 'restoration_validation'
+    | 'resolved'
+    | 'closed';
+  version: number;
+  ownerTeamId: string;
+  ownerAssigneeId: string | null;
+  nocTeamId: string;
+  pendingMaterialisation: boolean;
+  pendingHandoff: boolean;
+  pendingReturn: boolean;
+  resolvedAt: string | null;
+}
 export interface IncidentOverview {
   incidents: PublicIncident[];
+  operations: PublicOperationSummary[];
+  operationsReady: boolean;
   next: string | null;
   policies: IncidentPolicy[];
   jsmLinks: {
@@ -218,8 +239,82 @@ export function incidentOverview(
   });
   if (new Set(jsmLinks.map((link) => link.incidentId)).size !== jsmLinks.length)
     throw new Error('INVALID_RESPONSE');
+  const operationsReady =
+    v.operationsReady === undefined ? false : v.operationsReady;
+  if (typeof operationsReady !== 'boolean') throw new Error('INVALID_RESPONSE');
+  const rawOperations = v.operations === undefined ? [] : v.operations;
+  if (
+    !Array.isArray(rawOperations) ||
+    rawOperations.length > 20 ||
+    (!operationsReady && rawOperations.length > 0)
+  )
+    throw new Error('INVALID_RESPONSE');
+  const operationKeys = [
+    'incidentId',
+    'state',
+    'version',
+    'ownerTeamId',
+    'ownerAssigneeId',
+    'nocTeamId',
+    'pendingMaterialisation',
+    'pendingHandoff',
+    'pendingReturn',
+    'resolvedAt',
+  ];
+  const operations = rawOperations.map(
+    (input: unknown): PublicOperationSummary => {
+      const raw = object(input);
+      if (Object.keys(raw).some((key) => !operationKeys.includes(key)))
+        throw new Error('INVALID_RESPONSE');
+      const incidentId = uuid(raw.incidentId),
+        incident = incidents.find((i) => i.id === incidentId);
+      if (!incident) throw new Error('INVALID_RESPONSE');
+      const state = one(raw.state, [
+        'new',
+        'acknowledged',
+        'triage',
+        'in_progress',
+        'restoration_validation',
+        'resolved',
+        'closed',
+      ]);
+      if (
+        typeof raw.pendingMaterialisation !== 'boolean' ||
+        typeof raw.pendingHandoff !== 'boolean' ||
+        typeof raw.pendingReturn !== 'boolean'
+      )
+        throw new Error('INVALID_RESPONSE');
+      const ownerAssigneeId =
+        raw.ownerAssigneeId === null ? null : uuid(raw.ownerAssigneeId);
+      const resolvedAt = raw.resolvedAt === null ? null : utc(raw.resolvedAt);
+      if (
+        (state === 'new') !== (ownerAssigneeId === null) ||
+        ['resolved', 'closed'].includes(state) !== (resolvedAt !== null) ||
+        (resolvedAt !== null && resolvedAt < incident.occurredAt) ||
+        (raw.pendingHandoff && raw.pendingReturn) ||
+        ((raw.pendingHandoff || raw.pendingReturn) && state !== 'in_progress')
+      )
+        throw new Error('INVALID_RESPONSE');
+      return {
+        incidentId,
+        state,
+        version: integer(raw.version),
+        ownerTeamId: uuid(raw.ownerTeamId),
+        ownerAssigneeId,
+        nocTeamId: uuid(raw.nocTeamId),
+        pendingMaterialisation: raw.pendingMaterialisation,
+        pendingHandoff: raw.pendingHandoff,
+        pendingReturn: raw.pendingReturn,
+        resolvedAt,
+      };
+    },
+  );
+  if (new Set(operations.map((op) => op.incidentId)).size !== operations.length)
+    throw new Error('INVALID_RESPONSE');
   return {
     incidents,
+    operations,
+    operationsReady,
     policies,
     jsmLinks,
     next: v.next === null ? null : uuid(v.next),
